@@ -1,0 +1,25 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+###################
+# Named Individuals - InvolvementDegree
+###################
+
+feg:PrimeMover
+    a owl:NamedIndividual, feg:InvolvementDegree ;
+    rdfs:label "Prime Mover" ;
+    rdfs:comment "The muscle or muscles primarily responsible for producing the movement in an exercise. The prime mover is the intended target of the exercise." ;
+.
+
+feg:Synergist
+    a owl:NamedIndividual, feg:InvolvementDegree ;
+    rdfs:label "Synergist" ;
+    rdfs:comment "A muscle that assists the prime mover in producing the movement. The synergist contributes meaningfully to the exercise but is not the primary target." ;
+.
+
+feg:Stabilizer
+    a owl:NamedIndividual, feg:InvolvementDegree ;
+    rdfs:label "Stabilizer" ;
+    rdfs:comment "A muscle that contracts to stabilize a joint during the exercise without contributing directly to the movement. Stabilizers are active but not trained in a meaningful hypertrophic or strength sense by the exercise." ;
+.

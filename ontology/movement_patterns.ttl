@@ -1,0 +1,126 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - MovementPattern (SKOS)
+###################
+
+feg:MovementPatternScheme
+    a skos:ConceptScheme ;
+    rdfs:label "Movement Pattern Scheme" ;
+    rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
+.
+
+feg:KneeDominant
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Knee Dominant" ;
+    rdfs:comment "Movements in which the knee is the primary joint driving the exercise, involving significant quadriceps recruitment." ;
+.
+
+feg:Squat
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:KneeDominant ;
+    skos:prefLabel "Squat" ;
+    rdfs:comment "A bilateral knee dominant movement in which both feet remain fixed and the hips descend toward the ground." ;
+.
+
+feg:SplitSquat
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:KneeDominant ;
+    skos:prefLabel "Split Squat" ;
+    rdfs:comment "A knee dominant movement performed with a staggered stance, both feet fixed, placing greater demand on the forward leg." ;
+.
+
+feg:Lunge
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:KneeDominant ;
+    skos:prefLabel "Lunge" ;
+    rdfs:comment "A knee dominant movement in which one foot travels to create a staggered stance, introducing a dynamic balance demand absent in the split squat." ;
+.
+
+feg:HipHinge
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Hip Hinge" ;
+    rdfs:comment "Movements in which the hips are the primary joint driving the exercise, involving significant posterior chain recruitment." ;
+.
+
+feg:Push
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Push" ;
+    rdfs:comment "Movements in which force is produced by pushing load away from the body." ;
+.
+
+feg:HorizontalPush
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:Push ;
+    skos:prefLabel "Horizontal Push" ;
+    rdfs:comment "Movements in which force is produced by pushing horizontally away from the body, principally targeting the chest, anterior deltoid, and triceps." ;
+.
+
+feg:VerticalPush
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:Push ;
+    skos:prefLabel "Vertical Push" ;
+    rdfs:comment "Movements in which force is produced by pushing vertically away from the body, principally targeting the shoulders and triceps." ;
+.
+
+feg:Pull
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling load toward the body." ;
+.
+
+feg:HorizontalPull
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:Pull ;
+    skos:prefLabel "Horizontal Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling horizontally toward the body, principally targeting the mid-back, rear deltoid, and biceps." ;
+.
+
+feg:VerticalPull
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:Pull ;
+    skos:prefLabel "Vertical Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling vertically toward the body, principally targeting the lats and biceps." ;
+.
+
+feg:Carry
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Carry" ;
+    rdfs:comment "Movements in which load is held and transported through space, demanding full-body stability and grip strength." ;
+.
+
+feg:Rotation
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Rotation" ;
+    rdfs:comment "Movements involving rotation or anti-rotation of the trunk, principally targeting the obliques and deep core musculature." ;
+.
+
+feg:Core
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Core" ;
+    rdfs:comment "Movements principally targeting trunk stability and strength through flexion, extension, or isometric demand." ;
+.
+
+feg:Locomotion
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Locomotion" ;
+    rdfs:comment "Movements involving whole-body travel through space, including running, jumping, and crawling patterns." ;
+.

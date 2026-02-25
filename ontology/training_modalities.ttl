@@ -1,0 +1,37 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+###################
+# Named Individuals - TrainingModality
+###################
+
+feg:Strength
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Strength" ;
+    rdfs:comment "Training principally focused on developing maximal force production, typically performed at high loads and low repetitions." ;
+.
+
+feg:Hypertrophy
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Hypertrophy" ;
+    rdfs:comment "Training principally focused on increasing muscle size through moderate loads and moderate to high repetitions." ;
+.
+
+feg:Cardio
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Cardio" ;
+    rdfs:comment "Training principally focused on improving cardiovascular endurance and aerobic capacity." ;
+.
+
+feg:Mobility
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Mobility" ;
+    rdfs:comment "Training principally focused on improving range of motion and movement quality at a joint or across multiple joints." ;
+.
+
+feg:Plyometrics
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Plyometrics" ;
+    rdfs:comment "Training principally focused on developing explosive power through rapid stretch-shortening cycles." ;
+.
