@@ -1,2 +1,19 @@
 .DS_Store
 .ruff_cache
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Pipeline runtime outputs
+data/graph/
+logs/
+
+# Local environment files
+.env
+.env.*
