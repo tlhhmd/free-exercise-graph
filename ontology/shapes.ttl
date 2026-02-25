@@ -1,0 +1,150 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+###################
+# ExerciseShape
+###################
+
+feg:ExerciseShape
+    a sh:NodeShape ;
+    sh:targetClass feg:Exercise ;
+    rdfs:label "Exercise Shape" ;
+    rdfs:comment "Validates that every Exercise individual is correctly and completely described." ;
+
+    # must have exactly one rdfs:label
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "An exercise must have exactly one rdfs:label." ;
+    ] ;
+
+    # must have at least one movement pattern
+    sh:property [
+        sh:path feg:movementPattern ;
+        sh:minCount 1 ;
+        sh:class feg:MovementPattern ;
+        sh:message "An exercise must have at least one movement pattern, and each must be a known MovementPattern individual." ;
+    ] ;
+
+    # must have at least one muscle involvement
+    sh:property [
+        sh:path feg:hasInvolvement ;
+        sh:minCount 1 ;
+        sh:class feg:MuscleInvolvement ;
+        sh:message "An exercise must have at least one muscle involvement." ;
+    ] ;
+
+    # must have at least one prime mover
+    sh:sparql [
+        sh:message "An exercise must have at least one muscle involvement with degree PrimeMover." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PrimeMover .
+                }
+            }
+        """ ;
+    ] ;
+
+    # no muscle may appear more than once across involvements
+    sh:sparql [
+        sh:message "A muscle may not appear more than once across an exercise's muscle involvements." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:hasInvolvement ?inv1 ;
+                      feg:hasInvolvement ?inv2 .
+                ?inv1 feg:muscle ?muscle .
+                ?inv2 feg:muscle ?muscle .
+                FILTER (?inv1 != ?inv2)
+            }
+        """ ;
+    ] ;
+
+    # training modality if present must be a known individual
+    sh:property [
+        sh:path feg:trainingModality ;
+        sh:class feg:TrainingModality ;
+        sh:message "Training modality must be a known TrainingModality individual." ;
+    ] ;
+
+    # equipment if present must be a known individual
+    sh:property [
+        sh:path feg:equipment ;
+        sh:class feg:Equipment ;
+        sh:message "Equipment must be a known Equipment individual." ;
+    ] ;
+
+    # legacySourceId if present must be a single string
+    sh:property [
+        sh:path feg:legacySourceId ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "legacySourceId must be a single string value." ;
+    ] ;
+
+    # isUnilateral if present must be a single boolean
+    sh:property [
+        sh:path feg:isUnilateral ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "isUnilateral must be a single boolean value." ;
+    ] ;
+.
+
+###################
+# MuscleInvolvementShape
+###################
+
+feg:MuscleInvolvementShape
+    a sh:NodeShape ;
+    sh:targetClass feg:MuscleInvolvement ;
+    rdfs:label "Muscle Involvement Shape" ;
+    rdfs:comment "Validates that every MuscleInvolvement instance is complete and well-formed." ;
+
+    # must have exactly one muscle
+    sh:property [
+        sh:path feg:muscle ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class feg:Muscle ;
+        sh:message "A muscle involvement must reference exactly one known Muscle individual." ;
+    ] ;
+
+    # must have exactly one degree
+    sh:property [
+        sh:path feg:degree ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class feg:InvolvementDegree ;
+        sh:message "A muscle involvement must have exactly one degree, and it must be a known InvolvementDegree individual." ;
+    ] ;
+
+    # degree must be one of the three allowed values
+    sh:property [
+        sh:path feg:degree ;
+        sh:in ( feg:PrimeMover feg:Synergist feg:Stabilizer ) ;
+        sh:message "Degree must be one of: PrimeMover, Synergist, Stabilizer." ;
+    ] ;
+
+    # must be referenced by at least one exercise - catches orphaned nodes
+    sh:sparql [
+        sh:message "A MuscleInvolvement must be referenced by at least one Exercise via hasInvolvement." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    ?exercise feg:hasInvolvement $this .
+                }
+            }
+        """ ;
+    ] ;
+.

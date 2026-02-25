@@ -1,0 +1,129 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://placeholder.url#>
+    a owl:Ontology ;
+    rdfs:label "Free Exercise Graph Ontology" ;
+    rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
+.
+
+###################
+# Classes
+###################
+
+feg:Exercise
+    a owl:Class ;
+    rdfs:label "Exercise" ;
+    rdfs:comment "A bodily activity that enhances or maintains physical fitness and overall health and wellness." ;
+.
+
+feg:MovementPattern
+    a owl:Class ;
+    rdfs:label "Movement Pattern" ;
+    rdfs:comment "A fundamental category of human movement that describes the mechanical structure of an exercise. Exercises sharing a movement pattern make similar demands on the musculoskeletal system and may serve as substitutes for one another." ;
+.
+
+feg:Muscle
+    a owl:Class ;
+    rdfs:label "Muscle" ;
+    rdfs:comment "A contractile tissue in the human body that generates force and movement. The term \"muscle\" may refer to an individual muscle or a functional muscle group." ;
+.
+
+feg:MuscleInvolvement
+    a owl:Class ;
+    rdfs:label "Muscle Involvement" ;
+    rdfs:comment "A relationship between a specific exercise and a specific muscle, capturing the degree to which that muscle is recruited during the exercise. A single exercise may have multiple muscle involvements, one per involved muscle." ;
+.
+
+feg:InvolvementDegree
+    a owl:Class ;
+    rdfs:label "Involvement Degree" ;
+    rdfs:comment "A classification describing the role a muscle plays in an exercise." ;
+.
+
+feg:Equipment
+    a owl:Class ;
+    rdfs:label "Equipment" ;
+    rdfs:comment "A physical tool or apparatus used to perform an exercise." ;
+.
+
+feg:TrainingModality
+    a owl:Class ;
+    rdfs:label "Training Modality" ;
+    rdfs:comment "A category describing the physiological adaptation targeted by an exercise or program. Examples include strength, hypertrophy, cardio, and mobility." ;
+.
+
+###################
+# Object Properties
+###################
+
+feg:hasInvolvement
+    a owl:ObjectProperty ;
+    rdfs:label "has involvement" ;
+    rdfs:comment "Relates an exercise to a muscle involvement instance describing a muscle recruited during its execution." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:MuscleInvolvement ;
+.
+
+feg:muscle
+    a owl:ObjectProperty ;
+    rdfs:label "muscle" ;
+    rdfs:comment "Relates a muscle involvement instance to the muscle being recruited." ;
+    rdfs:domain feg:MuscleInvolvement ;
+    rdfs:range feg:Muscle ;
+.
+
+feg:degree
+    a owl:ObjectProperty ;
+    rdfs:label "degree" ;
+    rdfs:comment "Relates a muscle involvement instance to the degree to which the muscle is recruited." ;
+    rdfs:domain feg:MuscleInvolvement ;
+    rdfs:range feg:InvolvementDegree ;
+.
+
+feg:movementPattern
+    a owl:ObjectProperty ;
+    rdfs:label "movement pattern" ;
+    rdfs:comment "Relates an exercise to its fundamental movement pattern." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:MovementPattern ;
+.
+
+feg:equipment
+    a owl:ObjectProperty ;
+    rdfs:label "equipment" ;
+    rdfs:comment "Relates an exercise to the equipment used to perform it." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:Equipment ;
+.
+
+feg:trainingModality
+    a owl:ObjectProperty ;
+    rdfs:label "training modality" ;
+    rdfs:comment "Relates an exercise to the physiological adaptation it primarily targets." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:TrainingModality ;
+.
+
+###################
+# Data Properties
+###################
+
+feg:legacySourceId
+    a owl:DatatypeProperty ;
+    rdfs:label "legacy source ID" ;
+    rdfs:comment "The original identifier for this exercise in the yuhonas/free-exercise-db dataset. Preserved for provenance and upstream traceability." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:string ;
+.
+
+feg:isUnilateral
+    a owl:DatatypeProperty ;
+    rdfs:label "is unilateral" ;
+    rdfs:comment "True if the exercise is performed one limb at a time. When absent, bilateral execution is assumed." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean ;
+.
