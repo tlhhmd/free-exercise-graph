@@ -1,0 +1,78 @@
+{
+  "name": "Alternating Floor Press",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "kettlebells",
+  "primaryMuscles": [
+    "chest"
+  ],
+  "secondaryMuscles": [
+    "abdominals",
+    "shoulders",
+    "triceps"
+  ],
+  "instructions": [
+    "Lie on the floor with two kettlebells next to your shoulders.",
+    "Position one in place on your chest and then the other, gripping the kettlebells on the handle with the palms facing forward.",
+    "Extend both arms, so that the kettlebells are being held above your chest. Lower one kettlebell, bringing it to your chest and turn the wrist in the direction of the locked out kettlebell.",
+    "Raise the kettlebell and repeat on the opposite side."
+  ],
+  "category": "strength",
+  "images": [
+    "Alternating_Floor_Press/0.jpg",
+    "Alternating_Floor_Press/1.jpg"
+  ],
+  "id": "Alternating_Floor_Press",
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "PectoralisMajor",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "PectoralisMinor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "is_unilateral": true,
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:49:35+00:00"
+}
