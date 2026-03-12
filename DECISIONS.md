@@ -645,6 +645,95 @@ scheme needed for flat enumerations.
 
 ---
 
+### ADR-031: Streamlit adopted for annotation tool; Marimo deprecated for this use case
+**Decision:** The gold standard annotation tool (`evals/annotate.py`) is built with
+Streamlit rather than Marimo. ADR-013 (Marimo over Jupyter) is superseded for the
+annotation use case specifically; Marimo remains available for exploratory analysis.
+
+**Rationale:** Marimo's reactive execution graph created persistent friction with
+the annotation UI. Specifically: `mo.ui.array` nesting caused rendering failures,
+multi-state update ordering produced blank screens, and the cell-dependency model
+made dynamic row editing (add/delete muscle involvements) unstable. Streamlit's
+linear top-to-bottom execution model and `st.data_editor` component provide the
+stability required for high-integrity manual data entry.
+
+**Implication:** `evals/annotate_test.py` (the Marimo prototype) is retained for
+reference but is not the active tool. The active annotator is `evals/annotate.py`
+(Streamlit). `review.py` (quarantine triage UI) may use either framework — evaluate
+at build time.
+
+---
+
+### ADR-032: seed.json → gold.json annotation pipeline
+**Decision:** The eval annotation workflow uses two separate files:
+- `evals/seed.json` — immutable reference: LLM-generated enrichments for the 30
+  sampled exercises. Never written by the annotator.
+- `evals/gold.json` — evolving ground truth: human-verified and corrected records.
+  Written on each Save. Initialized from seed on first run if absent.
+
+**Rationale:** Treating the seed as immutable preserves the original LLM output as
+a reference for side-by-side comparison. The annotator always shows both columns
+(Seed Reference | Gold Standard), which makes errors of omission and commission
+immediately visible. Separating the files prevents accidental overwrites and allows
+diffing seed vs gold to measure correction rate.
+
+**Side-by-side layout:** Left column shows the seed record read-only. Right column
+is the editable gold form. A "Reset to Seed" button restores the gold record from
+seed for the current exercise.
+
+---
+
+### ADR-033: Annotation UI vocabulary derived exclusively from ontology TTL files
+**Decision:** All controlled vocabulary shown in the annotation UI (muscles,
+movement patterns, training modalities, involvement degrees) is parsed at runtime
+from `ontology/*.ttl` via rdflib. No strings for these terms are hardcoded in
+`annotate.py`.
+
+**Rationale:** Hardcoding vocabulary in the annotator creates "Label Drift" — the
+UI silently falls out of sync when TTL files are updated, allowing annotators to
+select terms that no longer exist or miss newly added terms. Loading from TTL at
+startup ensures the annotator always reflects the current vocabulary state.
+
+**Implementation:** `get_ontology_data()` (decorated with `@st.cache_data`) parses
+all `*.ttl` files in `ontology/` and extracts concept local names from the four
+SKOS concept schemes: `MuscleScheme`, `MovementPatternScheme`,
+`TrainingModalityScheme`, `InvolvementDegreeScheme`.
+
+---
+
+### ADR-034: Double Counting detection in annotation UI
+**Decision:** The annotation UI validates muscle involvement selections in real time
+and flags any case where both a muscle and one of its SKOS ancestors are selected
+simultaneously (e.g. selecting both `Hamstrings` and `Posterior` as prime movers).
+
+**Rationale:** Double counting at the parent/child level would inflate involvement
+coverage in the gold standard and produce misleading F1-score calculations during
+eval. A parent concept subsumes its children — selecting both means the same muscle
+mass is counted twice. The flag is a soft warning (not a hard block) to support
+edge cases where explicit redundancy is intentional.
+
+**Implementation:** `check_double_counting()` walks `HIERARCHY` (a dict of
+`{muscle: [parents]}` built from `skos:broader` edges) and flags any selected
+muscle whose parent is also in the selected set.
+
+---
+
+### ADR-035: Hierarchical muscle explorer for annotation discovery
+**Decision:** The annotation tool includes a modal "Muscle Hierarchy Explorer" that
+renders the local SKOS neighbourhood of any muscle node (its parents and children)
+as a D3.js force graph, with navigation buttons to zoom in to children or zoom out
+to parents.
+
+**Rationale:** The muscle vocabulary has 60+ concepts across three hierarchy levels.
+An annotator selecting muscles for a novel exercise cannot hold the full tree in
+working memory. Without a discovery mechanism they default to vague group-level
+terms (e.g. `Shoulders`) instead of precise head-level terms (e.g. `AnteriorDeltoid`)
+that make the gold standard more valuable for fine-grained eval. The explorer
+resolves this by letting the annotator navigate the graph and copy the selected term
+back to the annotation form.
+
+---
+
 ### ADR-030: Iliopsoas added as MuscleHead under Psoas
 **Decision:** Added `feg:Iliopsoas` as a `MuscleHead` under `feg:Psoas`
 with `skos:altLabel "Psoas Major"`.

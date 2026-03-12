@@ -1,0 +1,492 @@
+[
+  {
+    "id": "Barbell_Deadlift",
+    "movement_patterns": ["HipHinge"],
+    "muscle_involvements": [
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsFemoris", "degree": "PrimeMover"},
+      {"muscle": "Semitendinosus", "degree": "PrimeMover"},
+      {"muscle": "Semimembranosus", "degree": "PrimeMover"},
+      {"muscle": "ErectorSpinae", "degree": "PrimeMover"},
+      {"muscle": "RectusFemoris", "degree": "Synergist"},
+      {"muscle": "VastusLateralis", "degree": "Synergist"},
+      {"muscle": "VastusMedialis", "degree": "Synergist"},
+      {"muscle": "VastusIntermedius", "degree": "Synergist"},
+      {"muscle": "LatissimusDorsi", "degree": "Synergist"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"},
+      {"muscle": "LowerTrapezius", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMajor", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMinor", "degree": "Stabilizer"},
+      {"muscle": "WristFlexors", "degree": "Stabilizer"},
+      {"muscle": "Brachioradialis", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Squat",
+    "movement_patterns": ["Squat"],
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "Synergist"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMinimus", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"},
+      {"muscle": "LowerTrapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Bench_Press_-_Medium_Grip",
+    "movement_patterns": ["HorizontalPush"],
+    "muscle_involvements": [
+      {"muscle": "PectoralisMajor", "degree": "PrimeMover"},
+      {"muscle": "AnteriorDeltoid", "degree": "Synergist"},
+      {"muscle": "TricepsBrachii", "degree": "Synergist"},
+      {"muscle": "SerratusAnterior", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"},
+      {"muscle": "LowerTrapezius", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMajor", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMinor", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Shoulder_Press",
+    "movement_patterns": ["VerticalPush"],
+    "muscle_involvements": [
+      {"muscle": "AnteriorDeltoid", "degree": "PrimeMover"},
+      {"muscle": "LateralDeltoid", "degree": "PrimeMover"},
+      {"muscle": "TricepsBrachii", "degree": "PrimeMover"},
+      {"muscle": "PectoralisMajor", "degree": "Synergist"},
+      {"muscle": "UpperTrapezius", "degree": "Synergist"},
+      {"muscle": "SerratusAnterior", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Bent_Over_Barbell_Row",
+    "movement_patterns": ["HorizontalPull"],
+    "muscle_involvements": [
+      {"muscle": "LatissimusDorsi", "degree": "PrimeMover"},
+      {"muscle": "MiddleTrapezius", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMajor", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMinor", "degree": "PrimeMover"},
+      {"muscle": "BicepsBrachii", "degree": "Synergist"},
+      {"muscle": "Brachialis", "degree": "Synergist"},
+      {"muscle": "PosteriorDeltoid", "degree": "Synergist"},
+      {"muscle": "LowerTrapezius", "degree": "Synergist"},
+      {"muscle": "Brachioradialis", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Band_Assisted_Pull-Up",
+    "movement_patterns": ["VerticalPull"],
+    "muscle_involvements": [
+      {"muscle": "LatissimusDorsi", "degree": "PrimeMover"},
+      {"muscle": "BicepsBrachii", "degree": "PrimeMover"},
+      {"muscle": "Brachialis", "degree": "PrimeMover"},
+      {"muscle": "MiddleTrapezius", "degree": "Synergist"},
+      {"muscle": "LowerTrapezius", "degree": "Synergist"},
+      {"muscle": "RhomboidMajor", "degree": "Synergist"},
+      {"muscle": "RhomboidMinor", "degree": "Synergist"},
+      {"muscle": "PosteriorDeltoid", "degree": "Synergist"},
+      {"muscle": "Brachioradialis", "degree": "Stabilizer"},
+      {"muscle": "WristFlexors", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Lunge",
+    "movement_patterns": ["Lunge"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "Synergist"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMinimus", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "Trapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Hip_Thrust",
+    "movement_patterns": ["HipHinge"],
+    "muscle_involvements": [
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Curl",
+    "movement_patterns": ["Pull"],
+    "muscle_involvements": [
+      {"muscle": "BicepsBrachii", "degree": "PrimeMover"},
+      {"muscle": "Brachialis", "degree": "Synergist"},
+      {"muscle": "Brachioradialis", "degree": "Synergist"},
+      {"muscle": "WristFlexors", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Band_Skull_Crusher",
+    "movement_patterns": ["VerticalPush"],
+    "muscle_involvements": [
+      {"muscle": "TricepsBrachii", "degree": "PrimeMover"},
+      {"muscle": "AnteriorDeltoid", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Ab_Rollout",
+    "movement_patterns": ["TrunkStability"],
+    "muscle_involvements": [
+      {"muscle": "RectusAbdominis", "degree": "PrimeMover"},
+      {"muscle": "TransverseAbdominis", "degree": "PrimeMover"},
+      {"muscle": "Obliques", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Synergist"},
+      {"muscle": "AnteriorDeltoid", "degree": "Stabilizer"},
+      {"muscle": "LateralDeltoid", "degree": "Stabilizer"},
+      {"muscle": "PectoralisMajor", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMaximus", "degree": "Stabilizer"},
+      {"muscle": "QuadratusLumborum", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "3_4_Sit-Up",
+    "movement_patterns": ["TrunkStability"],
+    "muscle_involvements": [
+      {"muscle": "RectusAbdominis", "degree": "PrimeMover"},
+      {"muscle": "Iliopsoas", "degree": "Synergist"},
+      {"muscle": "Obliques", "degree": "Synergist"}
+    ]
+  },
+  {
+    "id": "Barbell_Side_Bend",
+    "movement_patterns": ["Rotation"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "ExternalOblique", "degree": "PrimeMover"},
+      {"muscle": "InternalOblique", "degree": "PrimeMover"},
+      {"muscle": "QuadratusLumborum", "degree": "PrimeMover"},
+      {"muscle": "RectusAbdominis", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Synergist"},
+      {"muscle": "LatissimusDorsi", "degree": "Stabilizer"},
+      {"muscle": "GluteusMaximus", "degree": "Stabilizer"},
+      {"muscle": "Trapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Box_Jump_Multiple_Response",
+    "movement_patterns": ["KneeDominant", "Locomotion"],
+    "training_modalities": ["Plyometrics"],
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsFemoris", "degree": "PrimeMover"},
+      {"muscle": "Semitendinosus", "degree": "PrimeMover"},
+      {"muscle": "Semimembranosus", "degree": "PrimeMover"},
+      {"muscle": "Gastrocnemius", "degree": "PrimeMover"},
+      {"muscle": "Soleus", "degree": "PrimeMover"},
+      {"muscle": "GluteusMedius", "degree": "Synergist"},
+      {"muscle": "TensorFasciaeLatae", "degree": "Synergist"},
+      {"muscle": "Gracilis", "degree": "Synergist"},
+      {"muscle": "AnteriorDeltoid", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Air_Bike",
+    "movement_patterns": ["Rotation"],
+    "muscle_involvements": [
+      {"muscle": "RectusAbdominis", "degree": "PrimeMover"},
+      {"muscle": "Obliques", "degree": "PrimeMover"},
+      {"muscle": "TransverseAbdominis", "degree": "Synergist"},
+      {"muscle": "TibialisAnterior", "degree": "Synergist"},
+      {"muscle": "Psoas", "degree": "Synergist"}
+    ]
+  },
+  {
+    "id": "90_90_Hamstring",
+    "movement_patterns": ["Mobility"],
+    "training_modalities": ["Mobility"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "BicepsFemoris", "degree": "PrimeMover"},
+      {"muscle": "Semimembranosus", "degree": "PrimeMover"},
+      {"muscle": "Semitendinosus", "degree": "PrimeMover"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"}
+    ]
+  },
+  {
+    "id": "All_Fours_Quad_Stretch",
+    "movement_patterns": ["Mobility"],
+    "training_modalities": ["Mobility"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "Quadriceps", "degree": "PrimeMover"},
+      {"muscle": "Iliopsoas", "degree": "PrimeMover"}
+    ]
+  },
+  {
+    "id": "Adductor",
+    "movement_patterns": ["SoftTissue"],
+    "training_modalities": ["Mobility"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "AdductorLongus", "degree": "PrimeMover"},
+      {"muscle": "AdductorBrevis", "degree": "PrimeMover"},
+      {"muscle": "AdductorMagnus", "degree": "PrimeMover"},
+      {"muscle": "Gracilis", "degree": "PrimeMover"}
+    ]
+  },
+  {
+    "id": "Anterior_Tibialis-SMR",
+    "movement_patterns": ["SoftTissue"],
+    "training_modalities": ["Mobility"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "TibialisAnterior", "degree": "PrimeMover"}
+    ]
+  },
+  {
+    "id": "Bear_Crawl_Sled_Drags",
+    "movement_patterns": ["Locomotion"],
+    "training_modalities": ["Cardio"],
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "Synergist"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "Deltoid", "degree": "Stabilizer"},
+      {"muscle": "BicepsBrachii", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Arnold_Dumbbell_Press",
+    "movement_patterns": ["VerticalPush"],
+    "muscle_involvements": [
+      {"muscle": "AnteriorDeltoid", "degree": "PrimeMover"},
+      {"muscle": "LateralDeltoid", "degree": "PrimeMover"},
+      {"muscle": "TricepsBrachii", "degree": "Synergist"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "SerratusAnterior", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Advanced_Kettlebell_Windmill",
+    "movement_patterns": ["HipHinge", "VerticalPush"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "AnteriorDeltoid", "degree": "PrimeMover"},
+      {"muscle": "LateralDeltoid", "degree": "PrimeMover"},
+      {"muscle": "TricepsLongHead", "degree": "PrimeMover"},
+      {"muscle": "TricepsLateralHead", "degree": "PrimeMover"},
+      {"muscle": "TricepsMedialHead", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "TransverseAbdominis", "degree": "Synergist"},
+      {"muscle": "RectusAbdominis", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Synergist"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMinimus", "degree": "Stabilizer"},
+      {"muscle": "RotatorCuff", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Alternating_Renegade_Row",
+    "movement_patterns": ["HorizontalPull", "TrunkStability"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "MiddleTrapezius", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMajor", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMinor", "degree": "PrimeMover"},
+      {"muscle": "LatissimusDorsi", "degree": "Synergist"},
+      {"muscle": "BicepsBrachii", "degree": "Synergist"},
+      {"muscle": "Brachialis", "degree": "Synergist"},
+      {"muscle": "PectoralisMajor", "degree": "Synergist"},
+      {"muscle": "TricepsBrachii", "degree": "Stabilizer"},
+      {"muscle": "AnteriorDeltoid", "degree": "Stabilizer"},
+      {"muscle": "PectoralisMinor", "degree": "Stabilizer"},
+      {"muscle": "SerratusAnterior", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "Obliques", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Alternating_Hang_Clean",
+    "movement_patterns": ["HipHinge", "Pull"],
+    "muscle_involvements": [
+      {"muscle": "BicepsFemoris", "degree": "PrimeMover"},
+      {"muscle": "Semitendinosus", "degree": "PrimeMover"},
+      {"muscle": "Semimembranosus", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsBrachii", "degree": "Synergist"},
+      {"muscle": "Brachialis", "degree": "Synergist"},
+      {"muscle": "UpperTrapezius", "degree": "Synergist"},
+      {"muscle": "MiddleTrapezius", "degree": "Synergist"},
+      {"muscle": "LowerTrapezius", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "WristFlexors", "degree": "Stabilizer"},
+      {"muscle": "Brachioradialis", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Glute_Bridge",
+    "movement_patterns": ["HipHinge"],
+    "muscle_involvements": [
+      {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMajor", "degree": "Stabilizer"},
+      {"muscle": "RhomboidMinor", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Seated_Calf_Raise",
+    "movement_patterns": ["KneeDominant"],
+    "muscle_involvements": [
+      {"muscle": "Gastrocnemius", "degree": "PrimeMover"},
+      {"muscle": "Soleus", "degree": "PrimeMover"},
+      {"muscle": "TibialisAnterior", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Band_Hip_Adductions",
+    "movement_patterns": ["KneeDominant"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "AdductorLongus", "degree": "PrimeMover"},
+      {"muscle": "AdductorBrevis", "degree": "PrimeMover"},
+      {"muscle": "AdductorMagnus", "degree": "PrimeMover"},
+      {"muscle": "Gracilis", "degree": "PrimeMover"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMinimus", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Bench_Jump",
+    "movement_patterns": ["KneeDominant", "Locomotion"],
+    "training_modalities": ["Plyometrics"],
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "Synergist"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "AnteriorDeltoid", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Barbell_Step_Ups",
+    "movement_patterns": ["KneeDominant"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+      {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+      {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+      {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+      {"muscle": "GluteusMaximus", "degree": "Synergist"},
+      {"muscle": "BicepsFemoris", "degree": "Synergist"},
+      {"muscle": "Semitendinosus", "degree": "Synergist"},
+      {"muscle": "Semimembranosus", "degree": "Synergist"},
+      {"muscle": "Gastrocnemius", "degree": "Synergist"},
+      {"muscle": "Soleus", "degree": "Synergist"},
+      {"muscle": "GluteusMedius", "degree": "Stabilizer"},
+      {"muscle": "GluteusMinimus", "degree": "Stabilizer"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "UpperTrapezius", "degree": "Stabilizer"},
+      {"muscle": "MiddleTrapezius", "degree": "Stabilizer"}
+    ]
+  },
+  {
+    "id": "Bent_Over_One-Arm_Long_Bar_Row",
+    "movement_patterns": ["HorizontalPull"],
+    "is_unilateral": true,
+    "muscle_involvements": [
+      {"muscle": "MiddleTrapezius", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMajor", "degree": "PrimeMover"},
+      {"muscle": "RhomboidMinor", "degree": "PrimeMover"},
+      {"muscle": "LatissimusDorsi", "degree": "PrimeMover"},
+      {"muscle": "BicepsBrachii", "degree": "Synergist"},
+      {"muscle": "Brachialis", "degree": "Synergist"},
+      {"muscle": "UpperTrapezius", "degree": "Synergist"},
+      {"muscle": "LowerTrapezius", "degree": "Synergist"},
+      {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+      {"muscle": "Core", "degree": "Stabilizer"},
+      {"muscle": "GluteusMaximus", "degree": "Stabilizer"}
+    ]
+  }
+]
