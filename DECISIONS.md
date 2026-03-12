@@ -645,6 +645,27 @@ scheme needed for flat enumerations.
 
 ---
 
+### ADR-030: Iliopsoas added as MuscleHead under Psoas
+**Decision:** Added `feg:Iliopsoas` as a `MuscleHead` under `feg:Psoas`
+with `skos:altLabel "Psoas Major"`.
+
+**Rationale:** Discovered during enrichment — the exercise
+`Bent-Knee_Hip_Raise` returned `Iliopsoas` which was not in the
+vocabulary. Iliopsoas is the anatomical compound of psoas major and
+iliacus; in exercise science it is commonly used as the functional
+unit name for hip flexor work. Modeling it as a MuscleHead under Psoas
+allows the LLM to use either `Psoas` (group-level) or `Iliopsoas`
+(head-level) and both resolve to valid vocabulary terms.
+
+**Hierarchy:** LowerBack → Psoas → Iliopsoas.
+
+**Note:** ADR-025 (Psoas as MuscleGroup) and ADR-024 (Core as
+MuscleGroup) were both decided previously but never applied to
+`muscles.ttl`. All three concepts are implemented together in this
+change. Version bumped from 0.5.0 → 0.6.0 (MINOR: additive).
+
+---
+
 ## Backlog
 
 ### Deferred from v1 by design

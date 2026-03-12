@@ -13,7 +13,7 @@ feg:MuscleScheme a skos:ConceptScheme ;
     rdfs:label "Muscle Vocabulary" ;
     skos:prefLabel "Muscle Vocabulary" ;
     rdfs:comment "SKOS concept scheme organizing muscles by region." ;
-    owl:versionInfo "0.5.0" .
+    owl:versionInfo "0.6.0" .
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SHOULDERS
@@ -253,6 +253,21 @@ feg:QuadratusLumborum a feg:MuscleGroup, skos:Concept ;
     skos:broader feg:LowerBack ;
     skos:inScheme feg:MuscleScheme .
 
+feg:Psoas a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Psoas" ;
+    skos:prefLabel "Psoas" ;
+    skos:altLabel "Hip Flexors" ;
+    skos:broader feg:LowerBack ;
+    skos:related feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Iliopsoas a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Iliopsoas" ;
+    skos:prefLabel "Iliopsoas" ;
+    skos:altLabel "Psoas Major" ;
+    skos:broader feg:Psoas ;
+    skos:inScheme feg:MuscleScheme .
+
 # ══════════════════════════════════════════════════════════════════════════════
 # ABDOMINALS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -293,6 +308,14 @@ feg:TransverseAbdominis a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Transverse Abdominis" ;
     skos:prefLabel "Transverse Abdominis" ;
     skos:altLabel "TVA" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Core a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Core" ;
+    skos:prefLabel "Core" ;
+    skos:altLabel "Anterior Core" ;
+    skos:scopeNote "Convenience term for the anterior trunk as a functional unit. Use on compound movements where abdominal bracing is incidental. Use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) for dedicated core exercises where the core is the primary target." ;
     skos:broader feg:Abdominals ;
     skos:inScheme feg:MuscleScheme .
 

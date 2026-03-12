@@ -177,10 +177,13 @@ Rules:
   terms and an unreliable primary/secondary split. Use your own
   anatomical knowledge, informed by the exercise instructions.
 - Do not include muscles that play no meaningful role
-- For compound movements where core is incidental stabilization, use
-  `Core` as a stabilizer rather than listing individual abdominal
-  muscles. For dedicated core exercises (planks, crunches, etc.),
-  use specific muscles (RectusAbdominis, TransverseAbdominis, etc.)
+- `Core` means the anterior trunk (abdominals) only. Use it as a
+  Stabilizer on compound movements where abdominal bracing is
+  incidental. Do not use Core to represent the whole trunk — list
+  ErectorSpinae or QuadratusLumborum separately when the posterior
+  trunk is involved. For dedicated core exercises (planks, crunches,
+  sit-ups, ab rollouts), use specific muscles (RectusAbdominis,
+  TransverseAbdominis, Obliques) rather than Core.
 - Never invent muscle names. Every muscle name must appear exactly
   in the hierarchy below.
 
@@ -262,7 +265,7 @@ Output:
     {{"muscle": "TricepsMedialHead", "degree": "PrimeMover"}},
     {{"muscle": "GluteusMaximus", "degree": "Synergist"}},
     {{"muscle": "ErectorSpinae", "degree": "Stabilizer"}},
-    {{"muscle": "TransverseAbdominis", "degree": "Stabilizer"}},
+    {{"muscle": "Core", "degree": "Stabilizer"}},
     {{"muscle": "GluteusMedius", "degree": "Stabilizer"}},
     {{"muscle": "UpperTrapezius", "degree": "Stabilizer"}}
   ]
