@@ -1,0 +1,62 @@
+{
+  "name": "3/4 Sit-Up",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Lie down on the floor and secure your feet. Your legs should be bent at the knees.",
+    "Place your hands behind or to the side of your head. You will begin with your back on the ground. This will be your starting position.",
+    "Flex your hips and spine to raise your torso toward your knees.",
+    "At the top of the contraction your torso should be perpendicular to the ground. Reverse the motion, going only \u00be of the way down.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "3_4_Sit-Up/0.jpg",
+    "3_4_Sit-Up/1.jpg"
+  ],
+  "id": "3_4_Sit-Up",
+  "movement_patterns": [
+    "TrunkStability"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "ExternalOblique",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "InternalOblique",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    }
+  ],
+  "vocabulary_versions": {
+    "muscles": "0.5.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T15:05:18+00:00"
+}
