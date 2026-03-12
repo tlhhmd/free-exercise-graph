@@ -24,6 +24,10 @@ import logging
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent.parent / ".env")
+
 import anthropic
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -40,7 +44,7 @@ _QUARANTINE_DIR = _HERE.parent / "data" / "quarantine"
 
 MODEL = "claude-haiku-4-5-20251001"
 MAX_TOKENS = 1024
-CONCURRENCY = 10  # max simultaneous API calls
+CONCURRENCY = 1  # max simultaneous API calls
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 
