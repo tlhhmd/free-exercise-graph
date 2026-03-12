@@ -17,3 +17,7 @@ logs/
 # Local environment files
 .env
 .env.*
+
+# Working files
+Untitled-1.ipynb
+CLAUDE.md
