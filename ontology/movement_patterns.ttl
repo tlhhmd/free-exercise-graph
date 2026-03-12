@@ -11,6 +11,7 @@ feg:MovementPatternScheme
     a skos:ConceptScheme ;
     rdfs:label "Movement Pattern Scheme" ;
     rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
+    owl:versionInfo "0.4.0" ;
 .
 
 feg:KneeDominant
@@ -111,11 +112,11 @@ feg:Rotation
     rdfs:comment "Movements involving rotation or anti-rotation of the trunk, principally targeting the obliques and deep core musculature." ;
 .
 
-feg:Core
+feg:TrunkStability
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
-    skos:prefLabel "Core" ;
-    rdfs:comment "Movements principally targeting trunk stability and strength through flexion, extension, or isometric demand." ;
+    skos:prefLabel "Trunk Stability" ;
+    rdfs:comment "Movements principally targeting trunk stability and strength through flexion, extension, or isometric demand. Distinct from Rotation, which covers rotational and anti-rotational patterns." ;
 .
 
 feg:Locomotion
@@ -123,4 +124,18 @@ feg:Locomotion
     skos:inScheme feg:MovementPatternScheme ;
     skos:prefLabel "Locomotion" ;
     rdfs:comment "Movements involving whole-body travel through space, including running, jumping, and crawling patterns." ;
+.
+
+feg:Mobility
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Mobility" ;
+    rdfs:comment "Static and dynamic stretching, flexibility work, and range of motion exercises. Distinct from SoftTissue, which covers foam rolling and myofascial release." ;
+.
+
+feg:SoftTissue
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Soft Tissue" ;
+    rdfs:comment "Foam rolling, myofascial release, and similar soft tissue techniques. Not a movement in the traditional sense but a distinct exercise category in the source dataset." ;
 .

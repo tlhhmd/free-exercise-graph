@@ -1,0 +1,658 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ─── Concept Scheme ───────────────────────────────────────────────────────────
+# Classes (MuscleRegion, MuscleGroup, MuscleHead) are defined in ontology.ttl.
+# This file contains only the SKOS concept scheme and muscle individuals.
+
+feg:MuscleScheme a skos:ConceptScheme ;
+    rdfs:label "Muscle Vocabulary" ;
+    skos:prefLabel "Muscle Vocabulary" ;
+    rdfs:comment "SKOS concept scheme organizing muscles by region." ;
+    owl:versionInfo "0.5.0" .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SHOULDERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Shoulders a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Shoulders" ;
+    skos:prefLabel "Shoulders" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Deltoid a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Deltoid" ;
+    skos:prefLabel "Deltoid" ;
+    skos:broader feg:Shoulders ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:AnteriorDeltoid a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Anterior Deltoid" ;
+    skos:prefLabel "Anterior Deltoid" ;
+    skos:altLabel "Front Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:LateralDeltoid a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Lateral Deltoid" ;
+    skos:prefLabel "Lateral Deltoid" ;
+    skos:altLabel "Side Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:PosteriorDeltoid a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Posterior Deltoid" ;
+    skos:prefLabel "Posterior Deltoid" ;
+    skos:altLabel "Rear Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:RotatorCuff a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Rotator Cuff" ;
+    skos:prefLabel "Rotator Cuff" ;
+    skos:broader feg:Shoulders ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Supraspinatus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Supraspinatus" ;
+    skos:prefLabel "Supraspinatus" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Infraspinatus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Infraspinatus" ;
+    skos:prefLabel "Infraspinatus" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TeresMinor a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Teres Minor" ;
+    skos:prefLabel "Teres Minor" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Subscapularis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Subscapularis" ;
+    skos:prefLabel "Subscapularis" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHEST
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Chest a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Chest" ;
+    skos:prefLabel "Chest" ;
+    skos:altLabel "Pectorals" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:PectoralisMajor a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Pectoralis Major" ;
+    skos:prefLabel "Pectoralis Major" ;
+    skos:altLabel "Pec Major" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ClavicularHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Clavicular Head" ;
+    skos:prefLabel "Clavicular Head" ;
+    skos:altLabel "Upper Chest" ;
+    skos:broader feg:PectoralisMajor ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:SternalHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Sternal Head" ;
+    skos:prefLabel "Sternal Head" ;
+    skos:altLabel "Lower Chest" ;
+    skos:broader feg:PectoralisMajor ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:PectoralisMinor a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Pectoralis Minor" ;
+    skos:prefLabel "Pectoralis Minor" ;
+    skos:altLabel "Pec Minor" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:SerratusAnterior a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Serratus Anterior" ;
+    skos:prefLabel "Serratus Anterior" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LATS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Lats a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Lats" ;
+    skos:prefLabel "Lats" ;
+    skos:altLabel "Latissimus Dorsi" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:LatissimusDorsi a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Latissimus Dorsi" ;
+    skos:prefLabel "Latissimus Dorsi" ;
+    skos:altLabel "Lats" ;
+    skos:broader feg:Lats ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRAPS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Traps a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Traps" ;
+    skos:prefLabel "Traps" ;
+    skos:altLabel "Trapezius" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Trapezius a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Trapezius" ;
+    skos:prefLabel "Trapezius" ;
+    skos:broader feg:Traps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:UpperTrapezius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Upper Trapezius" ;
+    skos:prefLabel "Upper Trapezius" ;
+    skos:altLabel "Upper Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:MiddleTrapezius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Middle Trapezius" ;
+    skos:prefLabel "Middle Trapezius" ;
+    skos:altLabel "Mid Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:related feg:MiddleBack ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:LowerTrapezius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Lower Trapezius" ;
+    skos:prefLabel "Lower Trapezius" ;
+    skos:altLabel "Lower Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MIDDLE BACK
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:MiddleBack a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Middle Back" ;
+    skos:prefLabel "Middle Back" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Rhomboids a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Rhomboids" ;
+    skos:prefLabel "Rhomboids" ;
+    skos:broader feg:MiddleBack ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:RhomboidMajor a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Rhomboid Major" ;
+    skos:prefLabel "Rhomboid Major" ;
+    skos:broader feg:Rhomboids ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:RhomboidMinor a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Rhomboid Minor" ;
+    skos:prefLabel "Rhomboid Minor" ;
+    skos:broader feg:Rhomboids ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LOWER BACK
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:LowerBack a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Lower Back" ;
+    skos:prefLabel "Lower Back" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:ErectorSpinae a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Erector Spinae" ;
+    skos:prefLabel "Erector Spinae" ;
+    skos:broader feg:LowerBack ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Iliocostalis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Iliocostalis" ;
+    skos:prefLabel "Iliocostalis" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Longissimus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Longissimus" ;
+    skos:prefLabel "Longissimus" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Spinalis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Spinalis" ;
+    skos:prefLabel "Spinalis" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:QuadratusLumborum a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Quadratus Lumborum" ;
+    skos:prefLabel "Quadratus Lumborum" ;
+    skos:altLabel "QL" ;
+    skos:broader feg:LowerBack ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ABDOMINALS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Abdominals a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Abdominals" ;
+    skos:prefLabel "Abdominals" ;
+    skos:altLabel "Abs" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:RectusAbdominis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Rectus Abdominis" ;
+    skos:prefLabel "Rectus Abdominis" ;
+    skos:altLabel "Abs" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Obliques a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Obliques" ;
+    skos:prefLabel "Obliques" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ExternalOblique a feg:MuscleHead, skos:Concept ;
+    rdfs:label "External Oblique" ;
+    skos:prefLabel "External Oblique" ;
+    skos:broader feg:Obliques ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:InternalOblique a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Internal Oblique" ;
+    skos:prefLabel "Internal Oblique" ;
+    skos:broader feg:Obliques ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TransverseAbdominis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Transverse Abdominis" ;
+    skos:prefLabel "Transverse Abdominis" ;
+    skos:altLabel "TVA" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GLUTES
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Glutes a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Glutes" ;
+    skos:prefLabel "Glutes" ;
+    skos:altLabel "Gluteal Muscles" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:GluteusMaximus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Gluteus Maximus" ;
+    skos:prefLabel "Gluteus Maximus" ;
+    skos:broader feg:Glutes ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:GluteusMedius a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Gluteus Medius" ;
+    skos:prefLabel "Gluteus Medius" ;
+    skos:broader feg:Glutes ;
+    skos:related feg:Abductors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:GluteusMinimus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Gluteus Minimus" ;
+    skos:prefLabel "Gluteus Minimus" ;
+    skos:broader feg:Glutes ;
+    skos:related feg:Abductors ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# QUADRICEPS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Quadriceps a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Quadriceps" ;
+    skos:prefLabel "Quadriceps" ;
+    skos:altLabel "Quads" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:RectusFemoris a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Rectus Femoris" ;
+    skos:prefLabel "Rectus Femoris" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:VastusLateralis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Vastus Lateralis" ;
+    skos:prefLabel "Vastus Lateralis" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:VastusMedialis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Vastus Medialis" ;
+    skos:prefLabel "Vastus Medialis" ;
+    skos:altLabel "VMO" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:VastusIntermedius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Vastus Intermedius" ;
+    skos:prefLabel "Vastus Intermedius" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HAMSTRINGS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Hamstrings a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Hamstrings" ;
+    skos:prefLabel "Hamstrings" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:BicepsFemoris a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Biceps Femoris" ;
+    skos:prefLabel "Biceps Femoris" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Semitendinosus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Semitendinosus" ;
+    skos:prefLabel "Semitendinosus" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Semimembranosus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Semimembranosus" ;
+    skos:prefLabel "Semimembranosus" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ADDUCTORS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Adductors a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Adductors" ;
+    skos:prefLabel "Adductors" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:AdductorLongus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Adductor Longus" ;
+    skos:prefLabel "Adductor Longus" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:AdductorBrevis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Adductor Brevis" ;
+    skos:prefLabel "Adductor Brevis" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:AdductorMagnus a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Adductor Magnus" ;
+    skos:prefLabel "Adductor Magnus" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Gracilis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Gracilis" ;
+    skos:prefLabel "Gracilis" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ABDUCTORS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Abductors a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Abductors" ;
+    skos:prefLabel "Abductors" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:TensorFasciaeLatae a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Tensor Fasciae Latae" ;
+    skos:prefLabel "Tensor Fasciae Latae" ;
+    skos:altLabel "TFL" ;
+    skos:broader feg:Abductors ;
+    skos:inScheme feg:MuscleScheme .
+
+# Note: GluteusMedius and GluteusMinimus are defined under Glutes
+# with skos:related feg:Abductors per ADR-020.
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CALVES
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:LowerLeg a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Lower Leg" ;
+    skos:prefLabel "Lower Leg" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Calves a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Calves" ;
+    skos:prefLabel "Calves" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Gastrocnemius a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Gastrocnemius" ;
+    skos:prefLabel "Gastrocnemius" ;
+    skos:broader feg:Calves ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:MedialGastrocnemius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Medial Gastrocnemius" ;
+    skos:prefLabel "Medial Gastrocnemius" ;
+    skos:broader feg:Gastrocnemius ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:LateralGastrocnemius a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Lateral Gastrocnemius" ;
+    skos:prefLabel "Lateral Gastrocnemius" ;
+    skos:broader feg:Gastrocnemius ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Soleus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Soleus" ;
+    skos:prefLabel "Soleus" ;
+    skos:broader feg:Calves ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TibialisAnterior a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Tibialis Anterior" ;
+    skos:prefLabel "Tibialis Anterior" ;
+    skos:altLabel "Tibialis" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# BICEPS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Biceps a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Biceps" ;
+    skos:prefLabel "Biceps" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:BicepsBrachii a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Biceps Brachii" ;
+    skos:prefLabel "Biceps Brachii" ;
+    skos:broader feg:Biceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:BicepsLongHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Biceps Long Head" ;
+    skos:prefLabel "Biceps Long Head" ;
+    skos:broader feg:BicepsBrachii ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:BicepsShortHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Biceps Short Head" ;
+    skos:prefLabel "Biceps Short Head" ;
+    skos:broader feg:BicepsBrachii ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Brachialis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Brachialis" ;
+    skos:prefLabel "Brachialis" ;
+    skos:broader feg:Biceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Brachioradialis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Brachioradialis" ;
+    skos:prefLabel "Brachioradialis" ;
+    skos:broader feg:Forearms ;
+    skos:related feg:Biceps ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TRICEPS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Triceps a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Triceps" ;
+    skos:prefLabel "Triceps" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:TricepsBrachii a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Triceps Brachii" ;
+    skos:prefLabel "Triceps Brachii" ;
+    skos:broader feg:Triceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TricepsLongHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Triceps Long Head" ;
+    skos:prefLabel "Triceps Long Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TricepsLateralHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Triceps Lateral Head" ;
+    skos:prefLabel "Triceps Lateral Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TricepsMedialHead a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Triceps Medial Head" ;
+    skos:prefLabel "Triceps Medial Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme .
+
+# ══════════════════════════════════════════════════════════════════════════════
+# FOREARMS
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Forearms a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Forearms" ;
+    skos:prefLabel "Forearms" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:WristFlexors a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Wrist Flexors" ;
+    skos:prefLabel "Wrist Flexors" ;
+    skos:broader feg:Forearms ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:FlexorCarpiRadialis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Flexor Carpi Radialis" ;
+    skos:prefLabel "Flexor Carpi Radialis" ;
+    skos:broader feg:WristFlexors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:FlexorCarpiUlnaris a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Flexor Carpi Ulnaris" ;
+    skos:prefLabel "Flexor Carpi Ulnaris" ;
+    skos:broader feg:WristFlexors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:WristExtensors a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Wrist Extensors" ;
+    skos:prefLabel "Wrist Extensors" ;
+    skos:broader feg:Forearms ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ExtensorCarpiRadialis a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Extensor Carpi Radialis" ;
+    skos:prefLabel "Extensor Carpi Radialis" ;
+    skos:broader feg:WristExtensors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ExtensorCarpiUlnaris a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Extensor Carpi Ulnaris" ;
+    skos:prefLabel "Extensor Carpi Ulnaris" ;
+    skos:broader feg:WristExtensors ;
+    skos:inScheme feg:MuscleScheme .
+
+# Note: Brachioradialis is defined above under Biceps region
+# with skos:broader feg:Forearms and skos:related feg:Biceps per ADR-020.
+
+# ══════════════════════════════════════════════════════════════════════════════
+# NECK
+# ══════════════════════════════════════════════════════════════════════════════
+
+feg:Neck a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Neck" ;
+    skos:prefLabel "Neck" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Sternocleidomastoid a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Sternocleidomastoid" ;
+    skos:prefLabel "Sternocleidomastoid" ;
+    skos:altLabel "SCM" ;
+    skos:broader feg:Neck ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Scalenes a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Scalenes" ;
+    skos:prefLabel "Scalenes" ;
+    skos:broader feg:Neck ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:AnteriorScalene a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Anterior Scalene" ;
+    skos:prefLabel "Anterior Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:MiddleScalene a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Middle Scalene" ;
+    skos:prefLabel "Middle Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:PosteriorScalene a feg:MuscleHead, skos:Concept ;
+    rdfs:label "Posterior Scalene" ;
+    skos:prefLabel "Posterior Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme .

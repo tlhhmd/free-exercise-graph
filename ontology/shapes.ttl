@@ -5,6 +5,12 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+feg:ShapesGraph
+    a owl:Ontology ;
+    rdfs:label "Free Exercise Graph SHACL Shapes" ;
+    owl:versionInfo "0.1.0" ;
+.
+
 ###################
 # ExerciseShape
 ###################

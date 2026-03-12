@@ -6,6 +6,12 @@
 # Named Individuals - InvolvementDegree
 ###################
 
+feg:InvolvementDegreeVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "0.1.0" ;
+.
+
+
 feg:PrimeMover
     a owl:NamedIndividual, feg:InvolvementDegree ;
     rdfs:label "Prime Mover" ;

@@ -8,6 +8,7 @@
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph Ontology" ;
     rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
+    owl:versionInfo "0.1.0" ;
 .
 
 ###################
@@ -29,7 +30,28 @@ feg:MovementPattern
 feg:Muscle
     a owl:Class ;
     rdfs:label "Muscle" ;
-    rdfs:comment "A contractile tissue in the human body that generates force and movement. The term \"muscle\" may refer to an individual muscle or a functional muscle group." ;
+    rdfs:comment "Superclass for all muscle vocabulary terms. Covers regions, groups, and heads. The feg:muscle property on MuscleInvolvement may point to any level of the hierarchy." ;
+.
+
+feg:MuscleRegion
+    a owl:Class ;
+    rdfs:subClassOf feg:Muscle ;
+    rdfs:label "Muscle Region" ;
+    rdfs:comment "A colloquial regional grouping of muscles used in exercise science (e.g. Shoulders, Lats, Quads). Corresponds to the coarse terms used in the source dataset." ;
+.
+
+feg:MuscleGroup
+    a owl:Class ;
+    rdfs:subClassOf feg:Muscle ;
+    rdfs:label "Muscle Group" ;
+    rdfs:comment "An individual muscle or functional muscle group (e.g. Deltoid, Triceps Brachii, Erector Spinae)." ;
+.
+
+feg:MuscleHead
+    a owl:Class ;
+    rdfs:subClassOf feg:Muscle ;
+    rdfs:label "Muscle Head" ;
+    rdfs:comment "A distinct head, portion, or fiber region of a muscle (e.g. Anterior Deltoid, Biceps Long Head). The LLM enrichment pipeline classifies at this level where applicable." ;
 .
 
 feg:MuscleInvolvement

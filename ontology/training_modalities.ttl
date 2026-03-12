@@ -6,6 +6,12 @@
 # Named Individuals - TrainingModality
 ###################
 
+feg:TrainingModalityVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "0.1.0" ;
+.
+
+
 feg:Strength
     a owl:NamedIndividual, feg:TrainingModality ;
     rdfs:label "Strength" ;

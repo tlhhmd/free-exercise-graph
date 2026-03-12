@@ -1,0 +1,52 @@
+{
+  "name": "Ankle On The Knee",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": null,
+  "primaryMuscles": [
+    "glutes"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "From a lying position, bend your knees and keep your feet on the floor.",
+    "Place your ankle of one foot on your opposite knee.",
+    "Grasp the thigh or knee of the bottom leg and pull both of your legs into the chest. Relax your neck and shoulders. Hold for 10-20 seconds and then switch sides."
+  ],
+  "category": "stretching",
+  "images": [
+    "Ankle_On_The_Knee/0.jpg",
+    "Ankle_On_The_Knee/1.jpg"
+  ],
+  "id": "Ankle_On_The_Knee",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "PrimeMover"
+    }
+  ],
+  "is_unilateral": true,
+  "vocabulary_versions": {
+    "muscles": "0.5.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T15:09:20+00:00"
+}
