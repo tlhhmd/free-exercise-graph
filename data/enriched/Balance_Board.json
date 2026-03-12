@@ -1,0 +1,99 @@
+{
+  "name": "Balance Board",
+  "force": null,
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "other",
+  "primaryMuscles": [
+    "calves"
+  ],
+  "secondaryMuscles": [
+    "hamstrings",
+    "quadriceps"
+  ],
+  "instructions": [
+    "Place a balance board in front of you.",
+    "Stand up on it and try to balance yourself.",
+    "Hold the balance for as long as desired."
+  ],
+  "category": "strength",
+  "images": [
+    "Balance_Board/0.jpg",
+    "Balance_Board/1.jpg"
+  ],
+  "id": "Balance_Board",
+  "movement_patterns": [
+    "TrunkStability"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TibialisAnterior",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    }
+  ],
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:48:16+00:00"
+}

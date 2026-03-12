@@ -1,0 +1,73 @@
+{
+  "name": "Anti-Gravity Press",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "shoulders"
+  ],
+  "secondaryMuscles": [
+    "middle back",
+    "traps",
+    "triceps"
+  ],
+  "instructions": [
+    "Place a bar on the ground behind the head of an incline bench.",
+    "Lay on the bench face down. With a pronated grip, pick the barbell up from the floor. Flex the elbows, performing a reverse curl to bring the bar near your chest. This will be your starting position.",
+    "To begin, press the barbell out in front of your head by extending your elbows. Keep your arms parallel to the ground throughout the movement.",
+    "Return to the starting position and repeat to complete the set."
+  ],
+  "category": "strength",
+  "images": [
+    "Anti-Gravity_Press/0.jpg",
+    "Anti-Gravity_Press/1.jpg"
+  ],
+  "id": "Anti-Gravity_Press",
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:51:41+00:00"
+}

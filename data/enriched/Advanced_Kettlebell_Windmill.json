@@ -25,8 +25,8 @@
   ],
   "id": "Advanced_Kettlebell_Windmill",
   "movement_patterns": [
-    "Rotation",
-    "HipHinge"
+    "HipHinge",
+    "VerticalPush"
   ],
   "muscle_involvements": [
     {
@@ -55,23 +55,15 @@
     },
     {
       "muscle": "BicepsFemoris",
-      "degree": "PrimeMover"
-    },
-    {
-      "muscle": "Semimembranosus",
-      "degree": "PrimeMover"
+      "degree": "Synergist"
     },
     {
       "muscle": "Semitendinosus",
-      "degree": "PrimeMover"
+      "degree": "Synergist"
     },
     {
-      "muscle": "ExternalOblique",
-      "degree": "PrimeMover"
-    },
-    {
-      "muscle": "InternalOblique",
-      "degree": "PrimeMover"
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
     },
     {
       "muscle": "TransverseAbdominis",
@@ -82,42 +74,38 @@
       "degree": "Synergist"
     },
     {
-      "muscle": "GluteusMedius",
+      "muscle": "ErectorSpinae",
       "degree": "Synergist"
     },
     {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
       "muscle": "GluteusMinimus",
-      "degree": "Synergist"
+      "degree": "Stabilizer"
     },
     {
       "muscle": "RotatorCuff",
       "degree": "Stabilizer"
     },
     {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
       "muscle": "MiddleTrapezius",
-      "degree": "Stabilizer"
-    },
-    {
-      "muscle": "LowerTrapezius",
-      "degree": "Stabilizer"
-    },
-    {
-      "muscle": "Rhomboids",
-      "degree": "Stabilizer"
-    },
-    {
-      "muscle": "LatissimusDorsi",
       "degree": "Stabilizer"
     }
   ],
   "is_unilateral": true,
   "vocabulary_versions": {
-    "muscles": "0.5.0",
+    "muscles": "0.6.0",
     "movement_patterns": "0.4.0",
     "involvement_degrees": "0.1.0",
     "training_modalities": "0.1.0",
     "shapes": "0.1.0",
     "ontology": "0.1.0"
   },
-  "enriched_at": "2026-03-12T15:06:21+00:00"
+  "enriched_at": "2026-03-12T16:47:44+00:00"
 }

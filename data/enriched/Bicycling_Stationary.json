@@ -71,12 +71,12 @@
     }
   ],
   "vocabulary_versions": {
-    "muscles": "0.5.0",
+    "muscles": "0.6.0",
     "movement_patterns": "0.4.0",
     "involvement_degrees": "0.1.0",
     "training_modalities": "0.1.0",
     "shapes": "0.1.0",
     "ontology": "0.1.0"
   },
-  "enriched_at": "2026-03-12T15:08:47+00:00"
+  "enriched_at": "2026-03-12T16:50:34+00:00"
 }

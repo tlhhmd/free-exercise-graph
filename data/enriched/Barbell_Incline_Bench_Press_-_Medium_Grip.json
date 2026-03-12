@@ -1,0 +1,73 @@
+{
+  "name": "Barbell Incline Bench Press - Medium Grip",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "chest"
+  ],
+  "secondaryMuscles": [
+    "shoulders",
+    "triceps"
+  ],
+  "instructions": [
+    "Lie back on an incline bench. Using a medium-width grip (a grip that creates a 90-degree angle in the middle of the movement between the forearms and the upper arms), lift the bar from the rack and hold it straight over you with your arms locked. This will be your starting position.",
+    "As you breathe in, come down slowly until you feel the bar on you upper chest.",
+    "After a second pause, bring the bar back to the starting position as you breathe out and push the bar using your chest muscles. Lock your arms in the contracted position, squeeze your chest, hold for a second and then start coming down slowly again. Tip: it should take at least twice as long to go down than to come up.",
+    "Repeat the movement for the prescribed amount of repetitions.",
+    "When you are done, place the bar back in the rack."
+  ],
+  "category": "strength",
+  "images": [
+    "Barbell_Incline_Bench_Press_-_Medium_Grip/0.jpg",
+    "Barbell_Incline_Bench_Press_-_Medium_Grip/1.jpg"
+  ],
+  "id": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+  "movement_patterns": [
+    "VerticalPush"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:47:45+00:00"
+}

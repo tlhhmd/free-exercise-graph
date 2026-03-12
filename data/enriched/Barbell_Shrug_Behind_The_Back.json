@@ -1,0 +1,76 @@
+{
+  "name": "Barbell Shrug Behind The Back",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "traps"
+  ],
+  "secondaryMuscles": [
+    "forearms",
+    "middle back"
+  ],
+  "instructions": [
+    "Stand up straight with your feet at shoulder width as you hold a barbell with both hands behind your back using a pronated grip (palms facing back). Tip: Your hands should be a little wider than shoulder width apart. You can use wrist wraps for this exercise for better grip. This will be your starting position.",
+    "Raise your shoulders up as far as you can go as you breathe out and hold the contraction for a second. Tip: Refrain from trying to lift the barbell by using your biceps. The arms should remain stretched out at all times.",
+    "Slowly return to the starting position as you breathe in.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Barbell_Shrug_Behind_The_Back/0.jpg",
+    "Barbell_Shrug_Behind_The_Back/1.jpg"
+  ],
+  "id": "Barbell_Shrug_Behind_The_Back",
+  "movement_patterns": [
+    "Carry"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "MiddleBack",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RhomboidMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RhomboidMinor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:49:24+00:00"
+}

@@ -1,0 +1,80 @@
+{
+  "name": "Bottoms-Up Clean From The Hang Position",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "kettlebells",
+  "primaryMuscles": [
+    "forearms"
+  ],
+  "secondaryMuscles": [
+    "biceps",
+    "shoulders"
+  ],
+  "instructions": [
+    "Initiate the exercise by standing upright with a kettlebell in one hand.",
+    "Swing the kettlebell back forcefully and then reverse the motion forcefully. Crush the kettlebell handle as hard as possible and raise the kettlebell to your shoulder."
+  ],
+  "category": "strength",
+  "images": [
+    "Bottoms-Up_Clean_From_The_Hang_Position/0.jpg",
+    "Bottoms-Up_Clean_From_The_Hang_Position/1.jpg"
+  ],
+  "id": "Bottoms-Up_Clean_From_The_Hang_Position",
+  "movement_patterns": [
+    "Pull",
+    "VerticalPull"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "is_unilateral": true,
+  "vocabulary_versions": {
+    "muscles": "0.6.0",
+    "movement_patterns": "0.4.0",
+    "involvement_degrees": "0.1.0",
+    "training_modalities": "0.1.0",
+    "shapes": "0.1.0",
+    "ontology": "0.1.0"
+  },
+  "enriched_at": "2026-03-12T16:47:37+00:00"
+}
