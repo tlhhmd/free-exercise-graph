@@ -8,7 +8,7 @@
 
 feg:InvolvementDegreeVocabulary
     a owl:Ontology ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.2.0" ;
 .
 
 
@@ -28,4 +28,10 @@ feg:Stabilizer
     a owl:NamedIndividual, feg:InvolvementDegree ;
     rdfs:label "Stabilizer" ;
     rdfs:comment "A muscle that contracts to stabilize a joint during the exercise without contributing directly to the movement. Stabilizers are active but not trained in a meaningful hypertrophic or strength sense by the exercise." ;
+.
+
+feg:PassiveTarget
+    a owl:NamedIndividual, feg:InvolvementDegree ;
+    rdfs:label "Passive Target" ;
+    rdfs:comment "A muscle that is the passive target of a stretch or soft tissue technique. Used in Mobility and SoftTissue exercises where the muscle is being lengthened or treated rather than actively contracting. Exercises with at least one PassiveTarget involvement are exempt from the PrimeMover requirement. Synergists and Stabilizers may still be present if other muscles are actively engaged." ;
 .

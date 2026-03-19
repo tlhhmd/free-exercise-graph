@@ -1,0 +1,50 @@
+# Region Targeting
+# ==============================================================================
+# Use case: "What exercises target the shoulder region, and which specific
+# muscles do they engage as prime movers?"
+#
+# Traverses the SKOS muscle hierarchy downward from a given region (or group)
+# to find all exercises that recruit any descendant concept as a prime mover.
+# This is the mirror of 01_exercise_discovery.rq: where that query filters by
+# both pattern and muscle, this query focuses on the full muscle region picture.
+#
+# Example: binding feg:Shoulders surfaces exercises using AnteriorDeltoid,
+# LateralDeltoid, PosteriorDeltoid, Deltoid, or RotatorCuff as prime movers,
+# even though the enrichment pipeline classified at the head level.
+#
+# Results include the movement pattern to show which mechanical contexts are
+# represented — useful for identifying whether a region is trained across a
+# variety of patterns or concentrated in one (e.g. shoulders mostly VerticalPush).
+#
+# Parameterise: change BIND to any region, group, or head URI.
+#
+# Run against: sources/free-exercise-db/ingested.ttl
+# ==============================================================================
+
+PREFIX feg:  <https://placeholder.url#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?name ?muscleLabel ?patternLabel
+WHERE {
+    # --- Parameter ---
+    BIND(feg:Shoulders AS ?targetRegion)
+
+    ?exercise a feg:Exercise ;
+              rdfs:label ?name ;
+              feg:hasInvolvement ?inv .
+
+    ?inv feg:degree feg:PrimeMover ;
+         feg:muscle ?muscle .
+
+    # ?muscle is ?targetRegion or any descendant (traverse hierarchy upward)
+    ?muscle skos:broader* ?targetRegion .
+
+    OPTIONAL { ?muscle rdfs:label ?muscleLabel }
+
+    OPTIONAL {
+        ?exercise feg:movementPattern ?pattern .
+        ?pattern skos:prefLabel ?patternLabel .
+    }
+}
+ORDER BY ?name ?muscleLabel

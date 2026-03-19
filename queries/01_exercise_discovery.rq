@@ -1,0 +1,54 @@
+# Exercise Discovery
+# ==============================================================================
+# Use case: "Show me horizontal pull exercises that target the lats as a prime
+# mover." Parameterise by binding ?targetPattern and ?targetMuscle.
+#
+# The skos:broader* path traverses the SKOS hierarchy in both dimensions:
+#
+#   Pattern hierarchy — binding feg:Pull will match HorizontalPull and
+#   VerticalPull as well as Pull itself, so you can query at any level of
+#   specificity.
+#
+#   Muscle hierarchy — binding feg:Shoulders will match AnteriorDeltoid,
+#   LateralDeltoid, PosteriorDeltoid, Deltoid, and RotatorCuff, letting you
+#   discover exercises without knowing the exact head-level term used during
+#   enrichment.
+#
+# Example bindings (adjust to your data):
+#   ?targetPattern → feg:HorizontalPull   (or feg:Pull for the full family)
+#   ?targetMuscle  → feg:LatissimusDorsi  (or feg:Lats for the region)
+#
+# The example below uses feg:Pull + feg:Rhomboids, which are present in the
+# current enriched subset. As enrichment scales to all 873 exercises, richer
+# combinations become queryable.
+#
+# Run against: sources/free-exercise-db/ingested.ttl
+# ==============================================================================
+
+PREFIX feg:  <https://placeholder.url#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?exercise ?name ?patternLabel ?muscleLabel
+WHERE {
+    # --- Parameters ---
+    BIND(feg:Pull AS ?targetPattern)
+    BIND(feg:Rhomboids AS ?targetMuscle)
+
+    ?exercise a feg:Exercise ;
+              rdfs:label ?name ;
+              feg:movementPattern ?pattern ;
+              feg:hasInvolvement ?inv .
+
+    # Match the exercise's pattern against the target (or any narrower pattern)
+    ?pattern skos:broader* ?targetPattern .
+    ?pattern skos:prefLabel ?patternLabel .
+
+    # Match prime movers against the target muscle (or any descendant)
+    ?inv feg:degree feg:PrimeMover ;
+         feg:muscle ?muscle .
+    ?muscle skos:broader* ?targetMuscle .
+
+    OPTIONAL { ?muscle rdfs:label ?muscleLabel }
+}
+ORDER BY ?name

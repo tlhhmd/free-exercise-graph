@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "free-exercise-graph"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.84.0",
+    "morph-kgc>=2.6.2",
+    "pyshacl>=0.31.0",
+    "python-dotenv>=1.2.1",
+    "rdflib>=7.6.0",
+]
+
+[project.optional-dependencies]
+evals = [
+    "streamlit>=1.40.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

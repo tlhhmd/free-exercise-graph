@@ -2,13 +2,14 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://placeholder.url#>
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph Ontology" ;
     rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.3.0" ;
 .
 
 ###################
@@ -78,6 +79,12 @@ feg:TrainingModality
     rdfs:comment "A category describing the physiological adaptation targeted by an exercise or program. Examples include strength, hypertrophy, cardio, and mobility." ;
 .
 
+feg:JointAction
+    a owl:Class ;
+    rdfs:label "Joint Action" ;
+    rdfs:comment "A mechanical action occurring at a specific joint during an exercise. Joint actions describe what the body is doing at the level of individual joints, independent of how the exercise is categorised by other movement pattern terminology. A single exercise may involve multiple joint actions." ;
+.
+
 ###################
 # Object Properties
 ###################
@@ -130,6 +137,14 @@ feg:trainingModality
     rdfs:range feg:TrainingModality ;
 .
 
+feg:jointAction
+    a owl:ObjectProperty ;
+    rdfs:label "joint action" ;
+    rdfs:comment "Relates an exercise to the mechanical joint actions it produces. An exercise typically involves multiple joint actions. Joint actions are the mechanical precision layer — orthogonal to feg:movementPattern, which is the user-facing navigation layer." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction ;
+.
+
 ###################
 # Data Properties
 ###################
@@ -147,5 +162,22 @@ feg:isUnilateral
     rdfs:label "is unilateral" ;
     rdfs:comment "True if the exercise is performed one limb at a time. When absent, bilateral execution is assumed." ;
     rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean ;
+.
+
+feg:isCompound
+    a owl:DatatypeProperty ;
+    rdfs:label "is compound" ;
+    rdfs:comment "True if the exercise involves meaningful force production across multiple joints. When absent or false, the exercise is an isolation movement. This is a convenience flag for program design use cases — the full mechanical picture is captured by feg:jointAction." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean ;
+.
+
+feg:useGroupLevel
+    a owl:DatatypeProperty ;
+    rdfs:label "use group level" ;
+    rdfs:comment "Indicates that this MuscleGroup functions as a single training unit — its constituent muscles cannot be selectively recruited or meaningfully targeted independently through exercise selection. The group term is the appropriate level of specificity; the individual head-level concepts exist for anatomical completeness but do not represent distinct training outcomes." ;
+    skos:editorialNote "Used by the classification pipeline to enforce group-level usage. Groups with this flag are surfaced in the prompt as explicit exceptions to the head-preference rule, and a SHACL constraint rejects any classification that references one of their child heads." ;
+    rdfs:domain feg:MuscleGroup ;
     rdfs:range xsd:boolean ;
 .

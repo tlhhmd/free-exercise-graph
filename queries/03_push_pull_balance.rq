@@ -1,0 +1,50 @@
+# Push/Pull Balance
+# ==============================================================================
+# Use case: "Across all enriched exercises in the dataset, how are they
+# distributed across movement pattern families?"
+#
+# This query aggregates enriched exercises by top-level movement pattern and
+# counts both the number of distinct exercises and the number of prime mover
+# involvements per family.
+#
+# The top-level pattern for a concept is resolved by walking skos:broader once:
+#   - HorizontalPull → Pull
+#   - Squat → KneeDominant
+#   - HipHinge → HipHinge  (already top-level — COALESCE returns self)
+#
+# Prime mover count per pattern family reveals the training emphasis encoded
+# in the dataset and is useful for diagnosing Push/Pull imbalances before
+# building a program from graph queries.
+#
+# Run against: sources/free-exercise-db/ingested.ttl
+# ==============================================================================
+
+PREFIX feg:  <https://placeholder.url#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?family
+       (COUNT(DISTINCT ?exercise) AS ?exercises)
+       (COUNT(?primeMoverInv)     AS ?primeMoverInvolvements)
+WHERE {
+    ?exercise a feg:Exercise ;
+              feg:movementPattern ?pattern .
+
+    # Walk up one level to find the top-level pattern.
+    # If ?pattern has no skos:broader, it IS the top-level — COALESCE returns ?pattern.
+    OPTIONAL { ?pattern skos:broader ?parent }
+    BIND(COALESCE(?parent, ?pattern) AS ?topLevel)
+
+    # Verify we've reached a true top-level (no further broader)
+    FILTER NOT EXISTS { ?topLevel skos:broader ?grandparent }
+
+    ?topLevel rdfs:label ?family .
+
+    # Count prime mover involvements per exercise (optional — zero if none)
+    OPTIONAL {
+        ?exercise feg:hasInvolvement ?primeMoverInv .
+        ?primeMoverInv feg:degree feg:PrimeMover .
+    }
+}
+GROUP BY ?family
+ORDER BY DESC(?exercises)
