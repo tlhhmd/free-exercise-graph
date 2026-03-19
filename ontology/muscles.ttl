@@ -13,7 +13,7 @@ feg:MuscleScheme a skos:ConceptScheme ;
     rdfs:label "Muscle Vocabulary" ;
     skos:prefLabel "Muscle Vocabulary" ;
     rdfs:comment "SKOS concept scheme organizing muscles by region." ;
-    owl:versionInfo "0.6.0" .
+    owl:versionInfo "0.8.0" .
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SHOULDERS
@@ -55,6 +55,7 @@ feg:PosteriorDeltoid a feg:MuscleHead, skos:Concept ;
 feg:RotatorCuff a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Rotator Cuff" ;
     skos:prefLabel "Rotator Cuff" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Shoulders ;
     skos:inScheme feg:MuscleScheme .
 
@@ -197,6 +198,7 @@ feg:MiddleBack a feg:MuscleRegion, skos:Concept ;
 feg:Rhomboids a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Rhomboids" ;
     skos:prefLabel "Rhomboids" ;
+    feg:useGroupLevel true ;
     skos:broader feg:MiddleBack ;
     skos:inScheme feg:MuscleScheme .
 
@@ -225,6 +227,7 @@ feg:LowerBack a feg:MuscleRegion, skos:Concept ;
 feg:ErectorSpinae a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Erector Spinae" ;
     skos:prefLabel "Erector Spinae" ;
+    feg:useGroupLevel true ;
     skos:broader feg:LowerBack ;
     skos:inScheme feg:MuscleScheme .
 
@@ -289,6 +292,7 @@ feg:RectusAbdominis a feg:MuscleGroup, skos:Concept ;
 feg:Obliques a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Obliques" ;
     skos:prefLabel "Obliques" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Abdominals ;
     skos:inScheme feg:MuscleScheme .
 
@@ -487,6 +491,7 @@ feg:Calves a feg:MuscleRegion, skos:Concept ;
 feg:Gastrocnemius a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Gastrocnemius" ;
     skos:prefLabel "Gastrocnemius" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Calves ;
     skos:inScheme feg:MuscleScheme .
 
@@ -603,6 +608,7 @@ feg:Forearms a feg:MuscleRegion, skos:Concept ;
 feg:WristFlexors a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Wrist Flexors" ;
     skos:prefLabel "Wrist Flexors" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Forearms ;
     skos:inScheme feg:MuscleScheme .
 
@@ -621,6 +627,7 @@ feg:FlexorCarpiUlnaris a feg:MuscleHead, skos:Concept ;
 feg:WristExtensors a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Wrist Extensors" ;
     skos:prefLabel "Wrist Extensors" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Forearms ;
     skos:inScheme feg:MuscleScheme .
 
@@ -659,6 +666,7 @@ feg:Sternocleidomastoid a feg:MuscleGroup, skos:Concept ;
 feg:Scalenes a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Scalenes" ;
     skos:prefLabel "Scalenes" ;
+    feg:useGroupLevel true ;
     skos:broader feg:Neck ;
     skos:inScheme feg:MuscleScheme .
 

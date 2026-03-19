@@ -11,12 +11,13 @@ feg:MovementPatternScheme
     a skos:ConceptScheme ;
     rdfs:label "Movement Pattern Scheme" ;
     rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
-    owl:versionInfo "0.4.0" ;
+    owl:versionInfo "0.5.0" ;
 .
 
 feg:KneeDominant
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Knee Dominant" ;
     skos:prefLabel "Knee Dominant" ;
     rdfs:comment "Movements in which the knee is the primary joint driving the exercise, involving significant quadriceps recruitment." ;
 .
@@ -25,6 +26,7 @@ feg:Squat
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:KneeDominant ;
+    rdfs:label "Squat" ;
     skos:prefLabel "Squat" ;
     rdfs:comment "A bilateral knee dominant movement in which both feet remain fixed and the hips descend toward the ground." ;
 .
@@ -33,6 +35,7 @@ feg:SplitSquat
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:KneeDominant ;
+    rdfs:label "Split Squat" ;
     skos:prefLabel "Split Squat" ;
     rdfs:comment "A knee dominant movement performed with a staggered stance, both feet fixed, placing greater demand on the forward leg." ;
 .
@@ -41,6 +44,7 @@ feg:Lunge
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:KneeDominant ;
+    rdfs:label "Lunge" ;
     skos:prefLabel "Lunge" ;
     rdfs:comment "A knee dominant movement in which one foot travels to create a staggered stance, introducing a dynamic balance demand absent in the split squat." ;
 .
@@ -48,6 +52,7 @@ feg:Lunge
 feg:HipHinge
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Hip Hinge" ;
     skos:prefLabel "Hip Hinge" ;
     rdfs:comment "Movements in which the hips are the primary joint driving the exercise, involving significant posterior chain recruitment." ;
 .
@@ -55,6 +60,7 @@ feg:HipHinge
 feg:Push
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Push" ;
     skos:prefLabel "Push" ;
     rdfs:comment "Movements in which force is produced by pushing load away from the body." ;
 .
@@ -63,6 +69,7 @@ feg:HorizontalPush
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:Push ;
+    rdfs:label "Horizontal Push" ;
     skos:prefLabel "Horizontal Push" ;
     rdfs:comment "Movements in which force is produced by pushing horizontally away from the body, principally targeting the chest, anterior deltoid, and triceps." ;
 .
@@ -71,6 +78,7 @@ feg:VerticalPush
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:Push ;
+    rdfs:label "Vertical Push" ;
     skos:prefLabel "Vertical Push" ;
     rdfs:comment "Movements in which force is produced by pushing vertically away from the body, principally targeting the shoulders and triceps." ;
 .
@@ -78,6 +86,7 @@ feg:VerticalPush
 feg:Pull
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Pull" ;
     skos:prefLabel "Pull" ;
     rdfs:comment "Movements in which force is produced by pulling load toward the body." ;
 .
@@ -86,6 +95,7 @@ feg:HorizontalPull
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:Pull ;
+    rdfs:label "Horizontal Pull" ;
     skos:prefLabel "Horizontal Pull" ;
     rdfs:comment "Movements in which force is produced by pulling horizontally toward the body, principally targeting the mid-back, rear deltoid, and biceps." ;
 .
@@ -94,6 +104,7 @@ feg:VerticalPull
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     skos:broader feg:Pull ;
+    rdfs:label "Vertical Pull" ;
     skos:prefLabel "Vertical Pull" ;
     rdfs:comment "Movements in which force is produced by pulling vertically toward the body, principally targeting the lats and biceps." ;
 .
@@ -101,6 +112,7 @@ feg:VerticalPull
 feg:Carry
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Carry" ;
     skos:prefLabel "Carry" ;
     rdfs:comment "Movements in which load is held and transported through space, demanding full-body stability and grip strength." ;
 .
@@ -108,6 +120,7 @@ feg:Carry
 feg:Rotation
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Rotation" ;
     skos:prefLabel "Rotation" ;
     rdfs:comment "Movements involving rotation or anti-rotation of the trunk, principally targeting the obliques and deep core musculature." ;
 .
@@ -115,13 +128,42 @@ feg:Rotation
 feg:TrunkStability
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Trunk Stability" ;
     skos:prefLabel "Trunk Stability" ;
-    rdfs:comment "Movements principally targeting trunk stability and strength through flexion, extension, or isometric demand. Distinct from Rotation, which covers rotational and anti-rotational patterns." ;
+    rdfs:comment "Movements that train the trunk to resist external forces rather than produce movement. Parent concept — prefer the more specific anti-movement sub-patterns where applicable." ;
+.
+
+feg:AntiExtension
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:TrunkStability ;
+    rdfs:label "Anti Extension" ;
+    skos:prefLabel "Anti Extension" ;
+    rdfs:comment "Exercises that train the trunk to resist extension forces — the spine is braced against a load that attempts to extend it. Representative: plank, ab wheel rollout, dead bug, hollow hold." ;
+.
+
+feg:AntiRotation
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:TrunkStability ;
+    rdfs:label "Anti Rotation" ;
+    skos:prefLabel "Anti Rotation" ;
+    rdfs:comment "Exercises that train the trunk to resist rotational forces — the spine is braced against a load that attempts to rotate it. Representative: Pallof press, single-arm carry, single-arm cable row." ;
+.
+
+feg:AntiLateralFlexion
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:TrunkStability ;
+    rdfs:label "Anti Lateral Flexion" ;
+    skos:prefLabel "Anti Lateral Flexion" ;
+    rdfs:comment "Exercises that train the trunk to resist lateral flexion forces — the spine is braced against a load that attempts to bend it to the side. Representative: side plank, suitcase carry, single-arm overhead carry." ;
 .
 
 feg:Locomotion
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Locomotion" ;
     skos:prefLabel "Locomotion" ;
     rdfs:comment "Movements involving whole-body travel through space, including running, jumping, and crawling patterns." ;
 .
@@ -129,6 +171,7 @@ feg:Locomotion
 feg:Mobility
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Mobility" ;
     skos:prefLabel "Mobility" ;
     rdfs:comment "Static and dynamic stretching, flexibility work, and range of motion exercises. Distinct from SoftTissue, which covers foam rolling and myofascial release." ;
 .
@@ -136,6 +179,7 @@ feg:Mobility
 feg:SoftTissue
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Soft Tissue" ;
     skos:prefLabel "Soft Tissue" ;
     rdfs:comment "Foam rolling, myofascial release, and similar soft tissue techniques. Not a movement in the traditional sense but a distinct exercise category in the source dataset." ;
 .

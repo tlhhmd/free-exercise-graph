@@ -1,0 +1,53 @@
+# Exercise Substitution
+# ==============================================================================
+# Use case: "Find replacements for Barbell Row that use the same movement
+# pattern and train the same primary muscles."
+#
+# A substitute is an exercise that shares:
+#   (a) at least one movement pattern with the source exercise
+#   (b) at least one prime mover with the source exercise
+#
+# Results are ranked by shared prime mover count — more shared prime movers
+# means a closer substitute. Exercises with identical pattern + prime mover
+# profiles (e.g. bilateral vs unilateral variants) will rank highest.
+#
+# This query does exact pattern matching (leaf-level). Specifying a parent
+# pattern in BIND would broaden the search (e.g. feg:Pull would include both
+# horizontal and vertical pulls as substitutes).
+#
+# Parameterise: change the BIND to the source exercise URI.
+# Exercise URIs follow the convention feg:ex_{source_id}.
+#
+# The example below uses Alternating Kettlebell Row, which is enriched in the
+# current dataset. As enrichment scales, any exercise URI can be substituted.
+#
+# Run against: sources/free-exercise-db/ingested.ttl
+# ==============================================================================
+
+PREFIX feg:  <https://placeholder.url#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?candidate ?name (COUNT(DISTINCT ?sharedMuscle) AS ?sharedPrimeMovers)
+WHERE {
+    # --- Parameter ---
+    BIND(feg:ex_Alternating_Kettlebell_Row AS ?source)
+
+    # Prime movers and patterns of the source exercise
+    ?source feg:movementPattern ?pattern ;
+            feg:hasInvolvement ?srcInv .
+    ?srcInv feg:degree feg:PrimeMover ;
+            feg:muscle ?sharedMuscle .
+
+    # Candidate shares the pattern
+    ?candidate feg:movementPattern ?pattern ;
+               rdfs:label ?name .
+
+    # Candidate shares at least one prime mover
+    ?candidate feg:hasInvolvement ?candInv .
+    ?candInv feg:degree feg:PrimeMover ;
+             feg:muscle ?sharedMuscle .
+
+    FILTER(?candidate != ?source)
+}
+GROUP BY ?candidate ?name
+ORDER BY DESC(?sharedPrimeMovers) ?name

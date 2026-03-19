@@ -755,6 +755,688 @@ change. Version bumped from 0.5.0 → 0.6.0 (MINOR: additive).
 
 ---
 
+### ADR-036: Equipment vocabulary as named individuals in equipment.ttl
+**Decision:** Equipment terms from the source dataset are encoded as
+`owl:NamedIndividual` instances of `feg:Equipment` in a new file
+`ontology/equipment.ttl`. Version starts at 0.1.0.
+
+**12 terms, source string → URI mapping:**
+
+| Source string | URI |
+|---|---|
+| `bands` | `feg:Bands` |
+| `barbell` | `feg:Barbell` |
+| `body only` | `feg:Bodyweight` |
+| `cable` | `feg:Cable` |
+| `dumbbell` | `feg:Dumbbell` |
+| `e-z curl bar` | `feg:EZCurlBar` |
+| `exercise ball` | `feg:ExerciseBall` |
+| `foam roll` | `feg:FoamRoller` |
+| `kettlebells` | `feg:Kettlebell` |
+| `machine` | `feg:Machine` |
+| `medicine ball` | `feg:MedicineBall` |
+| `other` | `feg:Other` |
+
+**Structural choices:**
+- `feg:Bodyweight` preferred over `feg:BodyOnly` — user-facing vocabulary
+  principle (ADR-018); "body only" is the source's term, "bodyweight" is
+  what gym-goers say.
+- `feg:Kettlebell` singular — consistent with other singular noun URIs in
+  the vocabulary; source dataset uses "kettlebells" (plural).
+- `feg:FoamRoller` over `feg:FoamRoll` — the noun is the tool, not the action.
+- Source string aliases preserved as `skos:altLabel` for discoverability.
+- Same `owl:NamedIndividual` pattern as `involvement_degrees.ttl` and
+  `training_modalities.ttl`.
+
+**Rationale:** Equipment is a flat enumeration with no hierarchy needed in v1.
+The `owl:NamedIndividual` pattern is consistent with other flat vocabularies
+in this project. `feg:Other` is retained as a first-class term (not dropped)
+to faithfully represent the known gap in the source dataset.
+
+---
+
+### ADR-037: Structural refactor — data engineering lifecycle layout
+**Decision:** Reorganise the project around a dataset-centric layout with
+a `source/` directory as the primary pattern for per-dataset work. The
+LLM enrichment layer (enrich.py, enriched JSON) is decoupled and set aside
+for a future redesign. The raw-to-RDF pipeline is rebuilt on morph-KGC with
+declarative YARRRML mappings.
+
+**New layout (see ADR-041 for subsequent rename to `sources/`):**
+```
+source/
+  raw/exercises.json            ← read-only source (moved from dist/)
+  mappings/
+    exercises.yarrrml.yaml      ← YARRRML mapping rules
+    muscle_crosswalk.csv        ← source string → feg:Muscle URI
+    equipment_crosswalk.csv     ← source string → feg:Equipment URI
+    morphkgc.ini                ← morph-KGC execution config
+  catalog/
+    catalog.ttl                 ← DCAT + PROV-O provenance stubs
+pipeline/
+  map.py                        ← runner: morph-KGC → ingested.ttl
+```
+
+**What was removed:**
+- `pipeline/encode.py`, `pipeline/merge.py` — superseded by morph-KGC
+- `data/rdf/` — per-exercise TTL files replaced by single graph output
+- `pipeline/enrich.py`, `prompt.py`, `check_stale.py`, `data/enriched/`,
+  `data/quarantine/` — LLM enrichment layer decoupled for redesign as a
+  distinct pipeline stage (subsequently completed — see ADR-045 through ADR-048)
+
+**Supersedes:** ADR-037 (encode.py design) and ADR-038 (merge.py), both now
+obsolete.
+
+**Rationale:** The incremental encode.py + merge.py pattern served the LLM
+enrichment workflow but created accidental coupling between the enrichment
+step and the RDF serialisation step. Decoupling them as separate layers —
+raw→RDF (morph-KGC) and enriched→RDF (LLM enrichment layer) — is cleaner
+and scales better across additional datasets.
+
+---
+
+### ADR-038: YARRRML + morph-KGC for raw→RDF transformation
+**Decision:** `source/raw/exercises.json` is mapped to RDF using a YARRRML
+mapping file (`source/mappings/exercises.yarrrml.yaml`) executed by
+morph-KGC v2.6.x via `pipeline/map.py`. This replaces `encode.py` and
+`merge.py`.
+
+**Mapping coverage from source schema:**
+
+| Source field | Mapping |
+|---|---|
+| `id` | `feg:legacySourceId` (xsd:string) + URI template `feg:{id}` |
+| `name` | `rdfs:label` |
+| `equipment` | `feg:equipment` → crosswalk join → `feg:{Equipment}` IRI |
+| `primaryMuscles[]` | `feg:hasInvolvement` → MuscleInvolvement (degree: PrimeMover) |
+| `secondaryMuscles[]` | `feg:hasInvolvement` → MuscleInvolvement (degree: Synergist) |
+| `category` | Deferred — source conflates modality with sport discipline (ADR-013) |
+| `force`, `level`, `mechanic` | Dropped (ADR-010) |
+| `instructions`, `images` | Dropped — not modelled in ontology.ttl v1 |
+
+**MuscleInvolvement URI scheme:** `feg:inv_{id}_{source_muscle_string}_{degree}`.
+Template-based, deterministic, human-readable. Source strings with spaces
+("lower back", "middle back") are percent-encoded by morph-KGC
+(`feg:inv_X_lower%20back_PrimeMover`). Supersedes ADR-003 (SHA256 skolem URIs).
+
+**Muscle and equipment crosswalk:** Source strings (e.g. "lower back",
+"body only", "foam roll") map to feg: vocabulary URIs via two CSV lookup
+tables (`muscle_crosswalk.csv`, `equipment_crosswalk.csv`). All 17 source
+muscle terms and 12 equipment terms have explicit mappings. morph-KGC
+implements the join via referencing object maps.
+
+**morph-KGC configuration note:** When one YARRRML file contains triples maps
+for multiple data sources (JSON + CSV crosswalks), all triples maps must be in
+the same file for cross-TM join references to resolve at parse time. The .ini
+uses a single `[AllMappings]` section with no `file_path` override, so each
+triples map uses its YARRRML `access` value (file path literal) as the data
+source — resolved relative to the project root (cwd of map.py).
+
+**Rationale:** YARRRML is declarative, auditable, and tool-agnostic within the
+RML ecosystem. morph-KGC v2.6.x supports YARRRML natively. A single-command
+runner (`python3 pipeline/map.py`) replaces the two-step encode+merge workflow.
+The pattern scales to additional datasets by adding new `source/` subdirectories
+with their own YARRRML and crosswalk files.
+
+---
+
+### ADR-039: Minimum viable provenance — DCAT + PROV-O
+**Decision:** A minimal `source/catalog/catalog.ttl` file records the dataset
+lineage using DCAT and PROV-O vocabularies. It is a stub — enough to demonstrate
+the governance pattern, not a fully populated provenance record.
+
+**Contents:**
+- `dcat:Catalog` → `dcat:Dataset` for the exercise graph
+- `dcat:Distribution` pointing to `dist/graph.ttl`
+- `prov:Activity` stub linking the morph-KGC mapping to the distribution
+- `prov:Entity` for the source JSON, `prov:SoftwareAgent` for morph-KGC
+
+**What is deferred:** Actual run timestamps, input/output checksums,
+vocabulary version stamps. These can be added programmatically by `map.py`
+in a future iteration.
+
+**Rationale:** DCAT is the W3C standard for data catalog metadata. PROV-O
+provides the lineage vocabulary. Even a stub demonstrates the governance
+intent and establishes extension points for future automation.
+
+---
+
+### ADR-040: URI naming conventions — `ex_` prefix and normalized muscle strings
+**Decision:** Exercise and MuscleInvolvement URIs follow these rules:
+
+1. **Exercise URIs:** `feg:ex_$(id)` — the `ex_` prefix ensures URIs are valid
+   NCNames (no leading numeral, no QName issues), and is a stable, readable
+   convention across all exercise nodes. `feg:legacySourceId` still captures
+   the raw `$(id)` for provenance.
+
+2. **MuscleInvolvement URIs:** `feg:inv_ex_$(id)_$(normalizedMuscle)_$(degree)` —
+   uses the crosswalk `feg_local_name` (e.g., `LowerBack`, `MiddleBack`) rather
+   than the raw source string, eliminating percent-encoded spaces.
+
+3. **Normalization step:** `pipeline/map.py` pre-processes `exercises.json` before
+   morph-KGC runs, replacing `primaryMuscles` and `secondaryMuscles` array values
+   with their `feg_local_name` equivalents from `muscle_crosswalk.csv`. The
+   normalized exercises are written to `exercises_normalized.json` (gitignored)
+   in the same `raw/` directory, and the YARRRML mapping references this file.
+
+4. **Hyphens in exercise IDs** (`Bent-Knee_Hip_Raise`): hyphens are valid IRI
+   characters (RFC 3987). They prevent use as Turtle QNames, but serializers
+   fall back to `<full-IRI>` notation — no semantic harm. Not addressed in v1.
+
+**Rationale:** Percent-encoded spaces in URIs are technically valid IRIs but
+violate standard data element naming rules and reduce readability in SPARQL
+queries and serialised Turtle. The `ex_` prefix resolves the numeral-start
+issue without touching source `id` values. The normalization step is a minimal
+preprocessing stage that keeps the YARRRML mapping declarative while producing
+clean output.
+
+**Supersedes:** The URI scheme in ADR-038 (which accepted `lower%20back` in
+involvement URIs as a known limitation).
+
+---
+
+### ADR-041: Source layout renamed to `sources/free-exercise-db/`
+**Decision:** The `source/` directory is renamed to `sources/free-exercise-db/`.
+The pipeline output moves from `dist/graph.ttl` to
+`sources/free-exercise-db/ingested.ttl`.
+
+**Layout:**
+```
+sources/
+  free-exercise-db/
+    raw/
+      exercises.json              ← read-only source (fetched by fetch.py)
+      exercises_normalized.json   ← generated by map.py (gitignored)
+    mappings/
+      exercises.yarrrml.yaml
+      muscle_crosswalk.csv
+      equipment_crosswalk.csv
+      morphkgc.ini
+    catalog/
+      catalog.ttl                 ← scoped to this source only
+    ingested.ttl                  ← morph-KGC output (gitignored)
+```
+
+**Rationale:** `sources/` (plural) signals that the project is designed for
+multiple data sources. Placing `ingested.ttl` inside the source folder rather
+than a top-level `dist/` makes the lineage self-evident: each source folder
+contains its raw data, mapping rules, provenance metadata, and ingestion output
+as a cohesive unit.
+
+---
+
+### ADR-042: Source-specific scripts live inside their source folder
+**Decision:** `fetch.py` and `map.py` move from `pipeline/` into
+`sources/free-exercise-db/`. The `pipeline/` directory is reserved for
+tools that operate across sources or at a higher orchestration level
+(e.g., the LLM enrichment layer when redesigned).
+
+**Resulting layout (at time of this ADR — subsequently extended, see ADR-043 and ADR-048):**
+```
+sources/free-exercise-db/
+  fetch.py          ← downloads exercises.json from upstream
+  preprocess.py     ← normalises muscle strings via crosswalk CSVs
+  ingest.py         ← morph-KGC + enrichment layer + repair queries → ingested.ttl
+  validate.py       ← SHACL validation gate
+  enrich.py         ← LLM enrichment pipeline (redesigned — see ADR-045)
+  queries/          ← SPARQL UPDATE repair queries (see ADR-048)
+  raw/
+  mappings/
+  catalog/
+pipeline/
+  prompt_builder.py ← use-case-agnostic prompt assembly utilities (see ADR-045)
+```
+
+**Rationale:** `fetch.py` is trivially source-specific — it hardcodes the
+upstream URL for yuhonas/free-exercise-db. `preprocess.py` and `ingest.py`
+are also source-specific: the muscle string normalisation step is bespoke to
+how free-exercise-db encodes muscle names; a generic mapper would not need it.
+Co-locating these scripts with the source data they operate on makes each
+`sources/` subdirectory a self-contained, independently runnable unit. The
+`pipeline/` directory holds tools that are use-case-agnostic and reusable
+across sources.
+
+**Run commands:**
+```bash
+python3 sources/free-exercise-db/fetch.py
+python3 sources/free-exercise-db/preprocess.py
+python3 sources/free-exercise-db/ingest.py
+python3 sources/free-exercise-db/validate.py
+```
+
+---
+
+### ADR-043: Separate preprocessing and ingestion into distinct scripts
+**Decision:** `map.py` is split into two scripts and `map.py` is removed:
+
+- `preprocess.py` — reads crosswalk CSVs and normalises the raw JSON into
+  `exercises_normalized.json`. No RDF logic.
+- `ingest.py` — runs morph-KGC on the normalised JSON, merges vocabulary
+  files, applies the LLM enrichment layer, and runs repair queries. Serialises
+  to `ingested.ttl`.
+
+**Rationale:** The preprocessing step (crosswalk lookup, string normalisation)
+and the ingestion step (YARRRML mapping, RDF serialisation) are distinct
+concerns. Keeping them in one script conflates data preparation with pipeline
+execution. Separating them makes each script independently runnable,
+independently testable, and easier to reason about.
+
+**Business logic stays in CSVs:** `preprocess.py` reads the crosswalk CSVs
+generically — no mappings are hardcoded in Python. The CSVs remain the
+authoritative source of the source→vocabulary translation decisions.
+
+**Note:** `ingest.py` was subsequently extended to integrate the LLM enrichment
+layer and ontology-driven repair queries as additional pipeline stages (see
+ADR-045 through ADR-048). It is the central integration point of the pipeline.
+
+---
+
+### ADR-044: SHACL validation step — validate.py and shapes.ttl relaxation
+**Decision:** Add `validate.py` to `sources/free-exercise-db/` as a fourth
+pipeline stage. Relax the `feg:movementPattern sh:minCount` constraint in
+`shapes.ttl` from `1` to `0`. Bump `shapes.ttl` version `0.1.0` → `0.1.1`.
+
+**movementPattern constraint relaxed:** Movement patterns are not present in the
+raw source data — they are assigned during LLM enrichment. `sh:minCount 0` allows
+raw ingestion to pass validation. The constraint will be tightened back to
+`sh:minCount 1` (with Mobility/SoftTissue exemptions) once movement pattern
+coverage criteria are established (tracked in TODO).
+
+**9 duplicate-muscle exercises (source data quality):** The following exercises
+have the same muscle listed in both `primaryMuscles` and `secondaryMuscles` in
+the upstream source:
+
+- Kneeling Hip Flexor, Clean and Press, Hurdle Hops, All Fours Quad Stretch,
+  Bent-Arm Barbell Pullover, Barbell Step Ups, Upper Back Stretch,
+  Snatch Deadlift, Split Snatch
+
+These are upstream data quality issues surfaced by SHACL. Not fixed at the source
+(read-only). Handled post-ingestion by `repair_03_dedup_involvements_cross_degree.sparql`
+(see ADR-048), which removes the lower-priority involvement when the same muscle
+appears at multiple degrees within a single exercise.
+
+**validate.py behaviour:** Streams each violation as subject URI followed by the
+violation message. Exits non-zero if any violations are found, making it usable as
+a pipeline gate. Vocabulary files are merged into `ingested.ttl` — no separate
+ontology graph is needed for SHACL class resolution.
+
+---
+
+### ADR-045: SHACL shapes as single source of truth for enrichment prompt rules
+**Decision:** SHACL shapes are the authoritative source for enrichment prompt rules.
+`sh:message` carries validation-failure text (unchanged). `rdfs:comment` on property
+shapes carries instructional content for the LLM. The prompt builder reads both from
+`shapes.ttl` at import time alongside the vocabulary TTL files. Two rules previously
+maintained only as prompt prose are promoted to SHACL constraints.
+
+**Changes to `shapes.ttl` (0.1.1 → 0.2.0):**
+- `rdfs:comment` on `movementPattern` property shape: specificity preference (child > parent)
+- `rdfs:comment` on `isUnilateral` property shape: omission semantics (omit for bilateral)
+- `rdfs:comment` on `trainingModality` property shape: omission rule (defining characteristic only)
+- `rdfs:comment` on `muscle` property shape in `MuscleInvolvementShape`: specificity preference (MuscleHead > MuscleGroup > MuscleRegion)
+- New SPARQL constraint on `ExerciseShape`: ancestor double-counting — an exercise may not list both a muscle and one of its `skos:broader` ancestors
+- New SPARQL constraint on `MuscleInvolvementShape`: `Core` must always be degree `Stabilizer`
+
+**Rationale:** The previous `prompt.py` maintained two parallel sources of truth —
+rules in `shapes.ttl` (for validation) and rules in prompt prose (for LLM guidance).
+These diverge silently as the vocabulary evolves. Co-locating rules in `shapes.ttl`
+means a vocabulary change that warrants a new validation constraint automatically
+updates the prompt on next import. `rdfs:comment` is the natural carrier for
+instructional content; `sh:message` is the natural carrier for violation messages.
+The `Core` and ancestor double-counting rules gain validation teeth, not just
+documentation.
+
+**Pattern for the new `prompt.py`:** Extract instructional content by reading:
+- `rdfs:comment` on property shapes for field-level rules
+- `sh:message` on SPARQL constraints for cross-field rules
+- `rdfs:comment` / `skos:scopeNote` on vocabulary concepts (e.g. movement pattern
+  `rdfs:comment`, `Core` `skos:scopeNote`)
+
+**Why `rdfs:comment` over `sh:description`:** `sh:description` is semantically
+equivalent but less consistent with the rest of the ontology. `rdfs:comment` is
+used throughout all vocabulary files — using it on shape blank nodes keeps the
+documentation pattern uniform.
+
+---
+
+### ADR-046: Group-level scopeNotes for muscles not distinguished in exercise programming
+**Decision:** Added `skos:scopeNote` to five muscle groups flagging that group-level
+is the appropriate term — heads exist for anatomical completeness but are not
+meaningfully distinguished in exercise science or programming:
+
+- `RotatorCuff` — functional unit for glenohumeral stabilization
+- `ErectorSpinae` — heads run in parallel, not trained independently
+- `Gastrocnemius` — medial/lateral heads rarely distinguished in training
+- `WristFlexors` — individual heads not distinguished in programming
+- `WristExtensors` — individual heads not distinguished in programming
+
+Bumped `muscles.ttl` 0.6.0 → 0.7.0 (MINOR: additive).
+
+**Rationale:** Discovered during enrichment batch review that the LLM consistently
+used group-level terms for these muscles, which we initially flagged as specificity
+violations. On inspection, group-level is the correct exercise science usage for
+all five. The prompt rule "prefer head over group" is correct in general but needed
+explicit exceptions for muscles where the group IS the functional unit. The
+`skos:scopeNote` pattern (established for `Core` in ADR-024) is the right carrier —
+it surfaces in the rendered prompt via `include_scope_notes=True` and documents the
+design intent in the vocabulary itself.
+
+**Not added:** `BicepsBrachii`, `PectoralisMajor`, `Trapezius` — head-level
+distinction is genuinely meaningful for these (hammer vs supinated curl, incline vs
+flat press, upper/mid/lower trap work).
+
+---
+
+### ADR-047: feg:useGroupLevel boolean property for muscle group granularity
+**Decision:** Add `feg:useGroupLevel` as an `owl:DatatypeProperty` (range `xsd:boolean`)
+on `feg:MuscleGroup`. When asserted as `true` on a `MuscleGroup`, it signals that the
+group is the appropriate enrichment term — the individual heads are not meaningfully
+distinguished in exercise programming. Absence means heads should be enumerated.
+
+**Groups annotated `feg:useGroupLevel true`:**
+RotatorCuff, ErectorSpinae, Gastrocnemius, WristFlexors, WristExtensors,
+Obliques, Scalenes, Rhomboids.
+
+**Replaces** the prose `skos:scopeNote` approach used on the first five groups
+(ADR-046). The Core `skos:scopeNote` is retained — it serves a different purpose
+(explaining a convenience term, not signalling granularity preference).
+
+**Rationale:** The scopeNote approach encoded the same rule five times as
+hand-crafted prose. The prompt builder passed the text through verbatim — no
+consistency, no machine-readability. A boolean property lets the prompt builder
+generate a single, consistent instruction block from a SPARQL query. Follows the
+`feg:isUnilateral` precedent: presence = signal, absence = default. Named individuals
+(e.g. `feg:UseGroupLevel`) were considered and rejected — YAGNI; a boolean is
+sufficient since there is no anticipated third state. A `feg:MuscleShape` in
+`shapes.ttl` validates correct usage.
+
+**Additional annotation:** `skos:editorialNote` added to `feg:useGroupLevel` in
+`ontology.ttl` to surface the pipeline semantics: groups with this flag are listed
+explicitly in the enrichment prompt as exceptions to the head-preference rule.
+
+**Version bumps:** `ontology.ttl` 0.1.0 → 0.2.1 (additive property + editorial note),
+`muscles.ttl` 0.7.0 → 0.8.0, `shapes.ttl` 0.2.1 → 0.3.0.
+
+---
+
+### ADR-048: Repair queries integrated into ingest.py
+**Decision:** Post-ingest graph repair is implemented as SPARQL UPDATE queries stored
+in `sources/free-exercise-db/queries/` and executed as the final stage of `ingest.py`.
+There is no standalone `repair.py`. The repair step runs after morph-KGC mapping and
+LLM enrichment have been applied, before `ingested.ttl` is serialised.
+
+**Pipeline:**
+```
+preprocess.py → ingest.py (morph-KGC + enrichment + repair queries) → validate.py
+```
+
+**Repair queries (executed in numeric prefix order):**
+
+1. **repair_01_use_group_level.sparql** — useGroupLevel collapse: replaces any
+   `MuscleHead` with its parent `MuscleGroup` when the group carries
+   `feg:useGroupLevel true`. Motivated by the LLM consistently using
+   `RhomboidMajor`/`RhomboidMinor` as prime movers on row exercises despite the
+   prompt instruction.
+
+2. **repair_02_dedup_involvements.sparql** — same-degree dedup: after the
+   useGroupLevel collapse, two involvements from the same exercise may point to
+   the same muscle with the same degree. Removes the duplicate, keeping the
+   lower URI for deterministic output.
+
+3. **repair_03_dedup_involvements_cross_degree.sparql** — cross-degree dedup:
+   removes the lower-priority involvement when the same muscle appears at multiple
+   degrees within a single exercise (PrimeMover > Synergist > Stabilizer). Handles
+   the 9 upstream exercises where a muscle appears in both `primaryMuscles` and
+   `secondaryMuscles` (documented in ADR-044).
+
+**Numeric prefixes** enforce execution order. The useGroupLevel collapse (01) must
+run before same-degree dedup (02) because the collapse may create new duplicates.
+
+**What repair queries do NOT do:**
+- Parse SHACL validation reports — repairs are ontology-driven, not report-driven.
+  `feg:useGroupLevel` is the authoritative signal; no coupling to SHACL message strings.
+- Fix anything not derivable from vocabulary semantics alone.
+
+**Why not SHACL rules (`sh:SPARQLRule`)?** SHACL Advanced Features rules are
+constructive only — they can add triples but cannot DELETE. A true repair
+(replace head URI with group URI) requires DELETE + INSERT, which requires SPARQL UPDATE.
+
+**Rationale:** The LLM enrichment step produces semantically reasonable but
+occasionally vocabulary-inconsistent output. A post-ingest repair layer is cleaner
+than patching the prompt for every edge case, and more honest than silently accepting
+violations.
+
+---
+
+### ADR-051: movementPattern sh:minCount tightened to 1; validate.py filters to enriched exercises
+**Decision:** Tighten `feg:movementPattern sh:minCount` from `0` to `1` in `shapes.ttl`.
+Update `validate.py` to filter to enriched exercises (those with at least one
+`feg:movementPattern`) before running SHACL validation. Bump `shapes.ttl` `0.3.0 → 0.3.1`
+(PATCH: constraint correction).
+
+**validate.py behaviour:** Removes unenriched exercises and their MuscleInvolvement nodes
+from the data graph before handing it to pyshacl. Reports `N/873 enriched exercises`
+at the start of each run. Raw exercises are not checked — their missing movement patterns
+are expected and not meaningful as violations.
+
+**Rationale:** `minCount 0` was a temporary relaxation added in ADR-044 because the
+enrichment layer had not yet been integrated into `ingest.py`. Now that it is (ADR-048),
+the relaxation is no longer needed. Tightening to `1` makes the constraint honest: any
+enriched exercise that emerges from the pipeline without a movement pattern is a genuine
+error. The validate.py filter keeps the validator usable during incremental enrichment —
+reporting 843 constant violations for raw exercises would drown out real signal.
+
+---
+
+### ADR-050: feg:Power training modality added
+**Decision:** Add `feg:Power` as a named individual of `feg:TrainingModality` in
+`training_modalities.ttl`. Bump `0.1.0 → 0.2.0` (MINOR: additive).
+
+**Definition:** Training principally focused on developing rate of force development
+under load. The defining exercises are Olympic lifts and their derivatives: clean,
+snatch, jerk, and their hang, power, and split variants. Distinct from Plyometrics:
+explosive force production under load, no stretch-shortening cycle.
+
+**Rationale:** Olympic lifts were being assigned `feg:Plyometrics` — the only
+explosive modality available — despite not relying on the stretch-shortening cycle.
+This misclassification was identified during evaluation (eval report, March 2026).
+The Power/Plyometrics distinction is meaningful for program design: Power exercises
+require technical coaching, peak in a specific load range, and are sequenced
+differently than plyometric work in a training block. The boundary is encoded in the
+`rdfs:comment` as a direct rule for the enrichment pipeline: explosive force under
+load (Power) vs. stretch-shortening cycle (Plyometrics).
+
+**Exercises affected:** Hang Clean, Power Snatch, Clean and Press, and other Olympic
+lift variants previously mis-assigned to Plyometrics.
+
+---
+
+### ADR-049: rdfs:label added to all movement pattern concepts
+**Decision:** Add `rdfs:label` to every concept in `movement_patterns.ttl`, mirroring
+the value of the existing `skos:prefLabel`. Bump `movement_patterns.ttl` `0.4.0 → 0.4.1`
+(PATCH: non-breaking addition).
+
+**Rationale:** The rest of the vocabulary (`muscles.ttl`, `training_modalities.ttl`,
+`involvement_degrees.ttl`) uses `rdfs:label` as the primary human-readable label.
+Movement patterns were the only file that used only `skos:prefLabel`, requiring
+SPARQL queries to branch on the property depending on what type of resource they
+were labelling. Adding `rdfs:label` makes `rdfs:label` the uniform label predicate
+across the entire graph — queries can use `?x rdfs:label ?label` without needing to
+know whether `?x` is a muscle, pattern, or degree. `skos:prefLabel` is retained for
+SKOS-aware consumers.
+
+---
+
+### ADR-054: Anti-movement sub-patterns under TrunkStability; SpinalStability joint action
+**Decision:** Add three sub-patterns under `feg:TrunkStability` in `movement_patterns.ttl`:
+`feg:AntiExtension`, `feg:AntiRotation`, `feg:AntiLateralFlexion`. Add `feg:SpinalStability`
+as a joint action in `joint_actions.ttl`. Update `TrunkStability` comment to describe it
+as a parent concept. Bump `movement_patterns.ttl` `0.4.1 → 0.5.0` (MINOR: additive).
+
+**Two-layer model for trunk stability exercises:**
+
+| Exercise | Movement Pattern | Joint Action |
+|---|---|---|
+| Plank | AntiExtension | SpinalStability |
+| Ab Wheel Rollout | AntiExtension | SpinalStability |
+| Dead Bug | AntiExtension | SpinalStability |
+| Pallof Press | AntiRotation | SpinalStability |
+| Single-Arm Carry | AntiRotation | SpinalStability |
+| Side Plank | AntiLateralFlexion | SpinalStability |
+| Suitcase Carry | AntiLateralFlexion | SpinalStability |
+| Russian Twist | Rotation | SpinalRotation |
+
+The joint action (`SpinalStability`) captures the mechanical reality: the spine is not
+moving, it is resisting load isometrically. The movement pattern captures what direction
+it is resisting — which is the program design signal. The two dimensions are orthogonal
+and complementary: you need both to fully describe the exercise.
+
+**Why SpinalStability is a valid joint action despite being an absence of movement:**
+Joint actions are mechanical descriptors of what the body is doing under load. Resisting
+movement under load is a genuine mechanical demand — the muscles are contracting, the
+joint is loaded, and the exercise produces a specific adaptation. "The spine does not move"
+is as mechanically meaningful as "the spine flexes." Planks and rollouts are programmed
+for their isometric anti-extension demand, not as a residual category. Encoding this as a
+joint action makes that demand queryable.
+
+**TrunkStability as parent only:** `TrunkStability` remains in the vocabulary as the
+parent grouping concept, consistent with the existing hierarchy pattern (Push →
+HorizontalPush/VerticalPush). The prompt specificity rule ("prefer child over parent")
+applies: exercises should always be assigned one of the three sub-patterns where applicable.
+
+**Rotation vs. AntiRotation:** `feg:Rotation` (existing) covers dynamic rotational
+movements (Russian Twist, woodchop, cable rotation) where the spine actively rotates.
+`feg:AntiRotation` covers exercises where the spine resists rotation (Pallof press,
+single-arm work). These are distinct training stimuli and are now cleanly separated.
+
+---
+
+### ADR-053: Joint action vocabulary and feg:jointAction property
+**Decision:** Add `feg:jointAction` as a new `owl:ObjectProperty` on `feg:Exercise`,
+pointing to named individuals of a new `feg:JointAction` class. Add `feg:isCompound`
+as a convenience `owl:DatatypeProperty` (range `xsd:boolean`) on `feg:Exercise`.
+Encode the joint action vocabulary in a new `ontology/joint_actions.ttl` file,
+organised as a SKOS hierarchy with joint grouping nodes as top concepts and
+individual actions as `skos:narrower` concepts. Start at version `0.1.0`.
+
+**Three-layer movement model:**
+
+| Layer | Property | Purpose |
+|---|---|---|
+| Push/pull archetypes | `feg:movementPattern` | User-facing navigation and filtering |
+| Structural complexity | `feg:isCompound` | Program design — exercise selection and balance |
+| Mechanical precision | `feg:jointAction` | Substitution reasoning, muscle targeting, correctness |
+
+Each layer is orthogonal. A barbell row is `HorizontalPull` (pattern),
+`isCompound true`, and `ShoulderExtension + ScapularRetraction + ElbowFlexion`
+(joint actions). A bicep curl is also `Pull` and `ElbowFlexion`, but
+`isCompound false` — they share a pattern and a joint action, yet are not
+interchangeable. The combination of all three dimensions enables that distinction.
+
+**Why `feg:jointAction` is not modelled as SKOS narrower under `feg:movementPattern`:**
+Joint actions and movement patterns are different kinds of things. `ElbowFlexion`
+is not a subtype of `Pull` — elbow flexion occurs in rows (Pull), certain carries,
+and isometric holds. `ShoulderAbduction` does not sit under either Push or Pull.
+Encoding joint actions as narrower movement pattern concepts would bake incorrect
+inferences into the graph via `skos:broader*` traversal. Separate properties keep
+each dimension semantically coherent.
+
+**Why SKOS hierarchy by joint:** Grouping nodes (`Shoulder`, `Elbow`, `Hip`,
+`Knee`, `Ankle`, `Spine`, `Scapula`) enable traversal queries — "find all exercises
+involving any shoulder joint action" via `?action skos:broader* feg:Shoulder`.
+Consistent with the muscle vocabulary pattern (region → group → head). The
+relationship is "action occurs at this joint" rather than strict IS-A, which is
+the same pragmatic use of `skos:broader` already established in `muscles.ttl`.
+
+**Vocabulary — ~35 terms across 7 joints:**
+
+| Joint | Actions |
+|---|---|
+| Shoulder | Flexion, Extension, Abduction, Adduction, HorizontalAbduction, HorizontalAdduction, InternalRotation, ExternalRotation |
+| Elbow | Flexion, Extension |
+| Scapula | Retraction, Protraction, Depression, Elevation |
+| Hip | Flexion, Extension, Abduction, Adduction, InternalRotation, ExternalRotation |
+| Knee | Flexion, Extension |
+| Ankle | Dorsiflexion, Plantarflexion, Inversion, Eversion |
+| Spine | Flexion, Extension, Rotation, LateralFlexion |
+
+URIs use joint prefix: `feg:ShoulderFlexion`, `feg:ElbowFlexion`, `feg:HipExtension`, etc.
+Ankle terms use full anatomical name (`feg:Dorsiflexion`) rather than
+`feg:AnkleDorsiflexion` — the `Dorsiflexion` and `Plantarflexion` terms are
+unambiguous without the joint prefix; `Inversion` and `Eversion` get
+`feg:AnkleInversion` / `feg:AnkleEversion` to avoid confusion with spinal/other contexts.
+
+**`feg:isCompound` as boolean first pass:** The compound/isolation distinction
+is not strictly binary — there is a spectrum from true isolation (single joint,
+single muscle group) to fully integrated compound movements. What "compound" really
+encodes is the number of meaningful joints contributing to force production.
+A boolean is a pragmatic first pass and adequate for v1 filtering use cases.
+Future: derive from joint action count or replace with a small controlled vocabulary.
+
+**`feg:jointAction` attaches to `feg:Exercise`, not `feg:MuscleInvolvement`:**
+Attaching to involvement would enable mechanically precise statements like
+"GluteusMaximus is PrimeMover via HipExtension" — useful for distinguishing
+hamstrings-via-HipExtension (deadlift) from hamstrings-via-KneeFlexion (leg curl)
+in substitution queries. Deferred: exercise-level joint action combined with
+movement pattern already partially captures this distinction
+(HipHinge vs KneeDominant), and involvement-level is Medium-High LOE for v1.
+Noted as a known limitation for future work.
+
+**Files affected:**
+- `ontology/joint_actions.ttl` — new vocabulary file (`0.1.0`)
+- `ontology/ontology.ttl` — add `feg:JointAction` class, `feg:jointAction` and `feg:isCompound` properties
+- `ontology/shapes.ttl` — add validation shapes for `jointAction` and `isCompound`
+- `sources/free-exercise-db/prompt_template.md` — add joint actions section and example
+- `sources/free-exercise-db/enrich.py` — add joint action tree and isCompound rule to prompt assembly
+- `pipeline/prompt_builder.py` — no changes needed (generic utilities already handle new vocabulary)
+
+---
+
+### ADR-052: PassiveTarget involvement degree for Mobility and SoftTissue exercises
+**Decision:** Add `feg:PassiveTarget` as a fourth `feg:InvolvementDegree` named
+individual in `involvement_degrees.ttl`. Update `shapes.ttl` to: (a) include
+`PassiveTarget` in the allowed `sh:in` enumeration for `feg:degree`; (b) exempt
+exercises with at least one `PassiveTarget` involvement from the `PrimeMover`
+`sh:minCount 1` requirement. Add a Mobility example to `prompt_template.md`.
+Bump `involvement_degrees.ttl` `0.1.0 → 0.2.0` (MINOR: additive), `shapes.ttl`
+`0.3.1 → 0.4.0` (MINOR: new constraint logic).
+
+**Definition:** A muscle that is the passive target of a stretch or soft tissue
+technique. Used in Mobility and SoftTissue exercises where the muscle is being
+lengthened or treated rather than actively contracting. Exercises with at least
+one PassiveTarget involvement are exempt from the PrimeMover requirement.
+Synergists and Stabilizers may still be present if other muscles are actively engaged.
+
+**Rationale:** The `sh:minCount 1` PrimeMover constraint was correct for active
+exercises but semantically wrong for passive stretches and foam rolling — these
+exercises have no prime mover by definition. Two options were considered:
+
+1. **Global relaxation** — allow zero PrimeMover involvements for all exercises.
+   Rejected: loses the validation guarantee for active exercises.
+
+2. **PassiveTarget degree** — add a new degree that carries explicit semantic
+   meaning (which muscle is being stretched/treated) and serves as the exemption
+   signal. Chosen.
+
+**PassiveTarget carries semantic value** beyond just being an exemption flag: it
+distinguishes which muscle is the target of the treatment, enabling queries like
+"find all exercises that stretch the hamstrings" without ambiguity. It also
+documents the biomechanical relationship correctly — the stretched muscle is not
+active and should not be classified as PrimeMover, Synergist, or Stabilizer.
+
+**SHACL constraint change:** The PrimeMover constraint was a `sh:property
+sh:minCount 1` rule, which cannot express conditional logic. It was replaced with
+a `sh:sparql` constraint that fires only when neither PrimeMover nor PassiveTarget
+involvements are present — preserving the guarantee for active exercises while
+exempting passive ones.
+
+**Scope:** PassiveTarget is the correct degree for: static stretches, PNF stretching,
+yoga poses, foam rolling, and myofascial release. It should not be used on exercises
+where the muscle is eccentrically loaded under tension (e.g. Romanian deadlift
+hamstrings — these are PrimeMover with an eccentric emphasis, not passive targets).
+
+---
+
 ## Backlog
 
 ### Deferred from v1 by design
@@ -795,27 +1477,39 @@ change. Version bumped from 0.5.0 → 0.6.0 (MINOR: additive).
 
 ### Pipeline and tooling
 
-- **encode.py** - enriched JSON -> RDF Turtle (pipeline incomplete
-  without this)
-- **review.py** - Marimo UI for quarantine triage
-- **eval framework** - gold standard dataset, rubric, eval.py
-- **Crosswalk document** - map source dataset flat muscle terms to
-  our hierarchy
-- **SPARQL query library** - analytical queries demonstrating graph value
-- **GOVERNANCE.md** - formal change management process document
-- **README.md** - project overview with governance framing
-- **pyproject.toml** - ruff config, dependencies
+- **SPARQL query library** — `queries/` directory with analytical queries demonstrating
+  graph value (exercise discovery, substitution, muscle balance).
+- **check_stale.py** — detects enriched exercises whose vocabulary version stamps are
+  behind the current vocabulary. Needed once enrichment is at scale and vocabulary is
+  still evolving.
+- **Gold standard dataset** — 30–50 exercises with human-verified classifications.
+  Required for quantitative eval (F1, precision, recall per field). `evals/annotate.py`
+  exists for this purpose.
+- **eval.py** — automated scoring against gold standard.
+- **GOVERNANCE.md** — formal change management process document.
+- **README.md** — project overview with architecture, governance framing, and run instructions.
+- **pyproject.toml** — ruff config, pinned dependencies (morph-kgc, rdflib, pyshacl,
+  anthropic, python-dotenv).
 
 ---
 
 ## Open Questions
 
-- **Cossack squat classification:** Currently Squat in v1. Does lateral
-  plane movement warrant a LateralSquat sub-pattern?
-- **Push/Pull angle:** Is incline angle best captured as a property
-  (feg:loadAngle) or does it need a sub-pattern?
-- **TrainingModality in v2:** Whether to revisit modality assignment
-  when use cases around program design (PPL splits, modality filtering)
-  become clearer.
-- **Namespace:** Placeholder `https://placeholder.url#` needs a real
-  URI before any public release.
+- **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for
+  isolation exercises (curls, lateral raises). Whether to add `ElbowFlexion`,
+  `ShoulderAbduction`, etc. as movement pattern concepts — and whether these are peers
+  to existing patterns or a separate layer — is an open vocabulary design question.
+- **Mobility/SoftTissue Prime Mover exemption:** The SHACL `minCount 1` PrimeMover
+  constraint is semantically wrong for passive stretches and soft tissue work. Options:
+  relax globally for Mobility/SoftTissue exercises, or add a `PassiveTarget` involvement
+  degree. ADR required before implementation.
+- **movementPattern sh:minCount:** Relaxed to 0 in ADR-044. Should tighten back to 1
+  (with Mobility/SoftTissue exemption) once movement pattern coverage criteria are established.
+- **Power modality:** Olympic lifts and explosive strength movements are currently
+  forced into `Plyometrics`. A `feg:Power` named individual would distinguish them.
+- **Cossack squat classification:** Currently Squat in v1. Does lateral plane movement
+  warrant a LateralSquat sub-pattern?
+- **Push/Pull angle:** Is incline angle best captured as a property (feg:loadAngle)
+  or does it need a sub-pattern?
+- **Namespace:** Placeholder `https://placeholder.url#` needs a real URI before any
+  public release.

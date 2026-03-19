@@ -1,0 +1,474 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - JointAction (SKOS)
+###################
+
+feg:JointActionScheme
+    a skos:ConceptScheme ;
+    rdfs:label "Joint Action Scheme" ;
+    rdfs:comment "A controlled vocabulary of joint actions used to describe the mechanical basis of exercises. Joint grouping nodes organise actions by joint; only leaf-level JointAction individuals should be assigned to exercises via feg:jointAction." ;
+    owl:versionInfo "0.1.0" ;
+.
+
+###################
+# Shoulder
+###################
+
+feg:Shoulder
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Shoulder" ;
+    skos:prefLabel "Shoulder" ;
+    rdfs:comment "Grouping node for glenohumeral joint actions." ;
+.
+
+feg:ShoulderFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Flexion" ;
+    skos:prefLabel "Shoulder Flexion" ;
+    rdfs:comment "Raising the arm forward and upward in the sagittal plane. Primary drivers: anterior deltoid, clavicular pectoralis major." ;
+.
+
+feg:ShoulderExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Extension" ;
+    skos:prefLabel "Shoulder Extension" ;
+    rdfs:comment "Moving the arm backward behind the body in the sagittal plane. Primary drivers: latissimus dorsi, posterior deltoid, teres major." ;
+.
+
+feg:ShoulderAbduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Abduction" ;
+    skos:prefLabel "Shoulder Abduction" ;
+    rdfs:comment "Raising the arm out to the side in the frontal plane. Primary drivers: middle deltoid, supraspinatus." ;
+.
+
+feg:ShoulderAdduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Adduction" ;
+    skos:prefLabel "Shoulder Adduction" ;
+    rdfs:comment "Pulling the arm back toward and across the midline in the frontal plane. Primary drivers: latissimus dorsi, pectoralis major, teres major." ;
+.
+
+feg:ShoulderHorizontalAbduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Horizontal Abduction" ;
+    skos:prefLabel "Shoulder Horizontal Abduction" ;
+    rdfs:comment "Moving the arm outward from a horizontal forward position in the transverse plane. Primary drivers: posterior deltoid, infraspinatus, teres minor." ;
+.
+
+feg:ShoulderHorizontalAdduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Horizontal Adduction" ;
+    skos:prefLabel "Shoulder Horizontal Adduction" ;
+    rdfs:comment "Moving the arm across the body from a horizontally abducted position in the transverse plane. Primary drivers: pectoralis major, anterior deltoid." ;
+.
+
+feg:ShoulderInternalRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Internal Rotation" ;
+    skos:prefLabel "Shoulder Internal Rotation" ;
+    rdfs:comment "Rotating the humerus inward toward the midline. Primary drivers: subscapularis, anterior deltoid, pectoralis major." ;
+.
+
+feg:ShoulderExternalRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder External Rotation" ;
+    skos:prefLabel "Shoulder External Rotation" ;
+    rdfs:comment "Rotating the humerus outward away from the midline. Primary drivers: infraspinatus, teres minor." ;
+.
+
+###################
+# Elbow
+###################
+
+feg:Elbow
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Elbow" ;
+    skos:prefLabel "Elbow" ;
+    rdfs:comment "Grouping node for elbow joint actions." ;
+.
+
+feg:ElbowFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Elbow ;
+    rdfs:label "Elbow Flexion" ;
+    skos:prefLabel "Elbow Flexion" ;
+    rdfs:comment "Bending the elbow to decrease the angle between the forearm and upper arm. Primary drivers: biceps brachii, brachialis, brachioradialis." ;
+.
+
+feg:ElbowExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Elbow ;
+    rdfs:label "Elbow Extension" ;
+    skos:prefLabel "Elbow Extension" ;
+    rdfs:comment "Straightening the elbow to increase the angle between the forearm and upper arm. Primary drivers: triceps brachii." ;
+.
+
+###################
+# Scapula
+###################
+
+feg:Scapula
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Scapula" ;
+    skos:prefLabel "Scapula" ;
+    rdfs:comment "Grouping node for scapulothoracic joint actions." ;
+.
+
+feg:ScapularRetraction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Retraction" ;
+    skos:prefLabel "Scapular Retraction" ;
+    rdfs:comment "Drawing the shoulder blades toward the spine. Primary drivers: rhomboids, middle trapezius." ;
+.
+
+feg:ScapularProtraction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Protraction" ;
+    skos:prefLabel "Scapular Protraction" ;
+    rdfs:comment "Spreading the shoulder blades away from the spine. Primary drivers: serratus anterior, pectoralis minor." ;
+.
+
+feg:ScapularDepression
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Depression" ;
+    skos:prefLabel "Scapular Depression" ;
+    rdfs:comment "Pulling the shoulder blades downward. Primary drivers: lower trapezius, pectoralis minor." ;
+.
+
+feg:ScapularElevation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Elevation" ;
+    skos:prefLabel "Scapular Elevation" ;
+    rdfs:comment "Raising the shoulder blades upward. Primary drivers: upper trapezius, levator scapulae." ;
+.
+
+feg:ScapularUpwardRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Upward Rotation" ;
+    skos:prefLabel "Scapular Upward Rotation" ;
+    rdfs:comment "Rotating the scapula so the glenoid points upward to allow overhead reach. Occurs in all overhead pressing and pulling movements. Primary drivers: upper and lower trapezius, serratus anterior." ;
+.
+
+feg:ScapularDownwardRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Scapula ;
+    rdfs:label "Scapular Downward Rotation" ;
+    skos:prefLabel "Scapular Downward Rotation" ;
+    rdfs:comment "Rotating the scapula so the glenoid points downward, returning from an overhead position. Primary drivers: rhomboids, levator scapulae, pectoralis minor." ;
+.
+
+###################
+# Forearm
+###################
+
+feg:Forearm
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Forearm" ;
+    skos:prefLabel "Forearm" ;
+    rdfs:comment "Grouping node for radioulnar joint actions." ;
+.
+
+feg:ForearmSupination
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Forearm ;
+    rdfs:label "Forearm Supination" ;
+    skos:prefLabel "Forearm Supination" ;
+    rdfs:comment "Rotating the forearm so the palm faces upward or forward. Primary drivers: biceps brachii, supinator." ;
+.
+
+feg:ForearmPronation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Forearm ;
+    rdfs:label "Forearm Pronation" ;
+    skos:prefLabel "Forearm Pronation" ;
+    rdfs:comment "Rotating the forearm so the palm faces downward or backward. Primary drivers: pronator teres, pronator quadratus." ;
+.
+
+###################
+# Wrist
+###################
+
+feg:Wrist
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Wrist" ;
+    skos:prefLabel "Wrist" ;
+    rdfs:comment "Grouping node for radiocarpal joint actions." ;
+.
+
+feg:WristFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Wrist ;
+    rdfs:label "Wrist Flexion" ;
+    skos:prefLabel "Wrist Flexion" ;
+    rdfs:comment "Bending the hand toward the front of the forearm. Primary drivers: wrist flexors (flexor carpi radialis, flexor carpi ulnaris)." ;
+.
+
+feg:WristExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Wrist ;
+    rdfs:label "Wrist Extension" ;
+    skos:prefLabel "Wrist Extension" ;
+    rdfs:comment "Bending the hand toward the back of the forearm. Primary drivers: wrist extensors (extensor carpi radialis, extensor carpi ulnaris)." ;
+.
+
+###################
+# Hip
+###################
+
+feg:Hip
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Hip" ;
+    skos:prefLabel "Hip" ;
+    rdfs:comment "Grouping node for hip joint actions." ;
+.
+
+feg:HipFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Flexion" ;
+    skos:prefLabel "Hip Flexion" ;
+    rdfs:comment "Decreasing the angle between the thigh and torso by lifting the thigh forward. Primary drivers: iliopsoas, rectus femoris." ;
+.
+
+feg:HipExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Extension" ;
+    skos:prefLabel "Hip Extension" ;
+    rdfs:comment "Increasing the angle between the thigh and torso by driving the hip to full extension. Primary drivers: gluteus maximus, hamstrings." ;
+.
+
+feg:HipAbduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Abduction" ;
+    skos:prefLabel "Hip Abduction" ;
+    rdfs:comment "Moving the thigh outward away from the midline in the frontal plane. Primary drivers: gluteus medius, gluteus minimus, tensor fasciae latae." ;
+.
+
+feg:HipAdduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Adduction" ;
+    skos:prefLabel "Hip Adduction" ;
+    rdfs:comment "Moving the thigh inward toward and across the midline. Primary drivers: adductor magnus, adductor longus, adductor brevis, gracilis." ;
+.
+
+feg:HipInternalRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Internal Rotation" ;
+    skos:prefLabel "Hip Internal Rotation" ;
+    rdfs:comment "Rotating the femur inward in the transverse plane. Primary drivers: gluteus medius (anterior fibers), tensor fasciae latae." ;
+.
+
+feg:HipExternalRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip External Rotation" ;
+    skos:prefLabel "Hip External Rotation" ;
+    rdfs:comment "Rotating the femur outward in the transverse plane. Primary drivers: piriformis, deep hip external rotators, gluteus maximus (posterior fibers)." ;
+.
+
+feg:HipHorizontalAdduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Horizontal Adduction" ;
+    skos:prefLabel "Hip Horizontal Adduction" ;
+    rdfs:comment "Moving the thigh toward the midline in the transverse plane when the hip is already flexed to approximately 90°. Distinct from frontal-plane adduction. Primary drivers: adductors, pectineus." ;
+.
+
+feg:HipHorizontalAbduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Horizontal Abduction" ;
+    skos:prefLabel "Hip Horizontal Abduction" ;
+    rdfs:comment "Moving the thigh away from the midline in the transverse plane when the hip is already flexed to approximately 90°. Distinct from frontal-plane abduction. Primary drivers: gluteus medius, gluteus minimus." ;
+.
+
+###################
+# Knee
+###################
+
+feg:Knee
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Knee" ;
+    skos:prefLabel "Knee" ;
+    rdfs:comment "Grouping node for knee joint actions." ;
+.
+
+feg:KneeFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Knee ;
+    rdfs:label "Knee Flexion" ;
+    skos:prefLabel "Knee Flexion" ;
+    rdfs:comment "Bending the knee to decrease the angle between the lower and upper leg. Primary drivers: hamstrings, gastrocnemius." ;
+.
+
+feg:KneeExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Knee ;
+    rdfs:label "Knee Extension" ;
+    skos:prefLabel "Knee Extension" ;
+    rdfs:comment "Straightening the knee to increase the angle between the lower and upper leg. Primary drivers: quadriceps." ;
+.
+
+###################
+# Ankle
+###################
+
+feg:Ankle
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Ankle" ;
+    skos:prefLabel "Ankle" ;
+    rdfs:comment "Grouping node for ankle joint actions." ;
+.
+
+feg:Dorsiflexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Ankle ;
+    rdfs:label "Dorsiflexion" ;
+    skos:prefLabel "Dorsiflexion" ;
+    rdfs:comment "Pulling the top of the foot upward toward the shin. Primary drivers: tibialis anterior." ;
+.
+
+feg:Plantarflexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Ankle ;
+    rdfs:label "Plantarflexion" ;
+    skos:prefLabel "Plantarflexion" ;
+    rdfs:comment "Pointing the foot downward away from the shin. Primary drivers: gastrocnemius, soleus." ;
+.
+
+feg:AnkleInversion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Ankle ;
+    rdfs:label "Ankle Inversion" ;
+    skos:prefLabel "Ankle Inversion" ;
+    rdfs:comment "Turning the sole of the foot inward. Primary drivers: tibialis posterior, tibialis anterior." ;
+.
+
+feg:AnkleEversion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Ankle ;
+    rdfs:label "Ankle Eversion" ;
+    skos:prefLabel "Ankle Eversion" ;
+    rdfs:comment "Turning the sole of the foot outward. Primary drivers: peroneus longus, peroneus brevis." ;
+.
+
+###################
+# Spine
+###################
+
+feg:Spine
+    a skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    rdfs:label "Spine" ;
+    skos:prefLabel "Spine" ;
+    rdfs:comment "Grouping node for spinal joint actions. Covers lumbar and thoracic segments together unless a distinction is clinically significant for exercise classification." ;
+.
+
+feg:SpinalFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Spine ;
+    rdfs:label "Spinal Flexion" ;
+    skos:prefLabel "Spinal Flexion" ;
+    rdfs:comment "Rounding the spine forward, reducing the angle between the torso and thighs. Primary drivers: rectus abdominis, obliques." ;
+.
+
+feg:SpinalExtension
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Spine ;
+    rdfs:label "Spinal Extension" ;
+    skos:prefLabel "Spinal Extension" ;
+    rdfs:comment "Extending the spine toward upright or hyperextended position. Primary drivers: erector spinae, multifidus." ;
+.
+
+feg:SpinalRotation
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Spine ;
+    rdfs:label "Spinal Rotation" ;
+    skos:prefLabel "Spinal Rotation" ;
+    rdfs:comment "Twisting the torso around the vertical axis. Primary drivers: obliques, multifidus." ;
+.
+
+feg:SpinalLateralFlexion
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Spine ;
+    rdfs:label "Spinal Lateral Flexion" ;
+    skos:prefLabel "Spinal Lateral Flexion" ;
+    rdfs:comment "Bending the spine to the side in the frontal plane. Primary drivers: quadratus lumborum, obliques, erector spinae (unilateral)." ;
+.
+
+feg:SpinalStability
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Spine ;
+    rdfs:label "Spinal Stability" ;
+    skos:prefLabel "Spinal Stability" ;
+    rdfs:comment "Isometric resistance of spinal movement under external load — the spine does not move, it braces against a destabilising force. The direction of the resisted force (extension, rotation, lateral flexion) is captured by the movement pattern (AntiExtension, AntiRotation, AntiLateralFlexion). Primary drivers: deep core musculature, transverse abdominis, multifidus." ;
+.

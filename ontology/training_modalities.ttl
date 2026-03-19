@@ -8,7 +8,7 @@
 
 feg:TrainingModalityVocabulary
     a owl:Ontology ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.2.0" ;
 .
 
 
@@ -40,4 +40,10 @@ feg:Plyometrics
     a owl:NamedIndividual, feg:TrainingModality ;
     rdfs:label "Plyometrics" ;
     rdfs:comment "Training principally focused on developing explosive power through rapid stretch-shortening cycles." ;
+.
+
+feg:Power
+    a owl:NamedIndividual, feg:TrainingModality ;
+    rdfs:label "Power" ;
+    rdfs:comment "Training principally focused on developing rate of force development under load. The defining exercises are Olympic lifts and their derivatives: clean, snatch, jerk, and their hang, power, and split variants. Distinct from Plyometrics: explosive force production under load, no stretch-shortening cycle." ;
 .

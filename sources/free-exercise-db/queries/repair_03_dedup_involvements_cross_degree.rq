@@ -1,0 +1,46 @@
+# Remove lower-priority duplicate muscle involvements where the same muscle
+# appears with different degrees on the same exercise. Keeps the highest-priority
+# degree (PrimeMover > Synergist > Stabilizer) and removes the rest.
+# Fixes upstream source data quality issues where a muscle appears in both
+# primaryMuscles and secondaryMuscles. See ADR-044, ADR-048.
+
+PREFIX feg: <https://placeholder.url#>
+
+# Remove Synergist when PrimeMover exists for the same muscle
+DELETE {
+    ?exercise feg:hasInvolvement ?inv2 .
+    ?inv2 ?p ?o .
+}
+WHERE {
+    ?exercise feg:hasInvolvement ?inv1 ;
+              feg:hasInvolvement ?inv2 .
+    ?inv1 feg:muscle ?muscle ; feg:degree feg:PrimeMover .
+    ?inv2 feg:muscle ?muscle ; feg:degree feg:Synergist .
+    ?inv2 ?p ?o .
+} ;
+
+# Remove Stabilizer when PrimeMover exists for the same muscle
+DELETE {
+    ?exercise feg:hasInvolvement ?inv2 .
+    ?inv2 ?p ?o .
+}
+WHERE {
+    ?exercise feg:hasInvolvement ?inv1 ;
+              feg:hasInvolvement ?inv2 .
+    ?inv1 feg:muscle ?muscle ; feg:degree feg:PrimeMover .
+    ?inv2 feg:muscle ?muscle ; feg:degree feg:Stabilizer .
+    ?inv2 ?p ?o .
+} ;
+
+# Remove Stabilizer when Synergist exists for the same muscle
+DELETE {
+    ?exercise feg:hasInvolvement ?inv2 .
+    ?inv2 ?p ?o .
+}
+WHERE {
+    ?exercise feg:hasInvolvement ?inv1 ;
+              feg:hasInvolvement ?inv2 .
+    ?inv1 feg:muscle ?muscle ; feg:degree feg:Synergist .
+    ?inv2 feg:muscle ?muscle ; feg:degree feg:Stabilizer .
+    ?inv2 ?p ?o .
+}

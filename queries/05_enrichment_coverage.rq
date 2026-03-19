@@ -1,0 +1,59 @@
+# Enrichment Coverage
+# ==============================================================================
+# Use case: "How many of the 873 exercises have been enriched with movement
+# patterns, and what does the enriched vs. raw breakdown look like?"
+#
+# An exercise is considered "enriched" if it has at least one movement pattern
+# assigned. Raw exercises have muscle involvements (from morph-KGC mapping of
+# the source data) but no pattern, modality, or LLM-assigned degree overrides.
+#
+# This is the primary diagnostic query for tracking enrichment pipeline
+# progress. Run after each enrich.py + ingest.py cycle to see coverage.
+#
+# A second result block breaks down the enriched exercises by pattern family,
+# showing not just how many were enriched but how they are distributed — useful
+# for catching skewed sampling (e.g. if random enrichment over-sampled one
+# movement type).
+#
+# Run against: sources/free-exercise-db/ingested.ttl
+# ==============================================================================
+
+PREFIX feg:  <https://placeholder.url#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# --- Part 1: enriched vs. raw count ---
+
+SELECT ?status (COUNT(DISTINCT ?exercise) AS ?count)
+WHERE {
+    {
+        ?exercise a feg:Exercise .
+        ?exercise feg:movementPattern ?any .
+        BIND("enriched" AS ?status)
+    }
+    UNION
+    {
+        ?exercise a feg:Exercise .
+        FILTER NOT EXISTS { ?exercise feg:movementPattern ?any }
+        BIND("raw" AS ?status)
+    }
+}
+GROUP BY ?status
+ORDER BY ?status
+
+# --- Part 2: enriched exercises by top-level movement pattern family ---
+# (Run separately — uncomment and comment out Part 1 above)
+
+# SELECT ?family (COUNT(DISTINCT ?exercise) AS ?exercises)
+# WHERE {
+#     ?exercise a feg:Exercise ;
+#               feg:movementPattern ?pattern .
+#
+#     # Resolve to top-level pattern
+#     OPTIONAL { ?pattern skos:broader ?parent . FILTER NOT EXISTS { ?parent skos:broader ?gp } }
+#     BIND(COALESCE(?parent, ?pattern) AS ?topLevel)
+#     ?topLevel rdfs:label ?family .
+# }
+# GROUP BY ?family
+# ORDER BY DESC(?exercises)
+

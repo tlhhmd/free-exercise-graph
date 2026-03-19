@@ -4,11 +4,12 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 feg:ShapesGraph
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph SHACL Shapes" ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.5.0" ;
 .
 
 ###################
@@ -30,12 +31,14 @@ feg:ExerciseShape
         sh:message "An exercise must have exactly one rdfs:label." ;
     ] ;
 
-    # must have at least one movement pattern
+    # movement pattern — every enriched exercise must have at least one.
+    # validate.py filters to enriched exercises only, so raw exercises are not checked.
     sh:property [
         sh:path feg:movementPattern ;
         sh:minCount 1 ;
         sh:class feg:MovementPattern ;
-        sh:message "An exercise must have at least one movement pattern, and each must be a known MovementPattern individual." ;
+        sh:message "Movement pattern must be a known MovementPattern individual." ;
+        rdfs:comment "Use the most specific pattern that applies — prefer child patterns over parent patterns (e.g. Squat over KneeDominant, HorizontalPush over Push). Use a parent only when no child fits. Compound exercises may have more than one pattern." ;
     ] ;
 
     # must have at least one muscle involvement
@@ -46,15 +49,20 @@ feg:ExerciseShape
         sh:message "An exercise must have at least one muscle involvement." ;
     ] ;
 
-    # must have at least one prime mover
+    # must have at least one prime mover, unless it has a passive target (Mobility/SoftTissue)
     sh:sparql [
-        sh:message "An exercise must have at least one muscle involvement with degree PrimeMover." ;
+        sh:message "An exercise must have at least one PrimeMover involvement, or at least one PassiveTarget involvement for Mobility and SoftTissue exercises." ;
+        rdfs:comment "An exercise must have at least one PrimeMover involvement, or at least one PassiveTarget involvement for Mobility and SoftTissue exercises." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             SELECT $this WHERE {
                 FILTER NOT EXISTS {
                     $this feg:hasInvolvement ?inv .
                     ?inv feg:degree feg:PrimeMover .
+                }
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PassiveTarget .
                 }
             }
         """ ;
@@ -63,6 +71,7 @@ feg:ExerciseShape
     # no muscle may appear more than once across involvements
     sh:sparql [
         sh:message "A muscle may not appear more than once across an exercise's muscle involvements." ;
+        rdfs:comment "A muscle may not appear more than once across an exercise's muscle involvements." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             SELECT $this WHERE {
@@ -80,6 +89,7 @@ feg:ExerciseShape
         sh:path feg:trainingModality ;
         sh:class feg:TrainingModality ;
         sh:message "Training modality must be a known TrainingModality individual." ;
+        rdfs:comment "Assign only when the modality is a defining characteristic of the exercise, not merely its typical training context. Plyometrics: explosive intent is the defining feature. Mobility: flexibility or range of motion is the defining feature. Cardio: cardiovascular adaptation is the defining feature. Omit for most resistance training exercises — a barbell squat, bench press, or deadlift has no defining modality." ;
     ] ;
 
     # equipment if present must be a known individual
@@ -103,6 +113,42 @@ feg:ExerciseShape
         sh:maxCount 1 ;
         sh:datatype xsd:boolean ;
         sh:message "isUnilateral must be a single boolean value." ;
+        rdfs:comment "Omit entirely for bilateral exercises. Set to true only when the exercise is inherently performed one limb at a time (e.g. single-leg squat, single-arm row). Absence is interpreted as bilateral by query consumers." ;
+    ] ;
+
+    # joint actions if present must be known JointAction individuals
+    sh:property [
+        sh:path feg:jointAction ;
+        sh:class feg:JointAction ;
+        sh:message "Joint action must be a known JointAction individual." ;
+        rdfs:comment "Assign all joint actions that are primary mechanical drivers of the exercise. Do not assign joint actions that are merely stabilising or incidental. Use joint grouping nodes (Shoulder, Hip, etc.) only as navigational concepts — they are not valid feg:jointAction values. An exercise typically has 2–5 joint actions." ;
+    ] ;
+
+    # isCompound if present must be a single boolean
+    sh:property [
+        sh:path feg:isCompound ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "isCompound must be a single boolean value." ;
+        rdfs:comment "Set to true when the exercise involves meaningful force production across multiple joints (e.g. squat, deadlift, bench press, row). Omit or set to false for single-joint isolation exercises (e.g. bicep curl, leg extension, lateral raise). When in doubt, count primary joint actions: two or more distinct joints contributing to force production indicates compound." ;
+    ] ;
+
+    # no exercise may list both a muscle and one of its SKOS ancestors — double-counting
+    sh:sparql [
+        sh:message "An exercise may not assign both a muscle and one of its ancestors — this double-counts the same muscle mass. Use the most specific term only." ;
+        rdfs:comment "An exercise may not assign both a muscle and one of its ancestors — this double-counts the same muscle mass. Use the most specific term only." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                $this feg:hasInvolvement ?inv1 ;
+                      feg:hasInvolvement ?inv2 .
+                ?inv1 feg:muscle ?child .
+                ?inv2 feg:muscle ?ancestor .
+                FILTER (?inv1 != ?inv2)
+                ?child skos:broader+ ?ancestor .
+            }
+        """ ;
     ] ;
 .
 
@@ -123,6 +169,7 @@ feg:MuscleInvolvementShape
         sh:maxCount 1 ;
         sh:class feg:Muscle ;
         sh:message "A muscle involvement must reference exactly one known Muscle individual." ;
+        rdfs:comment "Prefer the most specific term available: MuscleHead > MuscleGroup > MuscleRegion. Use a region term only if no group applies; use a group term only if no head applies. Exception: groups marked useGroupLevel=true are the correct term — do not descend to their heads. Exception: Core (a MuscleGroup under Abdominals) is a convenience term permitted on compound movements where abdominal bracing is incidental — see Core usage constraint below." ;
     ] ;
 
     # must have exactly one degree
@@ -137,8 +184,8 @@ feg:MuscleInvolvementShape
     # degree must be one of the three allowed values
     sh:property [
         sh:path feg:degree ;
-        sh:in ( feg:PrimeMover feg:Synergist feg:Stabilizer ) ;
-        sh:message "Degree must be one of: PrimeMover, Synergist, Stabilizer." ;
+        sh:in ( feg:PrimeMover feg:Synergist feg:Stabilizer feg:PassiveTarget ) ;
+        sh:message "Degree must be one of: PrimeMover, Synergist, Stabilizer, PassiveTarget." ;
     ] ;
 
     # must be referenced by at least one exercise - catches orphaned nodes
@@ -152,5 +199,88 @@ feg:MuscleInvolvementShape
                 }
             }
         """ ;
+    ] ;
+
+    # Core must always be assigned as Stabilizer
+    sh:sparql [
+        sh:message "Core must be assigned as Stabilizer only. For dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
+        rdfs:comment "Core must be assigned as Stabilizer only. For dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:muscle feg:Core .
+                $this feg:degree ?degree .
+                FILTER (?degree != feg:Stabilizer)
+            }
+        """ ;
+    ] ;
+
+    # must not reference a head whose parent group has useGroupLevel=true
+    sh:sparql [
+        sh:message "This involvement references a muscle head whose parent group has useGroupLevel=true. Use the group-level term instead." ;
+        rdfs:comment "Do not use a MuscleHead when its parent MuscleGroup has useGroupLevel=true. The group is the correct granularity for these muscles in exercise programming." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                $this feg:muscle ?head .
+                ?head skos:broader ?group .
+                ?group feg:useGroupLevel true .
+            }
+        """ ;
+    ] ;
+.
+
+###################
+# JointActionShape
+###################
+
+feg:JointActionShape
+    a sh:NodeShape ;
+    sh:targetClass feg:JointAction ;
+    rdfs:label "Joint Action Shape" ;
+    rdfs:comment "Validates joint action vocabulary concepts." ;
+
+    # must have exactly one rdfs:label
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A joint action must have exactly one rdfs:label." ;
+    ] ;
+
+    # must belong to the JointActionScheme
+    sh:property [
+        sh:path skos:inScheme ;
+        sh:hasValue feg:JointActionScheme ;
+        sh:minCount 1 ;
+        sh:message "A joint action must be in feg:JointActionScheme." ;
+    ] ;
+
+    # must have a broader joint grouping node
+    sh:property [
+        sh:path skos:broader ;
+        sh:minCount 1 ;
+        sh:message "A joint action must have a skos:broader joint grouping node (e.g. feg:Shoulder, feg:Hip)." ;
+    ] ;
+.
+
+###################
+# MuscleShape
+###################
+
+feg:MuscleShape
+    a sh:NodeShape ;
+    sh:targetClass feg:MuscleGroup ;
+    rdfs:label "Muscle Group Shape" ;
+    rdfs:comment "Validates muscle group vocabulary concepts." ;
+
+    # useGroupLevel if present must be a single boolean
+    sh:property [
+        sh:path feg:useGroupLevel ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "useGroupLevel must be a single boolean value." ;
     ] ;
 .

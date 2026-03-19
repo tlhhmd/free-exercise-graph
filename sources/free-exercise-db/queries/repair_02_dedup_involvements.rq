@@ -1,0 +1,21 @@
+# Remove duplicate MuscleInvolvement nodes on the same exercise where both
+# point to the same muscle with the same degree. This can arise after
+# repair_use_group_level collapses multiple heads to the same parent group.
+# The lower URI is kept to ensure deterministic output. See ADR-048.
+
+PREFIX feg: <https://placeholder.url#>
+
+DELETE {
+    ?exercise feg:hasInvolvement ?inv2 .
+    ?inv2 ?p ?o .
+}
+WHERE {
+    ?exercise feg:hasInvolvement ?inv1 ;
+              feg:hasInvolvement ?inv2 .
+    ?inv1 feg:muscle ?muscle ;
+          feg:degree ?degree .
+    ?inv2 feg:muscle ?muscle ;
+          feg:degree ?degree .
+    ?inv2 ?p ?o .
+    FILTER (str(?inv1) < str(?inv2))
+}

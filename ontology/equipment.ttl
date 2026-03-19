@@ -1,0 +1,92 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - Equipment
+###################
+
+feg:EquipmentVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "0.1.0" ;
+.
+
+
+feg:Bands
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bands" ;
+    skos:altLabel "Resistance Bands" ;
+    rdfs:comment "Elastic resistance bands used to add or accommodate load." ;
+.
+
+feg:Barbell
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Barbell" ;
+    rdfs:comment "A long straight bar loaded with weight plates on each end." ;
+.
+
+feg:Bodyweight
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bodyweight" ;
+    skos:altLabel "Body Only" ;
+    rdfs:comment "No external equipment; the exercise uses the athlete's own body mass as resistance." ;
+.
+
+feg:Cable
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Cable" ;
+    rdfs:comment "A pulley-based cable machine providing constant tension through the range of motion." ;
+.
+
+feg:Dumbbell
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Dumbbell" ;
+    rdfs:comment "A short hand-held weight, typically used in pairs." ;
+.
+
+feg:EZCurlBar
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "EZ Curl Bar" ;
+    skos:altLabel "E-Z Curl Bar" ;
+    rdfs:comment "A short angled barbell designed to reduce wrist strain during curling movements." ;
+.
+
+feg:ExerciseBall
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Exercise Ball" ;
+    skos:altLabel "Stability Ball" ;
+    rdfs:comment "A large inflatable ball used to introduce instability or support in exercises." ;
+.
+
+feg:FoamRoller
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Foam Roller" ;
+    skos:altLabel "Foam Roll" ;
+    rdfs:comment "A cylindrical foam implement used for self-myofascial release." ;
+.
+
+feg:Kettlebell
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Kettlebell" ;
+    skos:altLabel "Kettlebells" ;
+    rdfs:comment "A cast-iron weight with a handle, suited to ballistic and grind movements." ;
+.
+
+feg:Machine
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Machine" ;
+    rdfs:comment "A guided resistance machine that constrains the movement path." ;
+.
+
+feg:MedicineBall
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Medicine Ball" ;
+    rdfs:comment "A weighted ball used for throwing, catching, and rotational exercises." ;
+.
+
+feg:Other
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Other" ;
+    rdfs:comment "Equipment not covered by the current vocabulary. Indicates a known gap in the source dataset." ;
+.

@@ -1,0 +1,2961 @@
+[
+  {
+    "id": "90_90_Hamstring",
+    "name": "90/90 Hamstring",
+    "instructions": "Lie on your back, with one leg extended straight out. With the other leg, bend the hip and knee to 90 degrees. You may brace your leg with your hands if necessary. This will be your starting position. Extend your leg straight into the air, pausing briefly at the top. Return the leg to the starting position. Repeat for 10-20 repetitions, and then switch to the other leg.",
+    "source_muscles": {
+      "primary": [
+        "hamstrings"
+      ],
+      "secondary": [
+        "calves"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Ab_Roller",
+    "name": "Ab Roller",
+    "instructions": "Hold the Ab Roller with both hands and kneel on the floor. Now place the ab roller on the floor in front of you so that you are on all your hands and knees (as in a kneeling push up position). This will be your starting position. Slowly roll the ab roller straight forward, stretching your body into a straight position. Tip: Go down as far as you can without touching the floor with your body. Breathe in during this portion of the movement. After a pause at the stretched position, start pulling yourself back to the starting position as you breathe out. Tip: Go slowly and keep your abs tight at all times.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": [
+        "shoulders"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "TrunkStability"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LatissimusDorsi",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Adductor",
+    "name": "Adductor",
+    "instructions": "Lie face down with one leg on a foam roll. Rotate the leg so that the foam roll contacts against your inner thigh. Shift as much weight onto the foam roll as can be tolerated. While trying to relax the muscles if the inner thigh, roll over the foam between your hip and knee, holding points of tension for 10-30 seconds. Repeat with the other leg.",
+    "source_muscles": {
+      "primary": [
+        "adductors"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "SoftTissue"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "AdductorLongus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AdductorBrevis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AdductorMagnus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gracilis",
+          "degree": "PrimeMover"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Adductor_Groin",
+    "name": "Adductor/Groin",
+    "instructions": "Lie on your back with your feet raised towards the ceiling. Have your partner hold your feet or ankles. Abduct your legs as far as you can. This will be your starting position. Attempt to squeeze your legs together for 10 or more seconds, while your partner prevents you from doing so. Now, relax the muscles in your legs as your partner pushes your feet apart, stretching as far as is comfortable for you. Be sure to let your partner know when the stretch is adequate to prevent overstretching or injury.",
+    "source_muscles": {
+      "primary": [
+        "adductors"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "AdductorLongus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AdductorBrevis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AdductorMagnus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gracilis",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Advanced_Kettlebell_Windmill",
+    "name": "Advanced Kettlebell Windmill",
+    "instructions": "Clean and press a kettlebell overhead with one arm. Keeping the kettlebell locked out at all times, push your butt out in the direction of the locked out kettlebell. Keep the non-working arm behind your back and turn your feet out at a forty-five degree angle from the arm with the kettlebell. Lower yourself as far as possible. Pause for a second and reverse the motion back to the starting position.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": [
+        "glutes",
+        "hamstrings",
+        "shoulders"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge",
+        "VerticalPush",
+        "TrunkStability"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "Obliques",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "QuadratusLumborum",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "All_Fours_Quad_Stretch",
+    "name": "All Fours Quad Stretch",
+    "instructions": "Start off on your hands and knees, then lift your leg off the floor and hold the foot with your hand. Use your hand to hold the foot or ankle, keeping the knee fully flexed, stretching the quadriceps and hip flexors. Focus on extending your hips, thrusting them towards the floor. Hold for 10-20 seconds and then switch sides.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "quadriceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Iliopsoas",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternate_Hammer_Curl",
+    "name": "Alternate Hammer Curl",
+    "instructions": "Stand up with your torso upright and a dumbbell in each hand being held at arms length. The elbows should be close to the torso. The palms of the hands should be facing your torso. This will be your starting position. While holding the upper arm stationary, curl the right weight forward while contracting the biceps as you breathe out. Continue the movement until your biceps is fully contracted and the dumbbells are at shoulder level. Hold the contracted position for a second as you squeeze the biceps. Tip: Only the forearms should move. Slowly begin to bring the dumbbells back to starting position as your breathe in. Repeat the movement with the left hand. This equals one repetition. Continue alternating in this manner for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "biceps"
+      ],
+      "secondary": [
+        "forearms"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Pull"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternate_Incline_Dumbbell_Curl",
+    "name": "Alternate Incline Dumbbell Curl",
+    "instructions": "Sit down on an incline bench with a dumbbell in each hand being held at arms length. Tip: Keep the elbows close to the torso.This will be your starting position. While holding the upper arm stationary, curl the right weight forward while contracting the biceps as you breathe out. As you do so, rotate the hand so that the palm is facing up. Continue the movement until your biceps is fully contracted and the dumbbells are at shoulder level. Hold the contracted position for a second as you squeeze the biceps. Tip: Only the forearms should move. Slowly begin to bring the dumbbell back to starting position as your breathe in. Repeat the movement with the left hand. This equals one repetition. Continue alternating in this manner for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "biceps"
+      ],
+      "secondary": [
+        "forearms"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Pull"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsLongHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsShortHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternate_Leg_Diagonal_Bound",
+    "name": "Alternate Leg Diagonal Bound",
+    "instructions": "Assume a comfortable stance with one foot slightly in front of the other. Begin by pushing off with the front leg, driving the opposite knee forward and as high as possible before landing. Attempt to cover as much distance to each side with each bound. It may help to use a line on the ground to guage distance from side to side. Repeat the sequence with the other leg.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "abductors",
+        "adductors",
+        "calves",
+        "glutes",
+        "hamstrings"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Locomotion"
+      ],
+      "training_modalities": [
+        "Plyometrics"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMinimus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TensorFasciaeLatae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorLongus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorBrevis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorMagnus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Cable_Shoulder_Press",
+    "name": "Alternating Cable Shoulder Press",
+    "instructions": "Move the cables to the bottom of the tower and select an appropriate weight. Grasp the cables and hold them at shoulder height, palms facing forward. This will be your starting position. Keeping your head and chest up, extend through the elbow to press one side directly over head. After pausing at the top, return to the starting position and repeat on the opposite side.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Deltoid_Raise",
+    "name": "Alternating Deltoid Raise",
+    "instructions": "In a standing position, hold a pair of dumbbells at your side. Keeping your elbows slightly bent, raise the weights directly in front of you to shoulder height, avoiding any swinging or cheating. Return the weights to your side. On the next repetition, raise the weights laterally, raising them out to your side to about shoulder height. Return the weights to the starting position and continue alternating to the front and side.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Floor_Press",
+    "name": "Alternating Floor Press",
+    "instructions": "Lie on the floor with two kettlebells next to your shoulders. Position one in place on your chest and then the other, gripping the kettlebells on the handle with the palms facing forward. Extend both arms, so that the kettlebells are being held above your chest. Lower one kettlebell, bringing it to your chest and turn the wrist in the direction of the locked out kettlebell. Raise the kettlebell and repeat on the opposite side.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "abdominals",
+        "shoulders",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Hang_Clean",
+    "name": "Alternating Hang Clean",
+    "instructions": "Place two kettlebells between your feet. To get in the starting position, push your butt back and look straight ahead. Clean one kettlebell to your shoulder and hold on to the other kettlebell in a hanging position. Clean the kettlebell to your shoulder by extending through the legs and hips as you pull the kettlebell towards your shoulders. Rotate your wrist as you do so. Lower the cleaned kettlebell to a hanging position and clean the alternate kettlebell. Repeat.",
+    "source_muscles": {
+      "primary": [
+        "hamstrings"
+      ],
+      "secondary": [
+        "biceps",
+        "calves",
+        "forearms",
+        "glutes",
+        "lower back",
+        "traps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge"
+      ],
+      "training_modalities": [
+        "Plyometrics"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Kettlebell_Press",
+    "name": "Alternating Kettlebell Press",
+    "instructions": "Clean two kettlebells to your shoulders. Clean the kettlebells to your shoulders by extending through the legs and hips as you pull the kettlebells towards your shoulders. Rotate your wrists as you do so. Press one directly overhead by extending through the elbow, turning it so the palm faces forward while holding the other kettlebell stationary . Lower the pressed kettlebell to the starting position and immediately press with your other arm.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PosteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Ankle_Circles",
+    "name": "Ankle Circles",
+    "instructions": "Use a sturdy object like a squat rack to hold yourself. Lift the right leg in the air (just around 2 inches from the floor) and perform a circular motion with the big toe. Pretend that you are drawing a big circle with it. Tip: One circle equals 1 repetition. Breathe normally as you perform the movement. When you are done with the right foot, then repeat with the left leg.",
+    "source_muscles": {
+      "primary": [
+        "calves"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TibialisAnterior",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Ankle_On_The_Knee",
+    "name": "Ankle On The Knee",
+    "instructions": "From a lying position, bend your knees and keep your feet on the floor. Place your ankle of one foot on your opposite knee. Grasp the thigh or knee of the bottom leg and pull both of your legs into the chest. Relax your neck and shoulders. Hold for 10-20 seconds and then switch sides.",
+    "source_muscles": {
+      "primary": [
+        "glutes"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Psoas",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Anterior_Tibialis-SMR",
+    "name": "Anterior Tibialis-SMR",
+    "instructions": "Begin seated on the ground with your legs bent and your feet on the floor. Using a Muscle Roller or a rolling pin, apply pressure to the muscles on the outside of your shins. Work from just below the knee to above the ankle, pausing at points of tension for 10-30 seconds. Repeat on the other leg.",
+    "source_muscles": {
+      "primary": [
+        "calves"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "SoftTissue"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "TibialisAnterior",
+          "degree": "PrimeMover"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Arm_Circles",
+    "name": "Arm Circles",
+    "instructions": "Stand up and extend your arms straight out by the sides. The arms should be parallel to the floor and perpendicular (90-degree angle) to your torso. This will be your starting position. Slowly start to make circles of about 1 foot in diameter with each outstretched arm. Breathe normally as you perform the movement. Continue the circular motion of the outstretched arms for about ten seconds. Then reverse the movement, going the opposite direction.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "traps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "PosteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Arnold_Dumbbell_Press",
+    "name": "Arnold Dumbbell Press",
+    "instructions": "Sit on an exercise bench with back support and hold two dumbbells in front of you at about upper chest level with your palms facing your body and your elbows bent. Tip: Your arms should be next to your torso. The starting position should look like the contracted portion of a dumbbell curl. Now to perform the movement, raise the dumbbells as you rotate the palms of your hands until they are facing forward. Continue lifting the dumbbells until your arms are extended above you in straight arm position. Breathe out as you perform this portion of the movement. After a second pause at the top, begin to lower the dumbbells to the original position by rotating the palms of your hands towards you. Tip: The left arm will be rotated in a counter clockwise manner while the right one will be rotated clockwise. Breathe in as you perform this portion of the movement. Repeat for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Around_The_Worlds",
+    "name": "Around The Worlds",
+    "instructions": "Lay down on a flat bench holding a dumbbell in each hand with the palms of the hands facing towards the ceiling. Tip: Your arms should be parallel to the floor and next to your thighs. To avoid injury, make sure that you keep your elbows slightly bent. This will be your starting position. Now move the dumbbells by creating a semi-circle as you displace them from the initial position to over the head. All of the movement should happen with the arms parallel to the floor at all times. Breathe in as you perform this portion of the movement. Reverse the movement to return the weight to the starting position as you exhale.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "shoulders"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "SternalHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "ClavicularHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "SerratusAnterior",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Atlas_Stone_Trainer",
+    "name": "Atlas Stone Trainer",
+    "instructions": "This trainer is effective for developing Atlas Stone strength for those who don't have access to stones, and are typically made from bar ends or heavy pipe. Begin by loading the desired weight onto the bar. Straddle the weight, wrapping your arms around the implement, bending at the hips. Begin by pulling the weight up past the knees, extending through the hips. As the weight clears the knees, it can be lapped by resting it on your thighs and sitting back, hugging it tightly to your chest. Finish the movement by extending through your hips and knees to raise the weight as high as possible. The weight can be returned to the lap or to the ground for successive repetitions.",
+    "source_muscles": {
+      "primary": [
+        "lower back"
+      ],
+      "secondary": [
+        "biceps",
+        "forearms",
+        "glutes",
+        "hamstrings",
+        "quadriceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Atlas_Stones",
+    "name": "Atlas Stones",
+    "instructions": "Begin with the atlas stone between your feet. Bend at the hips to wrap your arms vertically around the Atlas Stone, attempting to get your fingers underneath the stone. Many stones will have a small flat portion on the bottom, which will make the stone easier to hold. Pulling the stone into your torso, drive through the back half of your feet to pull the stone from the ground. As the stone passes the knees, lap it by sitting backward, pulling the stone on top of your thighs. Sit low, getting the stone high onto your chest as you change your grip to reach over the stone. Stand, driving through with your hips. Close distance to the loading platform, and lean back, extending the hips to get the stone as high as possible.",
+    "source_muscles": {
+      "primary": [
+        "lower back"
+      ],
+      "secondary": [
+        "abdominals",
+        "adductors",
+        "biceps",
+        "calves",
+        "forearms",
+        "glutes",
+        "hamstrings",
+        "middle back",
+        "quadriceps",
+        "traps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge",
+        "Carry"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorMagnus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorLongus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AdductorBrevis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Rhomboids",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "QuadratusLumborum",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Axle_Deadlift",
+    "name": "Axle Deadlift",
+    "instructions": "Approach the bar so that it is centered over your feet. You feet should be about hip width apart. Bend at the hip to grip the bar at shoulder width, allowing your shoulder blades to protract. Typically, you would use an over/under grip. With your feet and your grip set, take a big breath and then lower your hips and flex the knees until your shins contact the bar. Look forward with your head, keep your chest up and your back arched, and begin driving through the heels to move the weight upward. After the bar passes the knees, aggressively pull the bar back, pulling your shoulder blades together as you drive your hips forward into the bar. Lower the bar by bending at the hips and guiding it to the floor.",
+    "source_muscles": {
+      "primary": [
+        "lower back"
+      ],
+      "secondary": [
+        "forearms",
+        "glutes",
+        "hamstrings",
+        "middle back",
+        "quadriceps",
+        "traps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LatissimusDorsi",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Rhomboids",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "WristExtensors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "3_4_Sit-Up",
+    "name": "3/4 Sit-Up",
+    "instructions": "Lie down on the floor and secure your feet. Your legs should be bent at the knees. Place your hands behind or to the side of your head. You will begin with your back on the ground. This will be your starting position. Flex your hips and spine to raise your torso toward your knees. At the top of the contraction your torso should be perpendicular to the ground. Reverse the motion, going only \u00be of the way down. Repeat for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "TrunkStability"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Iliopsoas",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Ab_Crunch_Machine",
+    "name": "Ab Crunch Machine",
+    "instructions": "Select a light resistance and sit down on the ab machine placing your feet under the pads provided and grabbing the top handles. Your arms should be bent at a 90 degree angle as you rest the triceps on the pads provided. This will be your starting position. At the same time, begin to lift the legs up as you crunch your upper torso. Breathe out as you perform this movement. Tip: Be sure to use a slow and controlled motion. Concentrate on using your abs to move the weight while relaxing your legs and feet. After a second pause, slowly return to the starting position as you breathe in. Repeat the movement for the prescribed amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "TrunkStability"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Psoas",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Air_Bike",
+    "name": "Air Bike",
+    "instructions": "Lie flat on the floor with your lower back pressed to the ground. For this exercise, you will need to put your hands beside your head. Be careful however to not strain with the neck as you perform it. Now lift your shoulders into the crunch position. Bring knees up to where they are perpendicular to the floor, with your lower legs parallel to the floor. This will be your starting position. Now simultaneously, slowly go through a cycle pedal motion kicking forward with the right leg and bringing in the knee of the left leg. Bring your right elbow close to your left knee by crunching to the side, as you breathe out. Go back to the initial position as you breathe in. Crunch to the opposite side as you cycle your legs and bring closer your left elbow to your right knee and exhale. Continue alternating in this manner until all of the recommended repetitions for each side have been completed.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "TrunkStability",
+        "Rotation"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TensorFasciaeLatae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Iliopsoas",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternate_Heel_Touchers",
+    "name": "Alternate Heel Touchers",
+    "instructions": "Lie on the floor with the knees bent and the feet on the floor around 18-24 inches apart. Your arms should be extended by your side. This will be your starting position. Crunch over your torso forward and up about 3-4 inches to the right side and touch your right heel as you hold the contraction for a second. Exhale while performing this movement. Now go back slowly to the starting position as you inhale. Now crunch over your torso forward and up around 3-4 inches to the left side and touch your left heel as you hold the contraction for a second. Exhale while performing this movement and then go back to the starting position as you inhale. Now that both heels have been touched, that is considered 1 repetition. Continue alternating sides in this manner until all prescribed repetitions are done.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Rotation"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "Obliques",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Anti-Gravity_Press",
+    "name": "Anti-Gravity Press",
+    "instructions": "Place a bar on the ground behind the head of an incline bench. Lay on the bench face down. With a pronated grip, pick the barbell up from the floor. Flex the elbows, performing a reverse curl to bring the bar near your chest. This will be your starting position. To begin, press the barbell out in front of your head by extending your elbows. Keep your arms parallel to the ground throughout the movement. Return to the starting position and repeat to complete the set.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "middle back",
+        "traps",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Rhomboids",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Kettlebell_Row",
+    "name": "Alternating Kettlebell Row",
+    "instructions": "Place two kettlebells in front of your feet. Bend your knees slightly and push your butt out as much as possible. As you bend over to get into the starting position grab both kettlebells by the handles. Pull one kettlebell off of the floor while holding on to the other kettlebell. Retract the shoulder blade of the working side, as you flex the elbow, drawing the kettlebell towards your stomach or rib cage. Lower the kettlebell in the working arm and repeat with your other arm.",
+    "source_muscles": {
+      "primary": [
+        "middle back"
+      ],
+      "secondary": [
+        "biceps",
+        "lats"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPull"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RhomboidMajor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RhomboidMinor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LatissimusDorsi",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PosteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Alternating_Renegade_Row",
+    "name": "Alternating Renegade Row",
+    "instructions": "Place two kettlebells on the floor about shoulder width apart. Position yourself on your toes and your hands as though you were doing a pushup, with the body straight and extended. Use the handles of the kettlebells to support your upper body. You may need to position your feet wide for support. Push one kettlebell into the floor and row the other kettlebell, retracting the shoulder blade of the working side as you flex the elbow, pulling it to your side. Then lower the kettlebell to the floor and begin the kettlebell in the opposite hand. Repeat for several reps.",
+    "source_muscles": {
+      "primary": [
+        "middle back"
+      ],
+      "secondary": [
+        "abdominals",
+        "biceps",
+        "chest",
+        "lats",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPull",
+        "TrunkStability"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RhomboidMajor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RhomboidMinor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LatissimusDorsi",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PosteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Calf_Stretch_Hands_Against_Wall",
+    "name": "Calf Stretch Hands Against Wall",
+    "instructions": "Stand facing a wall from several feet away. Stagger your stance, placing one foot forward. Lean forward and rest your hands on the wall, keeping your heel, hip and head in a straight line. Attempt to keep your heel on the ground. Hold for 10-20 seconds and then switch sides.",
+    "source_muscles": {
+      "primary": [
+        "calves"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Lying_Hamstring",
+    "name": "Lying Hamstring",
+    "instructions": "Lie on your back with your legs extended. Your partner should be kneeling beside you. Raise one leg up towards the ceiling and have your partner hold the ankle. Your partner can use their shoulder to brace your leg if necessary. This will be your starting position. With your partner holding your leg in place, attempt to flex the knee, contracting the hamstrings for 10-20 seconds. Then relax your leg, allowing your partner to gently push the leg towards your head. Be sure to inform your helper when the stretch is adequate to prevent injury or overstretching. Switch sides once complete.",
+    "source_muscles": {
+      "primary": [
+        "hamstrings"
+      ],
+      "secondary": [
+        "calves"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Dumbbell_Side_Bend",
+    "name": "Dumbbell Side Bend",
+    "instructions": "Stand up straight while holding a dumbbell on the left hand (palms facing the torso) as you have the right hand holding your waist. Your feet should be placed at shoulder width. This will be your starting position. While keeping your back straight and your head up, bend only at the waist to the right as far as possible. Breathe in as you bend to the side. Then hold for a second and come back up to the starting position as you exhale. Tip: Keep the rest of the body stationary. Now repeat the movement but bending to the left instead. Hold for a second and come back to the starting position. Repeat for the recommended amount of repetitions and then change hands.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Rotation"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "Obliques",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "QuadratusLumborum",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Seated_Hamstring_and_Calf_Stretch",
+    "name": "Seated Hamstring and Calf Stretch",
+    "instructions": "Loop a belt, rope, or band around one foot. Sit down with both legs extended . This will be your starting position. Leaning forward slightly, pull on the belt to draw the toes of your foot back. Hold this position for 10-20 seconds and then repeat with the other leg.",
+    "source_muscles": {
+      "primary": [
+        "hamstrings"
+      ],
+      "secondary": [
+        "calves"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Wide-Grip_Barbell_Bench_Press",
+    "name": "Wide-Grip Barbell Bench Press",
+    "instructions": "Lie back on a flat bench with feet firm on the floor. Using a wide, pronated (palms forward) grip that is around 3 inches away from shoulder width (for each hand), lift the bar from the rack and hold it straight over you with your arms locked. The bar will be perpendicular to the torso and the floor. This will be your starting position. As you breathe in, come down slowly until you feel the bar on your middle chest. After a second pause, bring the bar back to the starting position as you breathe out and push the bar using your chest muscles. Lock your arms and squeeze your chest in the contracted position, hold for a second and then start coming down slowly again. Tip: It should take at least twice as long to go down than to come up. Repeat the movement for the prescribed amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "shoulders",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "SternalHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "ClavicularHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "SerratusAnterior",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PectoralisMinor",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "One_Leg_Barbell_Squat",
+    "name": "One Leg Barbell Squat",
+    "instructions": "Start by standing about 2 to 3 feet in front of a flat bench with your back facing the bench. Have a barbell in front of you on the floor. Tip: Your feet should be shoulder width apart from each other. Bend the knees and use a pronated grip with your hands being wider than shoulder width apart from each other to lift the barbell up until you can rest it on your chest. Then lift the barbell over your head and rest it on the base of your neck. Move one foot back so that your toe is resting on the flat bench. Your other foot should be stationary in front of you. Keep your head up at all times as looking down will get you off balance and also maintain a straight back. Tip: Make sure your back is straight and chest is out while performing this exercise. As you inhale, slowly lower your leg until your thigh is parallel to the floor. At this point, your knee should be over your toes. Your chest should be directly above the middle of your thigh. Leading with the chest and hips and contracting the quadriceps, elevate your leg back to the starting position as you exhale. Repeat for the recommended amount of repetitions. Switch legs and repeat the movement.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "calves",
+        "glutes",
+        "hamstrings"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "SplitSquat"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMinimus",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Seated_Floor_Hamstring_Stretch",
+    "name": "Seated Floor Hamstring Stretch",
+    "instructions": "Sit on a mat with your right leg extended in front of you and your left leg bent with your foot against your right inner thigh. Lean forward from your hips and reach for your ankle until you feel a stretch in your hamstring. Hold for 15 seconds, then repeat for your other side.",
+    "source_muscles": {
+      "primary": [
+        "hamstrings"
+      ],
+      "secondary": [
+        "calves"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Rear_Leg_Raises",
+    "name": "Rear Leg Raises",
+    "instructions": "Place yourself on your hands knees on an exercise mat. Your head should be looking forward and the bend of the knees should create a 90-degree angle between the hamstrings and the calves. This will be your starting position. Extend one leg up and behind you. The knee and hip should both extend. Repeat for 5-10 repetitions, and then switch sides.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Clean_and_Press",
+    "name": "Clean and Press",
+    "instructions": "Assume a shoulder-width stance, with knees inside the arms. Now while keeping the back flat, bend at the knees and hips so that you can grab the bar with the arms fully extended and a pronated grip that is slightly wider than shoulder width. Point the elbows out to sides. The bar should be close to the shins. Position the shoulders over or slightly ahead of the bar. Establish a flat back posture. This will be your starting position. Begin to pull the bar by extending the knees. Move your hips forward and raise the shoulders at the same rate while keeping the angle of the back constant; continue to lift the bar straight up while keeping it close to your body. As the bar passes the knee, extend at the ankles, knees, and hips forcefully, similar to a jumping motion. As you do so, continue to guide the bar with your hands, shrugging your shoulders and using the momentum from your movement to pull the bar as high as possible. The bar should travel close to your body, and you should keep your elbows out. At maximum elevation, your feet should clear the floor and you should start to pull yourself under the bar. The mechanics of this could change slightly, depending on the weight used. You should descend into a squatting position as you pull yourself under the bar. As the bar hits terminal height, rotate your elbows around and under the bar. Rack the bar across the front of the shoulders while keeping the torso erect and flexing the hips and knees to absorb the weight of the bar. Stand to full height, holding the bar in the clean position. Without moving your feet, press the bar overhead as you exhale. Lower the bar under control .",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "abdominals",
+        "calves",
+        "glutes",
+        "hamstrings",
+        "lower back",
+        "middle back",
+        "quadriceps",
+        "shoulders",
+        "traps",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge",
+        "Squat",
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PosteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Rhomboids",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Seated_Palm-Up_Barbell_Wrist_Curl",
+    "name": "Seated Palm-Up Barbell Wrist Curl",
+    "instructions": "Hold a barbell with both hands and your palms facing up; hands spaced about shoulder width. Place your feet flat on the floor, at a distance that is slightly wider than shoulder width apart. Lean forward and place your forearms on top of your upper thighs with your palms up. Tip: Make sure that the front of the wrists lay on top of your knees. This will be your starting position. Lower the bar as far as possible while inhaling and keeping a tight grip. Now curl bar up as high as possible while flexing the forearms and exhaling. Hold the contraction at the top for a second and Tip: Only the wrist should move.",
+    "source_muscles": {
+      "primary": [
+        "forearms"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Pull"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "WristFlexors",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Overhead_Slam",
+    "name": "Overhead Slam",
+    "instructions": "Hold a medine ball with both hands and stand with your feet at shoulder width. This will be your starting position. Initiate the countermovement by raising the ball above your head and fully extending your body. Reverse the motion, slamming the ball into the ground directly in front of you as hard as you can. Receive the ball with both hands on the bounce and repeat the movement.",
+    "source_muscles": {
+      "primary": [
+        "lats"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "VerticalPull",
+        "TrunkStability"
+      ],
+      "training_modalities": [
+        "Plyometrics"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "LatissimusDorsi",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Sit-Up",
+    "name": "Sit-Up",
+    "instructions": "Lie down on the floor placing your feet either under something that will not move or by having a partner hold them. Your legs should be bent at the knees. Place your hands behind your head and lock them together by clasping your fingers. This is the starting position. Elevate your upper body so that it creates an imaginary V-shape with your thighs. Breathe out when performing this part of the exercise. Once you feel the contraction for a second, lower your upper body back down to the starting position while inhaling. Repeat for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "abdominals"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "TrunkStability"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusAbdominis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Obliques",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TransverseAbdominis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Iliopsoas",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Smith_Machine_Pistol_Squat",
+    "name": "Smith Machine Pistol Squat",
+    "instructions": "To begin, first set the bar to a position that best matches your height. Step under it and position the bar across the back of your shoulders. Take the bar with your hands facing forward, unlock it and lift it off the rack by extending your legs. 3 Move one foot forward about 12 inches in front of the bar. Extend the other leg out in front of you, holding it off the ground. Look forward at all times and maintain a neutral or slightly arched spine. This will be your starting position. Maintaining good posture, lower yourself by flexing the knee and hip, going down as far as flexibility allows. Pause briefly at the bottom and then return to the starting position by driving through the heel of your foot, extending the knee and hip.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "calves",
+        "glutes",
+        "hamstrings"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Squat"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMinimus",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Standing_Soleus_And_Achilles_Stretch",
+    "name": "Standing Soleus And Achilles Stretch",
+    "instructions": "Stand with your feet hip-distance apart, one foot slightly in front of the other. Bend both knees, keeping your back heel on the floor. Switch sides.",
+    "source_muscles": {
+      "primary": [
+        "calves"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Mobility"
+      ],
+      "training_modalities": [
+        "Mobility"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "Soleus",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        }
+      ],
+      "is_unilateral": true
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Incline_Cable_Flye",
+    "name": "Incline Cable Flye",
+    "instructions": "To get yourself into the starting position, set the pulleys at the floor level (lowest level possible on the machine that is below your torso). Place an incline bench (set at 45 degrees) in between the pulleys, select a weight on each one and grab a pulley on each hand. With a handle on each hand, lie on the incline bench and bring your hands together at arms length in front of your face. This will be your starting position. With a slight bend of your elbows (in order to prevent stress at the biceps tendon), lower your arms out at both sides in a wide arc until you feel a stretch on your chest. Breathe in as you perform this portion of the movement. Tip: Keep in mind that throughout the movement, the arms should remain stationary. The movement should only occur at the shoulder joint. Return your arms back to the starting position as you squeeze your chest muscles and exhale. Hold the contracted position for a second. Tip: Make sure to use the same arc of motion used to lower the weights. Repeat the movement for the prescribed amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "shoulders"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "ClavicularHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "SternalHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "PectoralisMinor",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "SerratusAnterior",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Isometric_Chest_Squeezes",
+    "name": "Isometric Chest Squeezes",
+    "instructions": "While either seating or standing, bend your arms at a 90-degree angle and place the palms of your hands together in front of your chest. Tip: Your hands should be open with the palms together and fingers facing forward (perpendicular to your torso). Push both hands against each other as you contract your chest. Start with slow tension and increase slowly. Keep breathing normally as you execute this contraction. Hold for the recommended number of seconds. Now release the tension slowly. Rest for the recommended amount of time and repeat.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "shoulders",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Hang_Clean_-_Below_the_Knees",
+    "name": "Hang Clean - Below the Knees",
+    "instructions": "Begin with a shoulder width, double overhand or hook grip, with the bar hanging just below the knees. Your back should be straight and inclined slightly forward. Begin by aggressively extending through the hips, knees and ankles, driving the weight upward. As you do so, shrug your shoulders towards your ears. As full extension is achieved, transition into the third pull by aggressively shrugging and flexing the arms with the elbows up and out. At peak extension, aggressively pull yourself down, rotating your elbows under the bar as you do so. Receive the bar in a front squat position, the depth of which is dependent upon the height of the bar at the end of the third pull. The bar should be racked onto the protracted shoulders, lightly touching the throat with the hands relaxed. Continue to descend to the bottom squat position, which will help in the recovery. Immediately recover by driving through the heels, keeping the torso upright and elbows up. Continue until you have risen to a standing position.",
+    "source_muscles": {
+      "primary": [
+        "quadriceps"
+      ],
+      "secondary": [
+        "calves",
+        "forearms",
+        "glutes",
+        "hamstrings",
+        "lower back",
+        "shoulders",
+        "traps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HipHinge",
+        "Squat",
+        "VerticalPush"
+      ],
+      "training_modalities": [
+        "Strength"
+      ],
+      "muscle_involvements": [
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsFemoris",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semitendinosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Semimembranosus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "MiddleTrapezius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Gastrocnemius",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Soleus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "BicepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Brachialis",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "WristFlexors",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Brachioradialis",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "LowerTrapezius",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Cable_Incline_Triceps_Extension",
+    "name": "Cable Incline Triceps Extension",
+    "instructions": "Lie on incline an bench facing away from a high pulley machine that has a straight bar attachment on it. Grasp the straight bar attachment overhead with a pronated (overhand; palms down) narrow grip (less than shoulder width) and keep your elbows tucked in to your sides. Your upper arms should create around a 25 degree angle when measured from the floor. Keeping the upper arms stationary, extend the arms as you flex the triceps. Breathe out during this portion of the movement and hold the contraction for a second. Slowly go back to the starting position. Repeat for the recommended amount of repetitions.",
+    "source_muscles": {
+      "primary": [
+        "triceps"
+      ],
+      "secondary": []
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Push"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Incline_Push-Up_Wide",
+    "name": "Incline Push-Up Wide",
+    "instructions": "Stand facing a Smith machine bar or sturdy elevated platform at an appropriate height. Place your hands on the bar, with your hands wider than shoulder width. Position your feet back from the bar with arms and body straight. Your arms should be perpendicular to the body. This will be your starting position. Keeping your body straight, lower your chest to the bar by bending the arms. Return to the starting position by extending the elbows, pressing yourself back up.",
+    "source_muscles": {
+      "primary": [
+        "chest"
+      ],
+      "secondary": [
+        "abdominals",
+        "shoulders",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "HorizontalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "PectoralisMajor",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsBrachii",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "SerratusAnterior",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  },
+  {
+    "id": "Kettlebell_Thruster",
+    "name": "Kettlebell Thruster",
+    "instructions": "Clean two kettlebells to your shoulders. Clean the kettlebells to your shoulders by extending through the legs and hips as you pull the kettlebells towards your shoulders. Rotate your wrists as you do so. This will be your starting position. Begin to squat by flexing your hips and knees, lowering your hips between your legs. Maintain an upright, straight back as you descend as low as you can. At the bottom, reverse direction and squat by extending your knees and hips, driving through your heels. As you do so, press both kettlebells overhead by extending your arms straight up, using the momentum from the squat to help drive the weights upward. As you begin the next repetition, return the weights to the shoulders.",
+    "source_muscles": {
+      "primary": [
+        "shoulders"
+      ],
+      "secondary": [
+        "quadriceps",
+        "triceps"
+      ]
+    },
+    "enrichment": {
+      "movement_patterns": [
+        "Squat",
+        "VerticalPush"
+      ],
+      "training_modalities": [],
+      "muscle_involvements": [
+        {
+          "muscle": "AnteriorDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "LateralDeltoid",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "RectusFemoris",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusLateralis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusMedialis",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "VastusIntermedius",
+          "degree": "PrimeMover"
+        },
+        {
+          "muscle": "TricepsLongHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsLateralHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "TricepsMedialHead",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMaximus",
+          "degree": "Synergist"
+        },
+        {
+          "muscle": "GluteusMedius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "ErectorSpinae",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "Core",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "UpperTrapezius",
+          "degree": "Stabilizer"
+        },
+        {
+          "muscle": "RotatorCuff",
+          "degree": "Stabilizer"
+        }
+      ],
+      "is_unilateral": false
+    },
+    "notes": "",
+    "flag": false
+  }
+]
