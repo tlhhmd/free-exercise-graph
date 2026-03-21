@@ -9,7 +9,7 @@
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph Ontology" ;
     rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
-    owl:versionInfo "0.3.0" ;
+    owl:versionInfo "0.5.0" ;
 .
 
 ###################
@@ -32,6 +32,7 @@ feg:Muscle
     a owl:Class ;
     rdfs:label "Muscle" ;
     rdfs:comment "Superclass for all muscle vocabulary terms. Covers regions, groups, and heads. The feg:muscle property on MuscleInvolvement may point to any level of the hierarchy." ;
+    owl:disjointWith feg:JointAction ;
 .
 
 feg:MuscleRegion
@@ -140,7 +141,25 @@ feg:trainingModality
 feg:jointAction
     a owl:ObjectProperty ;
     rdfs:label "joint action" ;
-    rdfs:comment "Relates an exercise to the mechanical joint actions it produces. An exercise typically involves multiple joint actions. Joint actions are the mechanical precision layer — orthogonal to feg:movementPattern, which is the user-facing navigation layer." ;
+    rdfs:comment "Umbrella property relating an exercise to its mechanical joint actions. In data, use feg:primaryJointAction or feg:supportingJointAction rather than this property directly. Queries over feg:jointAction will match both subproperties when RDFS inference is active." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction ;
+.
+
+feg:primaryJointAction
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf feg:jointAction ;
+    rdfs:label "primary joint action" ;
+    rdfs:comment "A joint action that directly produces the exercise's defining movement. These are the actions being trained — the mechanical reason the exercise exists. Assign only the actions that constitute the defining stimulus. An exercise typically has 1–3 primary joint actions. Leaf-level concepts only — do not assign joint grouping nodes." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction ;
+.
+
+feg:supportingJointAction
+    a owl:ObjectProperty ;
+    rdfs:subPropertyOf feg:jointAction ;
+    rdfs:label "supporting joint action" ;
+    rdfs:comment "A joint action that contributes meaningfully to the exercise but is not its defining stimulus. Assign only actions relevant for substitution, fatigue, or coordination — not a complete biomechanical inventory. When in doubt, omit. An exercise typically has 0–3 supporting joint actions. Leaf-level concepts only." ;
     rdfs:domain feg:Exercise ;
     rdfs:range feg:JointAction ;
 .

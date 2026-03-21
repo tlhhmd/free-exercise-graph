@@ -9,7 +9,7 @@ Downloads exercises.json from the upstream GitHub repository and writes it to
 raw/exercises.json (relative to this script). The destination file is treated
 as read-only source data — do not modify it manually.
 
-Source URL is documented in sources/free-exercise-db/catalog/catalog.ttl
+Source URL is documented in sources/free-exercise-db/catalog.ttl
 (dcat:downloadURL on the feg:SourceDistribution resource).
 """
 

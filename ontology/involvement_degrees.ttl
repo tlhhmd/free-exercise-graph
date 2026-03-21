@@ -8,14 +8,14 @@
 
 feg:InvolvementDegreeVocabulary
     a owl:Ontology ;
-    owl:versionInfo "0.2.0" ;
+    owl:versionInfo "0.2.2" ;
 .
 
 
 feg:PrimeMover
     a owl:NamedIndividual, feg:InvolvementDegree ;
     rdfs:label "Prime Mover" ;
-    rdfs:comment "The muscle or muscles primarily responsible for producing the movement in an exercise. The prime mover is the intended target of the exercise." ;
+    rdfs:comment "The muscle whose primary biomechanical action directly produces the exercise's defining joint action(s). The prime mover is the intended training target — the muscle the exercise is designed to develop. A muscle that is active but contributes via a secondary action should be Synergist instead. Example: LateralDeltoid's primary action is shoulder abduction; it should not be PrimeMover on a pressing or throwing exercise where ShoulderFlexion is the defining action. When multiple muscles share the same primary joint action (e.g. all four quadriceps heads all producing KneeExtension), all may be PrimeMover — they will be consolidated into the parent group post-ingestion by repair_04. Exception for explosive hip extension movements (cleans, snatches, jumps): GluteusMaximus is the primary PrimeMover. Hamstrings contribute to hip extension but are biarticular and are better classified Synergist in these movements." ;
 .
 
 feg:Synergist

@@ -1,0 +1,61 @@
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf:    <http://xmlns.com/foaf/01/> .
+
+# ─── Source Dataset (upstream) ────────────────────────────────────────────────
+# The raw data fetched by sources/free-exercise-db/fetch.py.
+
+<https://placeholder.url/source/free-exercise-db>
+    a dcat:Dataset ;
+    dcterms:title "free-exercise-db (upstream)"@en ;
+    dcterms:description "Raw exercise JSON from yuhonas/free-exercise-db (~873 exercises). Fetched as-is; not modified."@en ;
+    dcterms:license <https://unlicense.org/> ;
+    dcterms:publisher <https://github.com/yuhonas> ;
+    dcat:distribution <https://placeholder.url/source/free-exercise-db/distribution> ;
+.
+
+<https://placeholder.url/source/free-exercise-db/distribution>
+    a dcat:Distribution ;
+    dcterms:title "exercises.json — upstream dist snapshot"@en ;
+    dcat:mediaType "application/json" ;
+    dcat:downloadURL <https://raw.githubusercontent.com/yuhonas/free-exercise-db/refs/heads/main/dist/exercises.json> ;
+.
+
+# ─── Ingested Dataset ─────────────────────────────────────────────────────────
+# The RDF graph produced by sources/free-exercise-db/ingest.py (morph-KGC YARRRML mapping).
+
+<https://placeholder.url/source/free-exercise-db/ingested>
+    a dcat:Dataset ;
+    dcterms:title "free-exercise-db — ingested RDF"@en ;
+    dcterms:description "RDF Turtle graph produced from exercises.json via YARRRML mappings (morph-KGC). Covers exercise nodes, muscle involvement, and equipment."@en ;
+    dcterms:source <https://placeholder.url/source/free-exercise-db> ;
+    dcat:distribution <https://placeholder.url/source/free-exercise-db/ingested/distribution> ;
+    prov:wasGeneratedBy <https://placeholder.url/source/free-exercise-db/activity/morphkgc-mapping> ;
+.
+
+<https://placeholder.url/source/free-exercise-db/ingested/distribution>
+    a dcat:Distribution ;
+    dcterms:title "ingested.ttl — merged Turtle serialisation"@en ;
+    dcat:mediaType "text/turtle" ;
+    # Relative path — replace with absolute URI before public release.
+    dcat:downloadURL <file:///sources/free-exercise-db/ingested.ttl> ;
+.
+
+# ─── Provenance (PROV-O stub) ─────────────────────────────────────────────────
+
+<https://placeholder.url/source/free-exercise-db/activity/morphkgc-mapping>
+    a prov:Activity ;
+    rdfs:label "morph-KGC YARRRML mapping execution"@en ;
+    prov:used <https://placeholder.url/source/free-exercise-db/distribution> ;
+    prov:generated <https://placeholder.url/source/free-exercise-db/ingested/distribution> ;
+    prov:wasAssociatedWith <https://placeholder.url/agent/morph-kgc> ;
+.
+
+<https://placeholder.url/agent/morph-kgc>
+    a prov:SoftwareAgent ;
+    rdfs:label "morph-KGC"@en ;
+    foaf:homepage <https://morph-kgc.readthedocs.io/> ;
+.

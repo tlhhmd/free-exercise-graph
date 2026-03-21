@@ -7,9 +7,9 @@
 #   sources/free-exercise-db/mappings/muscle_crosswalk.csv  — source string → feg:Muscle URI
 #   sources/free-exercise-db/mappings/equipment_crosswalk.csv — source string → feg:Equipment URI
 #
-# URI conventions (ADR-040):
-#   Exercise:          feg:ex_{id}
-#   MuscleInvolvement: feg:inv_ex_{id}_{feg_local_name}_{degree}
+# URI conventions (ADR-040, ADR-064):
+#   Exercise:          feg:ex_{sanitized_id}
+#   MuscleInvolvement: feg:inv_ex_{sanitized_id}_{feg_local_name}_{degree}
 #   map.py normalises primaryMuscles/secondaryMuscles values to feg_local_name
 #   before morph-KGC runs, so no percent-encoded spaces appear in URIs.
 
@@ -50,7 +50,7 @@ mappings:
   ExerciseMap:
     sources:
       - [sources/free-exercise-db/raw/exercises_normalized.json~jsonpath, "$[*]"]
-    subjects: https://placeholder.url#ex_$(id)
+    subjects: https://placeholder.url#ex_$(sanitized_id)
     predicateobjects:
       - [rdf:type, feg:Exercise~iri]
       - [feg:legacySourceId, $(id), xsd:string]
@@ -69,16 +69,16 @@ mappings:
             condition:
               function: equal
               parameters:
-                - [str1, $(id)]
-                - [str2, $(id)]
+                - [str1, $(sanitized_id)]
+                - [str2, $(sanitized_id)]
       - predicate: feg:hasInvolvement
         objects:
           - mappings: SecondaryInvolvementMap
             condition:
               function: equal
               parameters:
-                - [str1, $(id)]
-                - [str2, $(id)]
+                - [str1, $(sanitized_id)]
+                - [str2, $(sanitized_id)]
 
   # ── MuscleInvolvement nodes ────────────────────────────────────────────────
   # morph-KGC auto-explodes primaryMuscles / secondaryMuscles arrays when
@@ -90,7 +90,7 @@ mappings:
   PrimaryInvolvementMap:
     sources:
       - [sources/free-exercise-db/raw/exercises_normalized.json~jsonpath, "$[*]"]
-    subjects: https://placeholder.url#inv_ex_$(id)_$(primaryMuscles)_PrimeMover
+    subjects: https://placeholder.url#inv_ex_$(sanitized_id)_$(primaryMuscles)_PrimeMover
     predicateobjects:
       - [rdf:type, feg:MuscleInvolvement~iri]
       - [feg:degree, feg:PrimeMover~iri]
@@ -106,7 +106,7 @@ mappings:
   SecondaryInvolvementMap:
     sources:
       - [sources/free-exercise-db/raw/exercises_normalized.json~jsonpath, "$[*]"]
-    subjects: https://placeholder.url#inv_ex_$(id)_$(secondaryMuscles)_Synergist
+    subjects: https://placeholder.url#inv_ex_$(sanitized_id)_$(secondaryMuscles)_Synergist
     predicateobjects:
       - [rdf:type, feg:MuscleInvolvement~iri]
       - [feg:degree, feg:Synergist~iri]

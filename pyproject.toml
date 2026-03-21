@@ -12,6 +12,7 @@ dependencies = [
     "pyshacl>=0.31.0",
     "python-dotenv>=1.2.1",
     "rdflib>=7.6.0",
+    "tenacity>=8.2.0",
 ]
 
 [project.optional-dependencies]
