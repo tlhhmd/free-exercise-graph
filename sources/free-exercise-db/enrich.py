@@ -5,30 +5,40 @@ LLM enrichment pipeline for free-exercise-db exercises.
 
 Reads exercises.json, calls the Claude API to add movement patterns,
 training modalities, muscle involvements, and unilateral flags, and writes
-results to exercises_enriched.json. Automatically resumes from prior runs.
-Failed exercises are written to exercises_quarantine.json for inspection.
+one JSON file per exercise to the enriched/ directory. Automatically resumes
+from prior runs (already-enriched exercises are skipped). Rate-limited
+requests are retried with exponential backoff before falling back to quarantine/.
 
 Usage:
     python3 sources/free-exercise-db/enrich.py
     python3 sources/free-exercise-db/enrich.py --limit 10
+    python3 sources/free-exercise-db/enrich.py --concurrency 4
     python3 sources/free-exercise-db/enrich.py --model claude-haiku-4-5-20251001
+    python3 sources/free-exercise-db/enrich.py --force Barbell_Deadlift Plank
 """
 
 import argparse
 import json
 import random
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 load_dotenv()
 from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import RDF, RDFS, SKOS
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from pipeline.prompt_builder import (
+sys.path.insert(0, str(Path(__file__).parent))
+from prompt_builder import (
     group_level_muscles,
     property_comment,
     render,
@@ -42,13 +52,14 @@ _HERE = Path(__file__).parent
 _ONTOLOGY_DIR = _HERE.parent.parent / "ontology"
 _TEMPLATE = _HERE / "prompt_template.md"
 _EXERCISES = _HERE / "raw" / "exercises.json"
-_ENRICHED = _HERE / "enriched" / "exercises_enriched.json"
-_QUARANTINE = _HERE / "enriched" / "exercises_quarantine.json"
+_ENRICHED_DIR = _HERE / "enriched"
+_QUARANTINE_DIR = _HERE / "quarantine"
 
 FEG = Namespace("https://placeholder.url#")
 DEFAULT_MODEL = "claude-sonnet-4-6"
 
 # ─── Ontology loading ─────────────────────────────────────────────────────────
+
 
 
 def _load_graphs() -> dict[str, Graph]:
@@ -63,6 +74,7 @@ def _load_graphs() -> dict[str, Graph]:
         "muscles": load("muscles.ttl", "ontology.ttl"),
         "degrees": load("involvement_degrees.ttl"),
         "modalities": load("training_modalities.ttl"),
+        "joint_actions": load("joint_actions.ttl"),
         "shapes": load("shapes.ttl"),
     }
 
@@ -75,6 +87,49 @@ def _vocabulary_versions(graphs: dict[str, Graph]) -> dict[str, str]:
             versions[name] = str(v)
             break
     return versions
+
+
+def _extract_vocab_sets(graphs: dict[str, Graph]) -> dict[str, set[str]]:
+    """Extract known local names for each vocabulary field for post-LLM validation."""
+    def local_names(g: Graph, *types) -> set[str]:
+        names = set()
+        for rdf_type in types:
+            names |= {str(s).split("#")[-1] for s in g.subjects(RDF.type, rdf_type)}
+        return names
+
+    return {
+        "joint_actions": local_names(graphs["joint_actions"], FEG.JointAction),
+        "movement_patterns": local_names(graphs["movement_patterns"], FEG.MovementPattern),
+        "training_modalities": local_names(graphs["modalities"], FEG.TrainingModality),
+        "muscles": local_names(
+            graphs["muscles"], FEG.Muscle, FEG.MuscleRegion, FEG.MuscleGroup, FEG.MuscleHead
+        ),
+        "degrees": local_names(graphs["degrees"], FEG.InvolvementDegree),
+    }
+
+
+def _validate_fields(fields: dict, vocab: dict[str, set[str]]) -> None:
+    """Validate LLM output against known vocabulary. Raises ValueError on unknown terms."""
+    errors = []
+    for ja in fields.get("primary_joint_actions", []):
+        if ja not in vocab["joint_actions"]:
+            errors.append(f"Unknown primary_joint_action: {ja!r}")
+    for ja in fields.get("supporting_joint_actions", []):
+        if ja not in vocab["joint_actions"]:
+            errors.append(f"Unknown supporting_joint_action: {ja!r}")
+    for mp in fields.get("movement_patterns", []):
+        if mp not in vocab["movement_patterns"]:
+            errors.append(f"Unknown movement_pattern: {mp!r}")
+    for tm in fields.get("training_modalities", []):
+        if tm not in vocab["training_modalities"]:
+            errors.append(f"Unknown training_modality: {tm!r}")
+    for inv in fields.get("muscle_involvements", []):
+        if inv.get("muscle") not in vocab["muscles"]:
+            errors.append(f"Unknown muscle: {inv.get('muscle')!r}")
+        if inv.get("degree") not in vocab["degrees"]:
+            errors.append(f"Unknown degree: {inv.get('degree')!r}")
+    if errors:
+        raise ValueError(f"Vocabulary validation failed: {'; '.join(errors)}")
 
 
 # ─── Prompt assembly (exercise-graph specific) ────────────────────────────────
@@ -129,6 +184,12 @@ def build_system_prompt(graphs: dict[str, Graph]) -> str:
             type_map=type_map,
             include_scope_notes=True,
         ),
+        "primary_joint_action_rule": property_comment(g_shapes, FEG.Exercise, FEG.primaryJointAction),
+        "supporting_joint_action_rule": property_comment(
+            g_shapes, FEG.Exercise, FEG.supportingJointAction
+        ),
+        "joint_action_tree": skos_tree(graphs["joint_actions"], FEG.JointActionScheme),
+        "is_compound_rule": property_comment(g_shapes, FEG.Exercise, FEG.isCompound),
         "sparql_constraints": "\n".join(
             f"- {m}" for m in sparql_constraint_comments(g_shapes)
         ),
@@ -153,6 +214,12 @@ def format_user_message(exercise: dict) -> str:
 # ─── LLM call ─────────────────────────────────────────────────────────────────
 
 
+@retry(
+    retry=retry_if_exception_type((anthropic.RateLimitError, anthropic.InternalServerError)),
+    wait=wait_exponential(multiplier=30, min=30, max=180),
+    stop=stop_after_attempt(4),
+    reraise=True,
+)
 def enrich_exercise(
     client: anthropic.Anthropic,
     system_prompt: str,
@@ -177,15 +244,43 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=None, help="Process at most N exercises.")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Claude model ID.")
     parser.add_argument("--random", action="store_true", help="Pick exercises at random.")
+    parser.add_argument(
+        "--exercises-file",
+        type=Path,
+        default=None,
+        help="Path to a JSON file of exercise objects to use instead of the default exercises.json.",
+    )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=1,
+        help="Number of parallel LLM requests (default: 1). Increase carefully — rate limits apply.",
+    )
+    parser.add_argument(
+        "--force",
+        nargs="+",
+        metavar="EXERCISE_ID",
+        help="Re-enrich specific exercise IDs, overwriting existing enriched/quarantine files.",
+    )
     args = parser.parse_args()
 
-    _ENRICHED.parent.mkdir(exist_ok=True)
-    exercises: list[dict] = json.loads(_EXERCISES.read_text())
-    enriched: list[dict] = json.loads(_ENRICHED.read_text()) if _ENRICHED.exists() else []
-    quarantine: list[dict] = json.loads(_QUARANTINE.read_text()) if _QUARANTINE.exists() else []
+    _ENRICHED_DIR.mkdir(exist_ok=True)
+    _QUARANTINE_DIR.mkdir(exist_ok=True)
 
-    done_ids = {e["id"] for e in enriched if "movement_patterns" in e}
-    quarantine_ids = {e["exercise"]["id"] for e in quarantine}
+    # --force: delete target files so they are treated as pending
+    if args.force:
+        for ex_id in args.force:
+            for target_dir in (_ENRICHED_DIR, _QUARANTINE_DIR):
+                p = target_dir / f"{ex_id}.json"
+                if p.exists():
+                    p.unlink()
+                    print(f"  Cleared {p.relative_to(_HERE)}")
+
+    exercises_path = args.exercises_file if args.exercises_file else _EXERCISES
+    exercises: list[dict] = json.loads(exercises_path.read_text())
+
+    done_ids = {p.stem for p in _ENRICHED_DIR.glob("*.json")}
+    quarantine_ids = {p.stem for p in _QUARANTINE_DIR.glob("*.json")}
     pending = [e for e in exercises if e["id"] not in done_ids and e["id"] not in quarantine_ids]
 
     if args.random:
@@ -201,26 +296,40 @@ def main() -> None:
     graphs = _load_graphs()
     system_prompt = build_system_prompt(graphs)
     vocab_versions = _vocabulary_versions(graphs)
+    vocab = _extract_vocab_sets(graphs)
 
     client = anthropic.Anthropic()
     print(
         f"Enriching {len(pending)} exercises with {args.model} "
-        f"({len(done_ids)} done, {len(quarantine_ids)} quarantined)."
+        f"(concurrency={args.concurrency}, {len(done_ids)} done, {len(quarantine_ids)} quarantined)."
     )
 
-    for i, exercise in enumerate(pending, 1):
-        print(f"  [{i}/{len(pending)}] {exercise['name']}", end="", flush=True)
+    def process(exercise: dict) -> tuple[dict, dict | None, Exception | None]:
         try:
             fields = enrich_exercise(client, system_prompt, exercise, args.model)
-            enriched.append({**exercise, **fields, "vocabulary_versions": vocab_versions})
-            _ENRICHED.write_text(json.dumps(enriched, indent=2))
-            print(" ✓")
-        except (json.JSONDecodeError, anthropic.APIError) as e:
-            quarantine.append({"exercise": exercise, "error": str(e)})
-            _QUARANTINE.write_text(json.dumps(quarantine, indent=2))
-            print(f" ✗  {e}")
+            _validate_fields(fields, vocab)
+            return exercise, fields, None
+        except (json.JSONDecodeError, anthropic.APIError, ValueError) as e:
+            return exercise, None, e
 
-    print(f"\n{len(done_ids) + len(pending) - len(quarantine)} enriched, {len(quarantine)} quarantined.")
+    with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
+        futures = {executor.submit(process, ex): ex for ex in pending}
+        for future in as_completed(futures):
+            exercise, fields, err = future.result()
+            if err:
+                (_QUARANTINE_DIR / f"{exercise['id']}.json").write_text(
+                    json.dumps({"exercise": exercise, "error": str(err)}, indent=2)
+                )
+                print(f"  ✗ {exercise['name']}  {err}", flush=True)
+            else:
+                (_ENRICHED_DIR / f"{exercise['id']}.json").write_text(
+                    json.dumps({**exercise, **fields, "vocabulary_versions": vocab_versions}, indent=2)
+                )
+                print(f"  ✓ {exercise['name']}", flush=True)
+
+    final_done = len(list(_ENRICHED_DIR.glob("*.json")))
+    final_quarantine = len(list(_QUARANTINE_DIR.glob("*.json")))
+    print(f"\n{final_done} enriched, {final_quarantine} quarantined.")
 
 
 if __name__ == "__main__":

@@ -25,17 +25,21 @@ PROJECT_ROOT = SOURCE_DIR.parent.parent  # project root
 CONFIG_PATH = SOURCE_DIR / "mappings" / "morphkgc.ini"
 ONTOLOGY_DIR = PROJECT_ROOT / "ontology"
 QUERIES_DIR = SOURCE_DIR / "queries"
-ENRICHED_PATH = SOURCE_DIR / "enriched" / "exercises_enriched.json"
+ENRICHED_DIR = SOURCE_DIR / "enriched"
 OUTPUT_PATH = SOURCE_DIR / "ingested.ttl"
 
 FEG = Namespace("https://placeholder.url#")
+
+
+def _sanitize_id(raw_id: str) -> str:
+    return raw_id.replace("-", "_")
 
 
 def _apply_enrichment(g, enriched: list[dict]) -> None:
     """Replace raw muscle involvements with enriched data and add movement
     patterns, training modalities, and isUnilateral for each enriched exercise."""
     for ex in enriched:
-        ex_uri = FEG[f"ex_{ex['id']}"]
+        ex_uri = FEG[f"ex_{_sanitize_id(ex['id'])}"]
 
         # Remove raw MuscleInvolvement nodes ingested from source data
         for inv in list(g.objects(ex_uri, FEG.hasInvolvement)):
@@ -46,7 +50,7 @@ def _apply_enrichment(g, enriched: list[dict]) -> None:
         # Add enriched muscle involvements
         for mi in ex.get("muscle_involvements", []):
             muscle, degree = mi["muscle"], mi["degree"]
-            inv_uri = FEG[f"inv_ex_{ex['id']}_{muscle}_{degree}"]
+            inv_uri = FEG[f"inv_ex_{_sanitize_id(ex['id'])}_{muscle}_{degree}"]
             g.add((ex_uri, FEG.hasInvolvement, inv_uri))
             g.add((inv_uri, RDF.type, FEG.MuscleInvolvement))
             g.add((inv_uri, FEG.muscle, FEG[muscle]))
@@ -59,6 +63,20 @@ def _apply_enrichment(g, enriched: list[dict]) -> None:
         # Add training modalities
         for tm in ex.get("training_modalities", []):
             g.add((ex_uri, FEG.trainingModality, FEG[tm]))
+
+        # Add joint actions (new split format; fall back to legacy flat list)
+        for ja in ex.get("primary_joint_actions", []):
+            g.add((ex_uri, FEG.primaryJointAction, FEG[ja]))
+        for ja in ex.get("supporting_joint_actions", []):
+            g.add((ex_uri, FEG.supportingJointAction, FEG[ja]))
+        # Legacy: exercises enriched before ADR-058 carry a flat joint_actions list
+        if not ex.get("primary_joint_actions") and not ex.get("supporting_joint_actions"):
+            for ja in ex.get("joint_actions", []):
+                g.add((ex_uri, FEG.jointAction, FEG[ja]))
+
+        # Add isCompound if present
+        if "is_compound" in ex:
+            g.add((ex_uri, FEG.isCompound, Literal(ex["is_compound"], datatype=XSD.boolean)))
 
         # Add isUnilateral if true
         if ex.get("is_unilateral"):
@@ -73,8 +91,9 @@ def main():
     data_graph = morph_kgc.materialize(str(CONFIG_PATH))
     print(f"  Data triples materialised: {len(data_graph)}")
 
-    if ENRICHED_PATH.exists():
-        enriched = json.loads(ENRICHED_PATH.read_text())
+    enriched_files = sorted(ENRICHED_DIR.glob("*.json")) if ENRICHED_DIR.exists() else []
+    if enriched_files:
+        enriched = [json.loads(p.read_text()) for p in enriched_files]
         before = len(data_graph)
         _apply_enrichment(data_graph, enriched)
         delta = len(data_graph) - before

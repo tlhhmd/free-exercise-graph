@@ -37,6 +37,7 @@ def main():
     for ex in exercises:
         ex["primaryMuscles"] = [crosswalk.get(m, m) for m in ex.get("primaryMuscles", [])]
         ex["secondaryMuscles"] = [crosswalk.get(m, m) for m in ex.get("secondaryMuscles", [])]
+        ex["sanitized_id"] = ex["id"].replace("-", "_")
 
     with open(EXERCISES_NORMALIZED_JSON, "w", encoding="utf-8") as f:
         json.dump(exercises, f)
