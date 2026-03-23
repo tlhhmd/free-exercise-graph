@@ -1,0 +1,113 @@
+{
+  "id": "Single_Arm_Clubbell_Order_Foot_Elevated_Ipsilateral_Cossack_Squat",
+  "name": "Single Arm Clubbell Order Foot Elevated Ipsilateral Cossack Squat",
+  "equipment": [
+    "Clubbell"
+  ],
+  "movement_patterns": [
+    "SplitSquat",
+    "AntiLateralFlexion"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Gracilis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "QuadratusLumborum",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TibialisAnterior",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeFlexion",
+    "HipFlexion"
+  ],
+  "supporting_joint_actions": [
+    "HipAdduction",
+    "HipExtension",
+    "SpinalStability",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Ipsilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

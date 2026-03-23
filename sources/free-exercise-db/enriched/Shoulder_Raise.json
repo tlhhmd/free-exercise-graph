@@ -1,0 +1,62 @@
+{
+  "name": "Shoulder Raise",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": null,
+  "primaryMuscles": [
+    "shoulders"
+  ],
+  "secondaryMuscles": [
+    "lats"
+  ],
+  "instructions": [
+    "Relax your arms to your sides and raise your shoulders up toward your ears, then back down."
+  ],
+  "category": "stretching",
+  "images": [
+    "Shoulder_Raise/0.jpg",
+    "Shoulder_Raise/1.jpg"
+  ],
+  "id": "Shoulder_Raise",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LevatorScapulae",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "ScapularElevation"
+  ],
+  "supporting_joint_actions": [
+    "ScapularDepression"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

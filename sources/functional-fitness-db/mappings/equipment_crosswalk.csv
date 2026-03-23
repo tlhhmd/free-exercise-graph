@@ -1,0 +1,41 @@
+source_value,feg_local_name,status
+Ab Wheel,AbWheel,matched
+Barbell,Barbell,matched
+Battle Ropes,BattleRopes,matched
+Bench (Decline),BenchDecline,matched
+Bench (Flat),BenchFlat,matched
+Bench (Incline),BenchIncline,matched
+Bodyweight,Bodyweight,matched
+Bulgarian Bag,BulgarianBag,matched
+Cable,Cable,matched
+Climbing Rope,ClimbingRope,matched
+Clubbell,Clubbell,matched
+Dumbbell,Dumbbell,matched
+EZ Bar,EZBar,matched
+Gravity Boots,GravityBoots,matched
+Gymnastic Rings,GymnasticRings,matched
+Heavy Sandbag,HeavySandbag,matched
+Indian Club,IndianClub,matched
+Kettlebell,Kettlebell,matched
+Landmine,Landmine,matched
+Macebell,Macebell,matched
+Medicine Ball,MedicineBall,matched
+Miniband,Miniband,matched
+None,,drop
+Parallette Bars,ParalletteBar,matched
+Plyo Box,PlyoBox,matched
+Pull Up Bar,PullUpBar,matched
+Resistance Band,ResistanceBand,matched
+Sandbag,Sandbag,matched
+Slam Ball,SlamBall,matched
+Slant Board,SlantBoard,matched
+Sled,Sled,matched
+Sledge Hammer,SledgeHammer,matched
+Sliders,Sliders,matched
+Stability Ball,ExerciseBall,matched
+Superband,Superband,matched
+Suspension Trainer,SuspensionTrainer,matched
+Tire,Tire,matched
+Trap Bar,TrapBar,matched
+Wall Ball,WallBall,matched
+Weight Plate,WeightPlate,matched

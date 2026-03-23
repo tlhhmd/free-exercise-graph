@@ -1,0 +1,67 @@
+{
+  "name": "One Arm Supinated Dumbbell Triceps Extension",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "dumbbell",
+  "primaryMuscles": [
+    "triceps"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Lie flat on a bench while holding a dumbbell at arms length. Your arm should be perpendicular to your body. The palm of your hand should be facing towards your face as a supinated grip is required to perform this exercise.",
+    "Place your non lifting hand on your bicep for support.",
+    "Slowly begin to lower the dumbbell down as you breathe in.",
+    "Then, begin lifting the dumbbell upward as you contract the triceps. Remember to breathe out during the concentric (lifting part of the exercise).",
+    "Repeat until you have performed your set repetitions.",
+    "Switch arms and repeat the movement.",
+    "Switch arms again and repeat the movement."
+  ],
+  "category": "strength",
+  "images": [
+    "One_Arm_Supinated_Dumbbell_Triceps_Extension/0.jpg",
+    "One_Arm_Supinated_Dumbbell_Triceps_Extension/1.jpg"
+  ],
+  "id": "One_Arm_Supinated_Dumbbell_Triceps_Extension",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Anconeus",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

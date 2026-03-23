@@ -9,7 +9,7 @@
 feg:ShapesGraph
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph SHACL Shapes" ;
-    owl:versionInfo "0.8.0" ;
+    owl:versionInfo "0.9.0" ;
 .
 
 ###################
@@ -39,7 +39,6 @@ feg:ExerciseShape
         sh:minCount 0 ;
         sh:class feg:MovementPattern ;
         sh:message "Movement pattern must be a known MovementPattern individual." ;
-        rdfs:comment "Use the most specific pattern that applies — prefer child patterns over parent patterns (e.g. Squat over KneeDominant, HorizontalPush over Push). Use a parent only when no child fits. Compound exercises may have more than one pattern. If no pattern fits well, return an empty array — do not force an ill-fitting label. Isolation exercises that are not curls, rows, presses, or hinges often have no clean pattern. Push and Pull patterns require multi-joint force production. Single-joint isolation movements (bicep curls, lateral raises, triceps extensions, leg extensions/curls) have no movement pattern — return empty array. Do not assign Pull to curls or Push to raises." ;
     ] ;
 
     # must have at least one muscle involvement
@@ -53,7 +52,6 @@ feg:ExerciseShape
     # must have at least one prime mover, unless it has a passive target (Mobility/SoftTissue)
     sh:sparql [
         sh:message "An exercise must have at least one PrimeMover involvement, or at least one PassiveTarget involvement for Mobility and SoftTissue exercises." ;
-        rdfs:comment "An exercise must have at least one PrimeMover involvement, or at least one PassiveTarget involvement for Mobility and SoftTissue exercises." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             SELECT $this WHERE {
@@ -72,7 +70,6 @@ feg:ExerciseShape
     # no muscle may appear more than once across involvements
     sh:sparql [
         sh:message "A muscle may not appear more than once across an exercise's muscle involvements." ;
-        rdfs:comment "A muscle may not appear more than once across an exercise's muscle involvements." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             SELECT $this WHERE {
@@ -90,7 +87,6 @@ feg:ExerciseShape
         sh:path feg:trainingModality ;
         sh:class feg:TrainingModality ;
         sh:message "Training modality must be a known TrainingModality individual." ;
-        rdfs:comment "Assign only when the modality is a defining characteristic of the exercise, not merely its typical training context. Plyometrics: explosive intent is the defining feature. Mobility: flexibility or range of motion is the defining feature. Cardio: cardiovascular adaptation is the defining feature. Omit for most resistance training exercises — a barbell squat, bench press, or deadlift has no defining modality." ;
     ] ;
 
     # equipment if present must be a known individual
@@ -108,13 +104,42 @@ feg:ExerciseShape
         sh:message "legacySourceId must be a single string value." ;
     ] ;
 
-    # isUnilateral if present must be a single boolean
+    # isUnilateral — deprecated, tolerated during migration, max one value
     sh:property [
         sh:path feg:isUnilateral ;
         sh:maxCount 1 ;
         sh:datatype xsd:boolean ;
-        sh:message "isUnilateral must be a single boolean value." ;
-        rdfs:comment "Omit entirely for bilateral exercises. Set to true only when the exercise is inherently performed one limb at a time (e.g. single-leg squat, single-arm row). Absence is interpreted as bilateral by query consumers." ;
+        sh:message "isUnilateral is deprecated (ADR-075). Use feg:laterality instead." ;
+    ] ;
+
+    # laterality if present must be a known Laterality individual
+    sh:property [
+        sh:path feg:laterality ;
+        sh:maxCount 1 ;
+        sh:class feg:Laterality ;
+        sh:message "feg:laterality must be a known Laterality individual (Bilateral, Unilateral, Contralateral, Ipsilateral)." ;
+    ] ;
+
+    # isCombination if present must be a single boolean
+    sh:property [
+        sh:path feg:isCombination ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+        sh:message "isCombination must be a single boolean value." ;
+    ] ;
+
+    # planeOfMotion if present must be a known PlaneOfMotion individual
+    sh:property [
+        sh:path feg:planeOfMotion ;
+        sh:class feg:PlaneOfMotion ;
+        sh:message "feg:planeOfMotion must be a known PlaneOfMotion individual (SagittalPlane, FrontalPlane, TransversePlane)." ;
+    ] ;
+
+    # exerciseStyle if present must be a known ExerciseStyle individual
+    sh:property [
+        sh:path feg:exerciseStyle ;
+        sh:class feg:ExerciseStyle ;
+        sh:message "feg:exerciseStyle must be a known ExerciseStyle individual." ;
     ] ;
 
     # primary joint actions must be known JointAction individuals
@@ -122,7 +147,6 @@ feg:ExerciseShape
         sh:path feg:primaryJointAction ;
         sh:class feg:JointAction ;
         sh:message "Primary joint action must be a known JointAction individual." ;
-        rdfs:comment "Assign the joint actions that directly produce the exercise's defining movement — the mechanical reason the exercise exists. For a deadlift: HipExtension, KneeExtension. For a curl: ElbowFlexion. Typically 1–3 per exercise. Leaf-level concepts only — do not assign joint grouping nodes (Shoulder, Hip, etc.). Anti-movement rule (applies to all three Anti* patterns): if the exercise is AntiExtension → SpinalStability; AntiRotation → SpinalStability; AntiLateralFlexion → SpinalStability. In all three cases the spine is isometrically resisting — not producing — movement. Do NOT assign SpinalExtension, SpinalRotation, or SpinalLateralFlexion to these exercises." ;
     ] ;
 
     # supporting joint actions must be known JointAction individuals
@@ -130,7 +154,6 @@ feg:ExerciseShape
         sh:path feg:supportingJointAction ;
         sh:class feg:JointAction ;
         sh:message "Supporting joint action must be a known JointAction individual." ;
-        rdfs:comment "Assign joint actions that contribute meaningfully but are not the defining stimulus — only those relevant for substitution decisions, fatigue accumulation, or inter-muscular coordination. This is not a biomechanical inventory: omit incidental or purely stabilising actions. Leave empty if nothing qualifies. Typically 0–3 per exercise. Leaf-level concepts only. Setup-position rule: do not assign joint actions that describe the starting position of the exercise — only actions that occur during the movement itself. Examples: bent knees at the start of a glute bridge are setup, not KneeFlexion as a joint action; semi-locked knees during a good morning are setup, not a movement action. Ankle mechanics for sagittal plane lifts: for squats, deadlifts, and lunges the relevant ankle action is Dorsiflexion (the ankle dorsiflexes to allow depth). AnkleEversion and AnkleInversion are movement faults, not defining supporting actions in these exercises." ;
     ] ;
 
     # isCompound if present must be a single boolean
@@ -139,13 +162,11 @@ feg:ExerciseShape
         sh:maxCount 1 ;
         sh:datatype xsd:boolean ;
         sh:message "isCompound must be a single boolean value." ;
-        rdfs:comment "Set to true when the exercise involves meaningful force production across multiple joints (e.g. squat, deadlift, bench press, row). Omit or set to false for single-joint isolation exercises (e.g. bicep curl, leg extension, lateral raise). When in doubt, count primary joint actions: two or more distinct joints contributing to force production indicates compound." ;
     ] ;
 
     # no exercise may list both a muscle and one of its SKOS ancestors — double-counting
     sh:sparql [
         sh:message "An exercise may not assign both a muscle and one of its ancestors — this double-counts the same muscle mass. Use the most specific term only." ;
-        rdfs:comment "An exercise may not assign both a muscle and one of its ancestors — this double-counts the same muscle mass. Use the most specific term only." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -178,7 +199,6 @@ feg:MuscleInvolvementShape
         sh:maxCount 1 ;
         sh:class feg:Muscle ;
         sh:message "A muscle involvement must reference exactly one known Muscle individual." ;
-        rdfs:comment "Prefer the most specific term available: MuscleHead > MuscleGroup > MuscleRegion. Use a region term only if no group applies; use a group term only if no head applies. Exception: groups marked useGroupLevel=true are the correct term — do not descend to their heads. Exception: Core (a MuscleGroup under Abdominals) is a convenience term permitted on compound movements where abdominal bracing is incidental — see Core usage constraint below. Critical: joint action concept names (e.g. ScapularUpwardRotation, HipFlexion, ElbowFlexion, ScapularRetraction) are NOT muscle names. Never use a joint action concept as a muscle value. All valid muscle names are listed in the muscle hierarchy above. TricepsBrachii (group) must not be used. Always decompose into TricepsLongHead, TricepsLateralHead, and TricepsMedialHead — including Stabilizer and Synergist roles. TricepsLongHead is meaningfully distinct as it crosses the shoulder joint. On Mobility exercises and passive stretches, minimize Stabilizers. Include a Stabilizer only when there is a clear active stabilization demand. Do not routinely add Core or RotatorCuff to all exercises." ;
     ] ;
 
     # must have exactly one degree
@@ -200,7 +220,6 @@ feg:MuscleInvolvementShape
     # muscle must not be a JointAction individual — feg:Muscle owl:disjointWith feg:JointAction
     sh:sparql [
         sh:message "A muscle involvement's feg:muscle value is a JointAction individual, not a Muscle. Joint action concept names (e.g. ScapularUpwardRotation, ScapularRetraction, HipFlexion) describe movement at a joint — they are not muscles. Check the muscle hierarchy for the correct muscle name." ;
-        rdfs:comment "A muscle involvement's feg:muscle value must not be a feg:JointAction individual. Joint action concept names (e.g. ScapularUpwardRotation, ScapularRetraction, HipFlexion, ElbowFlexion) describe movement at a joint — they are NOT muscles. If you find yourself writing a joint action name as a muscle, check the muscle hierarchy listed above for the correct anatomical term." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -227,7 +246,6 @@ feg:MuscleInvolvementShape
     # Core must always be assigned as Stabilizer
     sh:sparql [
         sh:message "Core must be assigned as Stabilizer only. For dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
-        rdfs:comment "Core must be assigned as Stabilizer only. For dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             SELECT $this WHERE {
@@ -241,7 +259,6 @@ feg:MuscleInvolvementShape
     # must not reference a head whose parent group has useGroupLevel=true
     sh:sparql [
         sh:message "This involvement references a muscle head whose parent group has useGroupLevel=true. Use the group-level term instead." ;
-        rdfs:comment "Do not use a MuscleHead when its parent MuscleGroup has useGroupLevel=true. The group is the correct granularity for these muscles in exercise programming." ;
         sh:select """
             PREFIX feg: <https://placeholder.url#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>

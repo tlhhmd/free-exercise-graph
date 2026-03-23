@@ -1,0 +1,47 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - Laterality
+###################
+
+feg:LateralityVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "1.0.0" ;
+.
+
+feg:LateralityScheme
+    a skos:ConceptScheme ;
+    rdfs:label "Laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body during an exercise." ;
+.
+
+feg:Bilateral
+    a owl:NamedIndividual, feg:Laterality ;
+    skos:inScheme feg:LateralityScheme ;
+    rdfs:label "Bilateral" ;
+    rdfs:comment "Both limbs work simultaneously and symmetrically. Examples: barbell squat, bench press, pull up." ;
+.
+
+feg:Unilateral
+    a owl:NamedIndividual, feg:Laterality ;
+    skos:inScheme feg:LateralityScheme ;
+    rdfs:label "Unilateral" ;
+    rdfs:comment "One limb works at a time, independently of the other. Examples: single-leg squat, single-arm dumbbell row, single-leg Romanian deadlift." ;
+.
+
+feg:Contralateral
+    a owl:NamedIndividual, feg:Laterality ;
+    skos:inScheme feg:LateralityScheme ;
+    rdfs:label "Contralateral" ;
+    rdfs:comment "Opposite limbs work together — one arm and the opposite leg move simultaneously. Characteristic of exercises that train anti-rotational core stability. Examples: bird dog, dead bug, contralateral reverse lunge." ;
+.
+
+feg:Ipsilateral
+    a owl:NamedIndividual, feg:Laterality ;
+    skos:inScheme feg:LateralityScheme ;
+    rdfs:label "Ipsilateral" ;
+    rdfs:comment "Same-side limbs work together — one arm and the same-side leg move simultaneously. Examples: ipsilateral loaded carry variations, certain single-leg single-arm press combinations." ;
+.

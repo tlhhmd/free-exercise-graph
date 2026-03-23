@@ -1,0 +1,81 @@
+{
+  "name": "Cat Stretch",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": null,
+  "primaryMuscles": [
+    "lower back"
+  ],
+  "secondaryMuscles": [
+    "middle back",
+    "traps"
+  ],
+  "instructions": [
+    "Position yourself on the floor on your hands and knees.",
+    "Pull your belly in and round your spine, lower back, shoulders, and neck, letting your head drop.",
+    "Hold for 15 seconds."
+  ],
+  "category": "stretching",
+  "images": [
+    "Cat_Stretch/0.jpg",
+    "Cat_Stretch/1.jpg"
+  ],
+  "id": "Cat_Stretch",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ScapularProtraction"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

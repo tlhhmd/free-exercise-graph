@@ -1,0 +1,76 @@
+{
+  "name": "Cross-Body Crunch",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Lie flat on your back and bend your knees about 60 degrees.",
+    "Keep your feet flat on the floor and place your hands loosely behind your head. This will be your starting position.",
+    "Now curl up and bring your right elbow and shoulder across your body while bring your left knee in toward your left shoulder at the same time. Reach with your elbow and try to touch your knee. Exhale as you perform this movement. Tip: Try to bring your shoulder up towards your knee rather than just your elbow and remember that the key is to contract the abs as you perform the movement; not just to move the elbow.",
+    "Now go back down to the starting position as you inhale and repeat with the left elbow and the right knee.",
+    "Continue alternating in this manner until all prescribed repetitions are done."
+  ],
+  "category": "strength",
+  "images": [
+    "Cross-Body_Crunch/0.jpg",
+    "Cross-Body_Crunch/1.jpg"
+  ],
+  "id": "Cross-Body_Crunch",
+  "movement_patterns": [
+    "Rotation"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "Obliques",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion",
+    "SpinalRotation"
+  ],
+  "supporting_joint_actions": [
+    "HipFlexion"
+  ],
+  "is_compound": false,
+  "laterality": "Contralateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

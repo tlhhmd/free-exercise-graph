@@ -1,0 +1,141 @@
+{
+  "id": "Battle_Rope_Single_Leg_Standing_Double_Wave",
+  "name": "Battle Rope Single Leg Standing Double Wave",
+  "equipment": [
+    "BattleRopes"
+  ],
+  "movement_patterns": [
+    "AntiLateralFlexion"
+  ],
+  "training_modalities": [
+    "Cardio"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TibialisAnterior",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowFlexion",
+    "ElbowExtension",
+    "ShoulderFlexion",
+    "ShoulderExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalStability",
+    "HipAbduction"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Balance"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

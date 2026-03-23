@@ -14,50 +14,45 @@ Run steps in order from the project root:
 # 1. Download upstream source (skip if exercises.json already present)
 python3 sources/free-exercise-db/fetch.py
 
-# 2. Normalise muscle strings via crosswalk CSVs
-python3 sources/free-exercise-db/preprocess.py
-
-# 3. Enrich via LLM (movement patterns, joint actions, involvement degrees)
+# 2. Enrich via LLM (movement patterns, joint actions, involvement degrees)
 python3 sources/free-exercise-db/enrich.py --limit 50 --random
 
-# 4. Check for vocabulary drift (optional but recommended before ingest)
+# 3. Check for vocabulary drift (recommended after any vocabulary version bump)
 python3 sources/free-exercise-db/check_stale.py
 
-# 5. Ingest → ingested.ttl
-python3 sources/free-exercise-db/ingest.py
+# 4. Build → ingested.ttl
+python3 sources/free-exercise-db/build.py
 
-# 6. SHACL validation
+# 5. Validate
 python3 sources/free-exercise-db/validate.py
 ```
 
+Steps 4 and 5 can be run together via `run_pipeline.py`.
+
 `fetch.py` only needs re-running when pulling a fresh upstream snapshot.
-`preprocess.py` must run before `ingest.py` — it produces `exercises_normalized.json` (gitignored).
-`enrich.py` must run before `ingest.py` — its output (`enriched/*.json`) is merged during ingestion.
+`enrich.py` must run before `build.py` — its output (`enriched/*.json`) is merged during assembly.
 
 ---
 
 ## Script Reference
 
 ### fetch.py
-Downloads `exercises.json` from the upstream GitHub repo. Write to `raw/` (read-only thereafter).
-
-### preprocess.py
-Reads `raw/exercises.json` and applies crosswalk CSVs to normalise source muscle strings and equipment
-strings into `feg:` local names. Writes `raw/exercises_normalized.json` (gitignored).
+Downloads `exercises.json` from the upstream GitHub repo. Writes to `raw/` (read-only thereafter).
 
 ### enrich.py
 LLM enrichment pipeline. Calls Claude (via `prompt_builder.py`) to classify each exercise
-with movement patterns, joint actions, involvement degrees (PrimeMover/Synergist/Stabilizer/PassiveTarget),
+with movement patterns, joint actions, involvement degrees (PrimeMover/Synergist/Stabilizer),
 training modality, compound flag, and unilateral flag. Writes one JSON file per exercise to
-`enriched/` (gitignored). Failed exercises go to `quarantine/` (gitignored). Rate-limited
-requests are retried with exponential backoff before falling back to quarantine.
+`enriched/`. Failed exercises go to `quarantine/`. Rate-limited requests are retried with
+exponential backoff before falling back to quarantine. Automatically resumes — already-enriched
+exercises are skipped.
 
 Flags:
 - `--limit N` — enrich at most N exercises
 - `--random` — process in random order (useful for sampling)
-- `--concurrency N` — parallel LLM requests (default: 1; increase carefully — rate limits apply)
+- `--concurrency N` — parallel LLM requests (default: 1)
 - `--force ID [ID ...]` — re-enrich specific exercise IDs, overwriting existing files
-- `--exercises-file PATH` — use a custom JSON exercise list instead of `raw/exercises.json`
+- `--retry-quarantine` — re-attempt all quarantined exercises
 
 Requires `ANTHROPIC_API_KEY` in environment or `.env` file.
 
@@ -70,18 +65,36 @@ Flags:
 - `--verbose` — show per-exercise detail
 - `--names-only` — print only exercise names
 
-### ingest.py
-Full ingestion pipeline:
-1. Runs morph-KGC on `exercises_normalized.json` (YARRRML → RDF)
-2. Merges all ontology vocabulary files from `ontology/`
-3. Applies LLM enrichment from `enriched/*.json` (one file per exercise)
-4. Runs SPARQL UPDATE repair queries (`queries/repair_01_` … `repair_05_`)
-5. Serialises to `ingested.ttl`
+### build.py
+Pure Python JSON→RDF assembly. Loads all ontology vocabulary files, reads `raw/exercises.json`
+for basic metadata, overlays `enriched/*.json` for enrichment triples, and serialises to
+`ingested.ttl`. Runs in ~1s. No morph-KGC, no repair passes.
 
 ### validate.py
-SHACL validation of enriched exercises against `ontology/shapes.ttl`. Scoped to enriched
-exercises only (unenriched exercises lack movement patterns and joint actions). Exits 0 if
-conforms, 1 if violations found.
+6-dimension quality scorecard. Runs validity (SHACL), uniqueness, integrity, timeliness,
+consistency, and completeness checks on enriched exercises. Writes a per-exercise CSV report
+to `quality_report.csv`. Exits 0 if no validity failures, 1 if any violations.
+
+Flags:
+- `--all` — include perfect exercises in stdout output
+- `--csv PATH` — override CSV output path
+
+### graph_health.py
+Reads `quality_report.csv` and produces a stakeholder-readable Graph Health report.
+Outputs Markdown to stdout by default; optionally writes `.md` and `.html` files.
+
+```bash
+python3 sources/free-exercise-db/graph_health.py
+python3 sources/free-exercise-db/graph_health.py --md report.md --html report.html
+```
+
+### run_pipeline.py
+End-to-end runner: runs `build.py` then `validate.py` in-process with combined telemetry report.
+
+```bash
+python3 sources/free-exercise-db/run_pipeline.py
+python3 sources/free-exercise-db/run_pipeline.py --skip-validate
+```
 
 ---
 
@@ -90,33 +103,29 @@ conforms, 1 if violations found.
 ```
 free-exercise-db/
   fetch.py                          download exercises.json from upstream GitHub
-  preprocess.py                     normalise source strings using crosswalk CSVs
   enrich.py                         LLM enrichment pipeline (Claude)
   prompt_builder.py                 utilities for building LLM prompts from RDF ontology files
-  check_stale.py                    vocabulary drift detection
-  ingest.py                         morph-KGC + enrichment merge + repair → ingested.ttl
-  validate.py                       SHACL validation (enriched exercises only)
   prompt_template.md                system prompt template for enrich.py
+  check_stale.py                    vocabulary drift detection
+  build.py                          JSON→RDF assembly → ingested.ttl
+  validate.py                       6-dimension quality scorecard
+  run_pipeline.py                   end-to-end runner (build + validate)
+  telemetry.py                      pipeline telemetry (PipelineRun, step timers)
+  graph_health.py                   Graph Health report (Markdown + HTML) from quality_report.csv
   catalog.ttl                       DCAT + PROV-O provenance (machine-readable)
   raw/
     exercises.json                  upstream source (read-only)
-    exercises_normalized.json       generated by preprocess.py (gitignored)
   enriched/
-    {exercise_id}.json              one file per enriched exercise (gitignored)
+    {exercise_id}.json              one file per enriched exercise (version controlled)
   quarantine/
     {exercise_id}.json              failed enrichments for inspection (gitignored)
   mappings/
-    exercises.yarrrml.yaml          YARRRML mapping rules
-    muscle_crosswalk.csv            source muscle strings → feg: local names
     equipment_crosswalk.csv         source equipment strings → feg: local names
-    morphkgc.ini                    morph-KGC execution config
   queries/
-    repair_01_*.rq                  SPARQL UPDATE: drop unmapped muscles
-    repair_02_*.rq                  SPARQL UPDATE: remove duplicate involvements
-    repair_03_*.rq                  SPARQL UPDATE: ancestor+child deduplication
-    repair_04_*.rq                  SPARQL UPDATE: consolidate muscle region heads
-    repair_05_*.rq                  SPARQL UPDATE: remove joint action muscles
-  ingested.ttl                      pipeline output (gitignored)
+    repair_01_*.rq                  SPARQL UPDATE: drop unmapped muscles (reference)
+    repair_02_*.rq                  SPARQL UPDATE: remove duplicate involvements (reference)
+    repair_05_*.rq                  SPARQL UPDATE: remove joint action muscles (reference)
+  ingested.ttl                      pipeline output (gitignored — rebuilt by build.py)
 ```
 
 ---
@@ -127,12 +136,12 @@ This source pipeline consumes the shared vocabulary files in `ontology/`:
 
 | Vocabulary | Used by |
 |---|---|
-| `ontology/muscles.ttl` | crosswalk CSVs, enrichment prompt, SHACL shapes |
+| `ontology/muscles.ttl` | enrichment prompt, build.py validation, SHACL shapes |
 | `ontology/movement_patterns.ttl` | enrichment prompt, SHACL shapes |
 | `ontology/joint_actions.ttl` | enrichment prompt, SHACL shapes |
 | `ontology/involvement_degrees.ttl` | enrichment prompt, SHACL shapes |
 | `ontology/training_modalities.ttl` | enrichment prompt, SHACL shapes |
-| `ontology/equipment.ttl` | crosswalk CSV, YARRRML mapping |
+| `ontology/equipment.ttl` | equipment_crosswalk.csv, build.py |
 | `ontology/shapes.ttl` | validate.py, test_shacl.py |
 
 Vocabulary changes (concept additions, removals, URI renames) require an ADR and a version bump
@@ -147,11 +156,11 @@ in the relevant ontology file. See `CONTRIBUTING.md` for the change process.
 | `id` | `feg:legacySourceId` + URI template `feg:ex_{id}` |
 | `name` | `rdfs:label` |
 | `equipment` | `feg:equipment` → `feg:{Equipment}` individual |
-| `primaryMuscles[]` | `feg:hasInvolvement` → MuscleInvolvement (PrimeMover) |
-| `secondaryMuscles[]` | `feg:hasInvolvement` → MuscleInvolvement (Synergist) |
-| `category` | Deferred — conflates modality with sport discipline (ADR-013) |
-| `force`, `level`, `mechanic` | Dropped (ADR-010) |
-| `instructions`, `images` | Dropped — not modelled in v1 |
+| `primaryMuscles[]` | dropped — superseded by LLM enrichment involvements |
+| `secondaryMuscles[]` | dropped — superseded by LLM enrichment involvements |
+| `category` | deferred — conflates modality with sport discipline (ADR-013) |
+| `force`, `level`, `mechanic` | dropped (ADR-010) |
+| `instructions`, `images` | dropped — not modelled in v1 |
 
 LLM enrichment adds: `feg:movementPattern`, `feg:primaryJointAction`, `feg:supportingJointAction`,
 `feg:isCompound`, `feg:isUnilateral`, `feg:hasInvolvement` (with refined degrees), `feg:trainingModality`.

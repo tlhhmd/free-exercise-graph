@@ -1,0 +1,135 @@
+{
+  "name": "Lateral Bound",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "adductors"
+  ],
+  "secondaryMuscles": [
+    "abductors",
+    "calves",
+    "glutes",
+    "hamstrings",
+    "quadriceps"
+  ],
+  "instructions": [
+    "Assume a half squat position facing 90 degrees from your direction of travel. This will be your starting position.",
+    "Allow your lead leg to do a countermovement inward as you shift your weight to the outside leg.",
+    "Immediately push off and extend, attempting to bound to the side as far as possible.",
+    "Upon landing, immediately push off in the opposite direction, returning to your original start position.",
+    "Continue back and forth for several repetitions."
+  ],
+  "category": "plyometrics",
+  "images": [
+    "Lateral_Bound/0.jpg",
+    "Lateral_Bound/1.jpg"
+  ],
+  "id": "Lateral_Bound",
+  "movement_patterns": [
+    "LateralLocomotion"
+  ],
+  "training_modalities": [
+    "Plyometrics"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipAdduction",
+    "HipAbduction"
+  ],
+  "supporting_joint_actions": [
+    "KneeExtension",
+    "HipExtension",
+    "Plantarflexion",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

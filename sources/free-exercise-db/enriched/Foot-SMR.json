@@ -1,0 +1,52 @@
+{
+  "name": "Foot-SMR",
+  "force": "static",
+  "level": "intermediate",
+  "mechanic": null,
+  "equipment": "other",
+  "primaryMuscles": [
+    "calves"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "This exercise stretches the fascia of the muscles in the feet. Start off seated with your shoes removed. Using a foot roller or a similar object, such as a small section of pvc pipe, place your foot against the roller across the arch of your foot. This will be your starting position.",
+    "Press down firmly, rolling across the arch of your foot. Hold for 10-30 seconds, and then switch feet."
+  ],
+  "category": "stretching",
+  "images": [
+    "Foot-SMR/0.jpg",
+    "Foot-SMR/1.jpg"
+  ],
+  "id": "Foot-SMR",
+  "movement_patterns": [],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "PassiveTarget"
+    }
+  ],
+  "primary_joint_actions": [],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

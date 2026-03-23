@@ -1,0 +1,68 @@
+{
+  "name": "Dynamic Back Stretch",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": null,
+  "primaryMuscles": [
+    "lats"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Stand with your feet shoulder width apart. This will be your starting position.",
+    "Keeping your arms straight, swing them straight up in front of you 5-10 times, increasing the range of motion each time until your arms are above your head."
+  ],
+  "category": "stretching",
+  "images": [
+    "Dynamic_Back_Stretch/0.jpg",
+    "Dynamic_Back_Stretch/1.jpg"
+  ],
+  "id": "Dynamic_Back_Stretch",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "PectoralisMajor",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ScapularUpwardRotation"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

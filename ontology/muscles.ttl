@@ -13,7 +13,7 @@ feg:MuscleScheme a skos:ConceptScheme ;
     rdfs:label "Muscle Vocabulary" ;
     skos:prefLabel "Muscle Vocabulary" ;
     rdfs:comment "SKOS concept scheme organizing muscles by region." ;
-    owl:versionInfo "0.8.0" .
+    owl:versionInfo "0.12.0" .
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SHOULDERS
@@ -146,6 +146,13 @@ feg:LatissimusDorsi a feg:MuscleGroup, skos:Concept ;
     skos:broader feg:Lats ;
     skos:inScheme feg:MuscleScheme .
 
+feg:TeresMajor a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Teres Major" ;
+    skos:prefLabel "Teres Major" ;
+    skos:scopeNote "Distinct from Teres Minor (rotator cuff). Acts synergistically with LatissimusDorsi in shoulder extension and adduction. Relevant on lat pulldowns, rows, and pull-up variants." ;
+    skos:broader feg:Lats ;
+    skos:inScheme feg:MuscleScheme .
+
 # ══════════════════════════════════════════════════════════════════════════════
 # TRAPS
 # ══════════════════════════════════════════════════════════════════════════════
@@ -256,12 +263,18 @@ feg:QuadratusLumborum a feg:MuscleGroup, skos:Concept ;
     skos:broader feg:LowerBack ;
     skos:inScheme feg:MuscleScheme .
 
+feg:HipFlexors a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Hip Flexors" ;
+    skos:prefLabel "Hip Flexors" ;
+    skos:altLabel "HipFlexors" ;
+    skos:scopeNote "Use only when both Psoas (Iliopsoas) and Sartorius are involved. If only one branch is active, use the specific child instead." ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:topConceptOf feg:MuscleScheme .
+
 feg:Psoas a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Psoas" ;
     skos:prefLabel "Psoas" ;
-    skos:altLabel "Hip Flexors" ;
-    skos:broader feg:LowerBack ;
-    skos:related feg:Quadriceps ;
+    skos:broader feg:HipFlexors ;
     skos:inScheme feg:MuscleScheme .
 
 feg:Iliopsoas a feg:MuscleHead, skos:Concept ;
@@ -369,6 +382,7 @@ feg:RectusFemoris a feg:MuscleHead, skos:Concept ;
     rdfs:label "Rectus Femoris" ;
     skos:prefLabel "Rectus Femoris" ;
     skos:broader feg:Quadriceps ;
+    skos:related feg:HipFlexors ;
     skos:inScheme feg:MuscleScheme .
 
 feg:VastusLateralis a feg:MuscleHead, skos:Concept ;
@@ -388,6 +402,13 @@ feg:VastusIntermedius a feg:MuscleHead, skos:Concept ;
     rdfs:label "Vastus Intermedius" ;
     skos:prefLabel "Vastus Intermedius" ;
     skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Sartorius a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Sartorius" ;
+    skos:prefLabel "Sartorius" ;
+    skos:scopeNote "Anterior thigh muscle; assists knee flexion and hip flexion. Relevant as a synergist on leg curl and hip flexion exercises." ;
+    skos:broader feg:HipFlexors ;
     skos:inScheme feg:MuscleScheme .
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -467,6 +488,7 @@ feg:TensorFasciaeLatae a feg:MuscleGroup, skos:Concept ;
     skos:prefLabel "Tensor Fasciae Latae" ;
     skos:altLabel "TFL" ;
     skos:broader feg:Abductors ;
+    skos:related feg:HipFlexors ;
     skos:inScheme feg:MuscleScheme .
 
 # Note: GluteusMedius and GluteusMinimus are defined under Glutes
@@ -517,6 +539,72 @@ feg:TibialisAnterior a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Tibialis Anterior" ;
     skos:prefLabel "Tibialis Anterior" ;
     skos:altLabel "Tibialis" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Shins a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Shins" ;
+    skos:prefLabel "Shins" ;
+    rdfs:comment "Colloquial term for the anterior lower leg compartment. Contains the muscles responsible for ankle dorsiflexion and toe extension." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ExtensorDigitorumLongus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Extensor Digitorum Longus" ;
+    skos:prefLabel "Extensor Digitorum Longus" ;
+    rdfs:comment "Anterior lower leg muscle responsible for toe extension and ankle dorsiflexion." ;
+    skos:broader feg:Shins ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:ExtensorHallucisLongus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Extensor Hallucis Longus" ;
+    skos:prefLabel "Extensor Hallucis Longus" ;
+    rdfs:comment "Anterior lower leg muscle responsible for big toe extension and ankle dorsiflexion." ;
+    skos:broader feg:Shins ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:TibialisPosterior a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Tibialis Posterior" ;
+    skos:prefLabel "Tibialis Posterior" ;
+    rdfs:comment "Deep posterior lower leg muscle responsible for ankle inversion and plantarflexion." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Peroneals a feg:MuscleRegion, skos:Concept ;
+    rdfs:label "Peroneals" ;
+    skos:prefLabel "Peroneals" ;
+    skos:altLabel "Fibularis" ;
+    rdfs:comment "Lateral compartment of the lower leg. Responsible for ankle eversion and assist plantarflexion." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:PeroneusLongus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Peroneus Longus" ;
+    skos:prefLabel "Peroneus Longus" ;
+    skos:altLabel "Fibularis Longus" ;
+    rdfs:comment "Lateral lower leg muscle. Everts the ankle and assists plantarflexion. Active as a synergist on calf raises and single-leg stability work." ;
+    skos:broader feg:Peroneals ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:PeroneusBrevis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Peroneus Brevis" ;
+    skos:prefLabel "Peroneus Brevis" ;
+    skos:altLabel "Fibularis Brevis" ;
+    rdfs:comment "Lateral lower leg muscle. Primary evertor of the ankle; assists plantarflexion." ;
+    skos:broader feg:Peroneals ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:FlexorHallucisLongus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Flexor Hallucis Longus" ;
+    skos:prefLabel "Flexor Hallucis Longus" ;
+    rdfs:comment "Deep posterior lower leg muscle. Flexes the big toe and assists plantarflexion. Relevant on calf raises and push-off movements." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:FlexorDigitorumLongus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Flexor Digitorum Longus" ;
+    skos:prefLabel "Flexor Digitorum Longus" ;
+    rdfs:comment "Deep posterior lower leg muscle. Flexes the lesser toes and assists plantarflexion and ankle inversion." ;
     skos:broader feg:LowerLeg ;
     skos:inScheme feg:MuscleScheme .
 
@@ -574,6 +662,13 @@ feg:Triceps a feg:MuscleRegion, skos:Concept ;
 feg:TricepsBrachii a feg:MuscleGroup, skos:Concept ;
     rdfs:label "Triceps Brachii" ;
     skos:prefLabel "Triceps Brachii" ;
+    skos:broader feg:Triceps ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Anconeus a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Anconeus" ;
+    skos:prefLabel "Anconeus" ;
+    rdfs:comment "Small elbow extensor muscle on the posterior forearm. Assists TricepsBrachii during elbow extension and stabilises the elbow joint." ;
     skos:broader feg:Triceps ;
     skos:inScheme feg:MuscleScheme .
 
@@ -686,4 +781,11 @@ feg:PosteriorScalene a feg:MuscleHead, skos:Concept ;
     rdfs:label "Posterior Scalene" ;
     skos:prefLabel "Posterior Scalene" ;
     skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:LevatorScapulae a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Levator Scapulae" ;
+    skos:prefLabel "Levator Scapulae" ;
+    skos:scopeNote "Elevates and downwardly rotates the scapula. Co-active with upper trapezius in shoulder shrugs and neck lateral flexion." ;
+    skos:broader feg:Neck ;
     skos:inScheme feg:MuscleScheme .

@@ -21,11 +21,15 @@ import pyshacl
 from rdflib import Graph, Literal, Namespace
 from rdflib.namespace import RDF, RDFS, SH, XSD
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from constants import FEG_NS
+
 ONTOLOGY_DIR = PROJECT_ROOT / "ontology"
 SHAPES_TTL = ONTOLOGY_DIR / "shapes.ttl"
 
-FEG = Namespace("https://placeholder.url#")
+FEG = Namespace(FEG_NS)
 
 _passed = 0
 _failed = 0

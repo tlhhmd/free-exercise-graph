@@ -1,0 +1,40 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - Planes of Motion
+###################
+
+feg:PlanesOfMotionVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "1.0.0" ;
+.
+
+feg:PlaneOfMotionScheme
+    a skos:ConceptScheme ;
+    rdfs:label "Plane of Motion" ;
+    rdfs:comment "The three cardinal planes of human movement, describing the axis around which the primary motion of an exercise occurs." ;
+.
+
+feg:SagittalPlane
+    a owl:NamedIndividual, feg:PlaneOfMotion ;
+    skos:inScheme feg:PlaneOfMotionScheme ;
+    rdfs:label "Sagittal Plane" ;
+    rdfs:comment "Forward and backward movement. The plane that divides the body into left and right halves. Examples: squat, deadlift, lunge, bicep curl, running." ;
+.
+
+feg:FrontalPlane
+    a owl:NamedIndividual, feg:PlaneOfMotion ;
+    skos:inScheme feg:PlaneOfMotionScheme ;
+    rdfs:label "Frontal Plane" ;
+    rdfs:comment "Side to side movement. The plane that divides the body into front and back halves. Examples: lateral raise, lateral lunge, side shuffle, lateral flexion." ;
+.
+
+feg:TransversePlane
+    a owl:NamedIndividual, feg:PlaneOfMotion ;
+    skos:inScheme feg:PlaneOfMotionScheme ;
+    rdfs:label "Transverse Plane" ;
+    rdfs:comment "Rotational movement. The plane that divides the body into top and bottom halves. Examples: Russian twist, cable wood chop, rotational medicine ball throw, hip internal and external rotation." ;
+.
