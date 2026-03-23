@@ -23,10 +23,3 @@ jobs:
 
       - name: SHACL unit tests
         run: python3 test_shacl.py
-
-      - name: Build graph
-        run: python3 sources/free-exercise-db/build.py
-
-      - name: Quality scorecard
-        run: python3 sources/free-exercise-db/validate.py --csv /tmp/quality_report.csv
-        timeout-minutes: 10

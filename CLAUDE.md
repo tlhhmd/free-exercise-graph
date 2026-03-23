@@ -7,6 +7,10 @@ touching any ontology or pipeline files.
 `TODO.md` is a live list of open work only — completed items are removed,
 not checked off. Completed decisions live in `DECISIONS.md` as ADRs.
 
+**At the end of every session**, update `TODO.md` to reflect what was
+completed, what is now unblocked, and any new items that surfaced. Remove
+items that are done. Do not let it go stale.
+
 ---
 
 ## What This Project Is
@@ -26,7 +30,7 @@ collaborative partner, not just an executor.
 ## Project Structure
 
 - `ontology/` — TTL vocabulary and schema files (one file per concept domain)
-- `sources/` — one subdirectory per upstream dataset; each is self-contained with its own `enrich.py`, `build.py`, `raw/`, `enriched/`, and `mappings/`
+- `sources/` — one subdirectory per upstream dataset; each is self-contained with its own `adapter.py`, `fetch.py`, `raw/`, and `mappings/`
 - `enrichment/` — shared LLM enrichment service (`service.py`, `prompt_template.md`, schema)
 - `evals/` — gold standard annotation and eval tooling
 - `queries/` — example SPARQL discovery queries
@@ -95,44 +99,55 @@ All vocabulary and schema files live in `ontology/`. Each file is independently 
 
 ## Pipeline Overview
 
-Each source under `sources/` follows the same pattern. Replace `<source>` with e.g. `free-exercise-db` or `functional-fitness-db`.
+The pipeline operates across all sources together, not per-source. Intermediate state lives in a SQLite database (`pipeline/pipeline.db`). Raw LLM responses are the only artifact retained as JSON.
 
-### fetch.py — download upstream source
+### Stage 1 — fetch.py (per source)
+Downloads upstream source data into `sources/<source>/raw/`. Never modify raw files.
+
 ```bash
 python3 sources/<source>/fetch.py
 ```
 
-### enrich.py — LLM enrichment
-Calls Claude to enrich exercises. Validates output with Pydantic at write time.
-Writes one JSON file per exercise to `enriched/`. Resumes from prior runs;
-quarantines on validation failure.
+### Stage 2 — identity.py
+Resolves source records across all sources into canonical entities using biomechanical similarity scoring. Writes entity clusters and confidence scores to SQLite. Ambiguous matches are linked via `possible_matches` and proceed independently — pipeline is never blocked.
 
 ```bash
-python3 sources/<source>/enrich.py                        # enrich all pending
-python3 sources/<source>/enrich.py --limit 10 --random
-python3 sources/<source>/enrich.py --retry-quarantine     # re-attempt all quarantined
-python3 sources/<source>/enrich.py --force <EXERCISE_ID>  # re-enrich specific exercise
-python3 sources/<source>/enrich.py --concurrency 4        # parallel requests
+python3 pipeline/identity.py
 ```
 
-### check_stale.py — detect stale enrichments
-Run after any vocabulary change to find enriched exercises whose vocabulary
-version stamps are behind the current ontology. Exits 1 if stale exercises found.
+### Stage 3 — canonicalize.py
+Aggregates all asserted facts from source records into the claims table, tagged by source and origin type. Runs conflict detection. Produces the canonical sparse layer per entity.
 
 ```bash
-python3 sources/<source>/check_stale.py
-python3 sources/<source>/check_stale.py --verbose
+python3 pipeline/canonicalize.py
 ```
 
-### build.py — assemble ingested.ttl
-Pure Python JSON→RDF assembly. Reads `enriched/*.json`, serialises to `ingested.ttl`.
+### Stage 4 — reconcile.py
+Applies deterministic resolution algebra over asserted claims. Writes resolved claims to `resolved_claims`. Deferred conflicts enter the triage queue. No LLM involvement.
 
 ```bash
-python3 sources/<source>/build.py
+python3 pipeline/reconcile.py
+python3 pipeline/reconcile.py --triage    # open triage queue for human review
+```
+
+### Stage 5 — enrich.py
+Single LLM pass per canonical entity. Fills fields absent from resolved claims. Inferred claims are tagged separately from asserted ones and never overwrite resolved claims.
+
+```bash
+python3 pipeline/enrich.py
+python3 pipeline/enrich.py --limit 10 --concurrency 4
+python3 pipeline/enrich.py --force <ENTITY_ID>
+python3 pipeline/enrich.py --dump-prompts <DIR>    # save prompts without calling LLM
+```
+
+### Stage 6 — build.py
+Assembles RDF from resolved and inferred claims. Asserted claims always take precedence over inferred. Writes `graph.ttl`.
+
+```bash
+python3 pipeline/build.py
 ```
 
 ### validate.py — 6-dimension quality scorecard
-Runs 6 quality checks and writes a per-exercise CSV report:
 
 | Dimension    | Severity | What it checks |
 |---|---|---|
@@ -142,13 +157,6 @@ Runs 6 quality checks and writes a per-exercise CSV report:
 | timeliness   | warn | enriched exercises have current vocabulary_versions stamps |
 | consistency  | warn | cross-field rules (JA ↔ pattern, isCompound ↔ JA count) |
 | completeness | warn | movement patterns, involvements, and primary JAs present |
-
-```bash
-python3 sources/<source>/validate.py
-python3 sources/<source>/validate.py --all   # include perfect exercises
-```
-
-Exits 0 if no validity failures, 1 if any validity violations.
 
 **URI conventions (ADR-040):**
 - Exercises: `feg:ex_{id}` (avoids leading numeral / invalid NCName issues)

@@ -1,42 +1,26 @@
 """
 enrichment/service.py
 
-Shared LLM enrichment service for all FEG source pipelines.
+Shared LLM enrichment utilities for the FEG pipeline.
 
-Provides ontology loading, system prompt assembly, the LLM call/parse loop,
-and the shared enrichment orchestration (run_enrichment, reparse_quarantine).
+Provides ontology loading, system prompt assembly, and LLM response parsing.
+LLM calls are made via provider objects from enrichment.providers.
+Orchestration lives in pipeline/enrich.py.
 
-Source-specific adapters (enrich.py in each source directory) handle:
-  - Reading source exercises (_read_exercises / loading JSON)
-  - User message formatting (format_user_message)
-  - Enriched record assembly (make_record)
-  - CLI argument parsing
-
-Usage in a source adapter:
+Usage:
     from enrichment.service import (
-        load_graphs, vocabulary_versions, build_system_prompt,
-        call_llm, parse_enrichment, run_enrichment, reparse_quarantine,
+        load_graphs, vocabulary_versions, build_system_prompt, parse_enrichment,
     )
+    from enrichment.providers import make_provider
     from enrichment.schema import setup_validators
 """
 
 import json
-import random
 import sys
-from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
 from pathlib import Path
 
-import anthropic
 from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import RDF, RDFS, SKOS
-from tenacity import (
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
@@ -48,8 +32,6 @@ from enrichment.schema import ExerciseEnrichment, normalize_casing, setup_valida
 
 FEG = Namespace(FEG_NS)
 ONTOLOGY_DIR = _PROJECT_ROOT / "ontology"
-
-DEFAULT_MODEL = "claude-sonnet-4-6"
 
 
 # ─── Ontology loading ──────────────────────────────────────────────────────────
@@ -179,50 +161,6 @@ def build_system_prompt(graphs: dict[str, Graph], template: Path) -> str:
     return render(template, variables)
 
 
-# ─── LLM call ─────────────────────────────────────────────────────────────────
-
-
-@retry(
-    retry=retry_if_exception_type(
-        (anthropic.RateLimitError, anthropic.InternalServerError)
-    ),
-    wait=wait_exponential(multiplier=30, min=30, max=180),
-    stop=stop_after_attempt(4),
-    reraise=True,
-)
-def call_llm(
-    client: anthropic.Anthropic,
-    system_prompt: str,
-    user_message: str,
-    model: str = DEFAULT_MODEL,
-) -> tuple[str, object]:
-    """Call the Claude API and return (raw_text, usage).
-
-    usage has .input_tokens, .output_tokens, .cache_creation_input_tokens,
-    .cache_read_input_tokens — use these to track cost and cache hit rate.
-
-    Retries on rate-limit and server errors with exponential backoff.
-    Raises on API failure after 4 attempts.
-    """
-    response = client.messages.create(
-        model=model,
-        max_tokens=4096,
-        system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": user_message}],
-    )
-    if not response.content:
-        raise ValueError(
-            f"Empty content list from API (stop_reason={response.stop_reason!r})"
-        )
-    raw = response.content[0].text
-    if not raw.strip():
-        raise ValueError(
-            f"Empty response text from API (stop_reason={response.stop_reason!r}, "
-            f"content blocks={len(response.content)}, "
-            f"block type={type(response.content[0]).__name__!r})"
-        )
-    return raw, response.usage
-
 
 def parse_enrichment(raw: str) -> ExerciseEnrichment:
     """Parse and validate the last JSON object from a raw LLM response.
@@ -253,191 +191,3 @@ def parse_enrichment(raw: str) -> ExerciseEnrichment:
     if last_obj is None:
         raise json.JSONDecodeError("No valid JSON object found", text, 0)
     return ExerciseEnrichment.model_validate(normalize_casing(last_obj))
-
-
-# ─── Shared orchestration ──────────────────────────────────────────────────────
-
-
-def reparse_quarantine(
-    quarantine_dir: Path,
-    enriched_dir: Path,
-    make_record: Callable[[dict, dict, dict], dict],
-) -> None:
-    """Re-parse raw_response from quarantine files without calling the LLM.
-
-    Use after a vocabulary fix when the model's original response was correct
-    but failed validation because a term wasn't in the vocab yet. Exercises
-    that pass validation are moved to enriched/; those that still fail remain
-    in quarantine with an updated error.
-    """
-    quarantine_files = list(quarantine_dir.glob("*.json"))
-    if not quarantine_files:
-        print("No quarantined exercises to reparse.")
-        return
-
-    graphs = load_graphs()
-    vocab_vers = vocabulary_versions(graphs)
-    setup_validators(graphs)
-
-    passed = 0
-    for p in quarantine_files:
-        data = json.loads(p.read_text())
-        raw = data.get("raw_response")
-        exercise = data.get("exercise", {})
-        name = exercise.get("name", p.stem)
-        if not raw:
-            print(f"  ⚠️  {name}  no raw_response — skipping")
-            continue
-        try:
-            enrichment = parse_enrichment(raw)
-            record = make_record(exercise, enrichment.model_dump(exclude_none=True), vocab_vers)
-            (enriched_dir / p.name).write_text(json.dumps(record, indent=2))
-            p.unlink()
-            passed += 1
-            print(f"  ✅ {name}")
-        except Exception as e:
-            data["error"] = str(e)
-            p.write_text(json.dumps(data, indent=2))
-            print(f"  ❌ {name}  {e}")
-
-    still_quarantined = len(list(quarantine_dir.glob("*.json")))
-    print(f"\n{passed} reparsed, {still_quarantined} still quarantined.")
-
-
-def run_enrichment(
-    exercises: list[dict],
-    format_fn: Callable[[dict], str],
-    make_record: Callable[[dict, dict, dict], dict],
-    enriched_dir: Path,
-    quarantine_dir: Path,
-    log_path: Path,
-    *,
-    model: str = DEFAULT_MODEL,
-    concurrency: int = 1,
-    limit: int | None = None,
-    randomise: bool = False,
-    force: list[str] | None = None,
-    retry_quarantine: bool = False,
-    dump_prompts_dir: Path | None = None,
-) -> None:
-    """Orchestrate LLM enrichment for a list of exercises.
-
-    Handles --retry-quarantine, --force, pending filtering, concurrency,
-    logging, and file I/O. Source adapters provide exercises, format_fn,
-    and make_record; everything else is shared.
-
-    When dump_prompts_dir is set, saves system_prompt.txt and one
-    {exercise_id}.txt per pending exercise instead of calling the LLM.
-    """
-    enriched_dir.mkdir(exist_ok=True)
-    quarantine_dir.mkdir(exist_ok=True)
-
-    if retry_quarantine:
-        cleared = list(quarantine_dir.glob("*.json"))
-        for p in cleared:
-            p.unlink()
-        print(f"  Cleared {len(cleared)} quarantine files.")
-
-    if force:
-        for ex_id in force:
-            for d in (enriched_dir, quarantine_dir):
-                p = d / f"{ex_id}.json"
-                if p.exists():
-                    p.unlink()
-                    print(f"  Cleared {p.relative_to(enriched_dir.parent)}")
-
-    done_ids = {p.stem for p in enriched_dir.glob("*.json")}
-    quarantine_ids = {p.stem for p in quarantine_dir.glob("*.json")}
-
-    pending = [
-        e for e in exercises
-        if e["id"] not in done_ids and e["id"] not in quarantine_ids
-    ]
-
-    if force:
-        force_set = set(force)
-        pending = [e for e in exercises if e["id"] in force_set]
-
-    if randomise:
-        random.shuffle(pending)
-    if limit:
-        pending = pending[:limit]
-
-    if not pending:
-        print("Nothing to enrich — all exercises are done or quarantined.")
-        return
-
-    print("Loading ontology...")
-    graphs = load_graphs()
-    system_prompt = build_system_prompt(graphs, _PROJECT_ROOT / "enrichment" / "prompt_template.md")
-    vocab_vers = vocabulary_versions(graphs)
-    setup_validators(graphs)
-
-    if dump_prompts_dir is not None:
-        dump_prompts_dir.mkdir(parents=True, exist_ok=True)
-        (dump_prompts_dir / "system_prompt.txt").write_text(system_prompt)
-        for exercise in pending:
-            (dump_prompts_dir / f"{exercise['id']}.txt").write_text(format_fn(exercise))
-        print(f"Saved system_prompt.txt + {len(pending)} exercise prompts to {dump_prompts_dir}")
-        return
-
-    client = anthropic.Anthropic()
-    total = len(pending)
-    print(
-        f"Enriching {total} exercises with {model} "
-        f"(concurrency={concurrency}, {len(done_ids)} done, "
-        f"{len(quarantine_ids)} quarantined)."
-    )
-
-    completed = 0
-
-    def _log(line: str) -> None:
-        ts = datetime.now(timezone.utc).strftime("%H:%M:%S")
-        log_path.open("a").write(f"{ts} {line}\n")
-
-    _log(f"START  {total} pending  model={model}  concurrency={concurrency}")
-
-    def process(exercise: dict) -> tuple[dict, dict | None, str | None, object | None, Exception | None]:
-        raw = None
-        usage = None
-        try:
-            raw, usage = call_llm(client, system_prompt, format_fn(exercise), model)
-            enrichment = parse_enrichment(raw)
-            return exercise, enrichment.model_dump(exclude_none=True), raw, usage, None
-        except Exception as e:
-            return exercise, None, raw, usage, e
-
-    with ThreadPoolExecutor(max_workers=concurrency) as executor:
-        futures = {executor.submit(process, ex): ex for ex in pending}
-        for future in as_completed(futures):
-            exercise, fields, raw, usage, err = future.result()
-            completed += 1
-            usage_str = ""
-            if usage:
-                cache_read = getattr(usage, "cache_read_input_tokens", 0) or 0
-                cache_write = getattr(usage, "cache_creation_input_tokens", 0) or 0
-                usage_str = (
-                    f"  in={usage.input_tokens} out={usage.output_tokens}"
-                    f" cache_read={cache_read} cache_write={cache_write}"
-                )
-            if err:
-                (quarantine_dir / f"{exercise['id']}.json").write_text(
-                    json.dumps(
-                        {"exercise": exercise, "error": str(err), "raw_response": raw},
-                        indent=2,
-                    )
-                )
-                print(f"  ❌ {exercise['name']}  {err}", flush=True)
-                _log(f"FAIL  [{completed}/{total}]  {exercise['name']}  {err}")
-            else:
-                record = make_record(exercise, fields, vocab_vers)
-                (enriched_dir / f"{exercise['id']}.json").write_text(
-                    json.dumps(record, indent=2)
-                )
-                print(f"  ✅ {exercise['name']}{usage_str}", flush=True)
-                _log(f"OK    [{completed}/{total}]  {exercise['name']}{usage_str}")
-
-    final_done = len(list(enriched_dir.glob("*.json")))
-    final_quarantine = len(list(quarantine_dir.glob("*.json")))
-    _log(f"DONE   {final_done} enriched  {final_quarantine} quarantined")
-    print(f"\n{final_done} enriched, {final_quarantine} quarantined.")

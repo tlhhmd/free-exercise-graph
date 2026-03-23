@@ -8,9 +8,6 @@ and exports each sheet as raw/{SheetName}.csv.
 Usage:
     python3 sources/functional-fitness-db/fetch.py
 
-Source URL is documented in sources/functional-fitness-db/catalog.ttl
-(dcat:downloadURL on the feg:SourceDistribution resource).
-
 Credit: Strength to Overcome — https://strengthtoovercome.com/functional-fitness-exercise-database
 """
 

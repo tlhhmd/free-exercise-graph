@@ -2713,6 +2713,146 @@ Vocabulary version not bumped in this commit — to be done in a batched version
 
 ---
 
+### ADR-086: Multi-Source Pipeline Rearchitecture
+**Status:** Accepted
+
+**Context:** The original pipeline enriches each source independently to completion — each source's `enrich.py` calls the LLM once per exercise, validates, and writes a finished `enriched/*.json` file. When a second source (functional-fitness-db) was added, this produced two independent enrichments of the same exercise with no shared state. Reconciliation was treated as a post-hoc merge problem: compare two finished outputs and pick a winner.
+
+This framing has a fundamental sequencing error. Enrichment was doing two jobs conflated into one: (1) completing sparse source data, and (2) classifying the exercise against the ontology. Those jobs should be separated. Running the LLM twice on the same exercise introduces non-deterministic variance — the same exercise enriched independently from two sources will produce overlapping but not identical outputs, making it impossible to distinguish genuine disagreement from random variance. More critically, the pipeline conflates incompleteness with disagreement: if source A lists three muscles and source B lists five, that looks like a conflict but is actually just coverage difference.
+
+**Decision:** Adopt an identity-first pipeline architecture. The new stage sequence is:
+
+1. `fetch.py` — unchanged; downloads upstream source data
+2. `identity.py` — resolves source records into canonical entities using biomechanical similarity; produces entity clusters with confidence scores
+3. `canonicalize.py` — aggregates all asserted facts from source records into a canonical sparse layer per entity; detects and classifies conflicts explicitly
+4. `reconcile.py` — applies deterministic resolution algebra to produce a single resolved claim per predicate per entity; defers unresolvable conflicts to a triage queue
+5. `enrich.py` (rearchitected) — single LLM pass per canonical entity; fills genuine gaps only; inferred claims are tagged separately from asserted ones
+6. `build.py` — assembles RDF from resolved and inferred claims; asserted claims always take precedence over inferred
+
+The LLM never arbitrates disagreements. It receives one clean, conflict-free canonical input and fills fields absent from all sources. Every claim in the final graph is traceable to its origin (source, stage, resolution rule).
+
+**Alternatives considered:**
+- **Continue per-source enrichment, reconcile post-hoc:** Rejected. Produces non-deterministic variance, conflates incompleteness with disagreement, and makes audit trails difficult.
+- **Re-enrich with both sources' data as input context:** Rejected. Non-deterministic; LLM still arbitrates rather than filling gaps.
+- **Source precedence (one source always wins):** Rejected. Arbitrary, lossy, and breaks when a third source is added.
+
+**Files to change:** `sources/*/enrich.py`, `sources/*/build.py`, new `pipeline/identity.py`, new `pipeline/canonicalize.py`, new `pipeline/reconcile.py`, `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, `TODO.md`, `DECISIONS.md`.
+
+---
+
+### ADR-087: SQLite as Intermediate Pipeline Storage
+**Status:** Accepted
+
+**Context:** The rearchitected pipeline (ADR-086) introduces multiple intermediate stages — identity clustering, canonical sparse layer, conflict detection, resolution, triage queue — each of which produces structured relational state. The current pattern of one JSON file per exercise is not well-suited to this workload: identity clusters are join queries, conflict detection is a group-by and filter, the triage queue is a filtered view of a conflicts table, and audit queries ("why did this muscle get this degree?") are provenance joins. All of these require hand-rolling joins and indexes in Python when working with JSON files.
+
+**Decision:** Use SQLite for all intermediate pipeline state. Key tables:
+
+- `entities` — one row per canonical entity (`entity_id`, `display_name`, `status`: resolved/deferred)
+- `entity_sources` — maps source records to canonical entities (`entity_id`, `source`, `source_id`, `confidence`)
+- `possible_matches` — links ambiguous identity candidates (`entity_id_a`, `entity_id_b`, `score`, `status`)
+- `claims` — all asserted and inferred claims with provenance (`entity_id`, `predicate`, `value`, `qualifier`, `origin`, `source`, `claim_type`: asserted/inferred, `origin_type`: structured/absent/inferred)
+- `conflicts` — detected conflicts over asserted claims (`conflict_id`, `entity_id`, `predicate`, `value`, `description`, `status`: open/resolved/deferred)
+- `resolved_claims` — output of reconcile.py (`entity_id`, `predicate`, `value`, `qualifier`, `resolution_method`, `conflict_id`)
+- `triage_queue` — deferred conflicts awaiting human review (`conflict_id`, `entity_id`, `description`, `options`, `status`)
+
+Raw LLM responses are retained as JSON files (one per entity) for debuggability — they are large and unstructured and not queried programmatically.
+
+**Alternatives considered:**
+- **Extended JSON:** Rejected. Hand-rolled joins, no query language, debugging requires grepping hundreds of files.
+- **RDF named graphs:** Rejected. Query complexity for ETL is high; SPARQL across named graphs is verbose and the intermediate pipeline is not a query problem.
+- **RDF-star:** Rejected. Tooling support in rdflib and pyoxigraph is experimental; too much risk for a production pipeline.
+- **DuckDB:** Rejected. OLAP engine optimised for columnar scans over large analytical datasets; the workload here is pure OLTP (row-level inserts, lookup by entity_id, small aggregations over hundreds of rows). Correct tool for the wrong job.
+
+**Files to change:** New `pipeline/db.py` (schema + connection utilities), `pipeline/identity.py`, `pipeline/canonicalize.py`, `pipeline/reconcile.py`, `sources/*/enrich.py`, `sources/*/build.py`, `DECISIONS.md`.
+
+---
+
+### ADR-088: Identity Resolution Algorithm
+**Status:** Accepted
+
+**Context:** When two source records have the same name, they are candidates for the same canonical entity — but name equality alone is a weak signal. "Romanian Deadlift" in one source and "Romanian Deadlift" in another are likely the same exercise, but "Romanian Deadlift" and "Stiff-Leg Deadlift" may describe functionally identical movements with different names. Conversely, "Cable Fly" (chest) and "Cable Fly" (rear delt) are same-named but distinct movements. Collapsing distinct exercises into one canonical entity would contaminate both enrichments; failing to merge genuinely identical exercises wastes enrichment budget and produces duplicate graph nodes.
+
+**Decision:** Compute a weighted similarity score over a feature vector. Biomechanical signals dominate; name and muscle list are weak signals.
+
+Feature vector and weights (approximate; to be calibrated during implementation):
+- Movement pattern match (categorical): high weight
+- Primary joint actions overlap (Jaccard): high weight
+- Laterality match: medium weight
+- Equipment overlap (hierarchy-aware — barbell is-a free-weight): medium weight
+- Normalised name similarity (string distance + embedding cosine): low weight
+- Coarse muscle group overlap: low weight (noisy — the reconciliation data proves this)
+
+Confidence outcomes:
+- **High (auto-merge):** Strong agreement across biomechanical signals, no hard contradictions. Records collapsed into one canonical entity.
+- **Low (separate entities):** Clear structural mismatch (different primary joint system, different movement pattern). Records kept as separate entities permanently.
+- **Ambiguous (defer):** Mixed signals. Records linked by a `possible_matches` row with a confidence score. Each proceeds through independent canonicalization and enrichment. Human triage resolves merge/keep-separate/mark-as-variant-of. Pipeline is not blocked.
+
+After enrichment, similarity can be recomputed with inferred joint actions as additional signal. If two deferred entities converge post-enrichment, the match is promoted to high confidence deterministically.
+
+The `feg:variantOf` relationship is available for cases where two exercises share a pattern-level identity but differ enough in execution to warrant separate nodes (e.g. barbell vs dumbbell Romanian Deadlift). This reduces pressure on identity resolution to be perfect.
+
+**Alternatives considered:**
+- **Name equality only:** Rejected. Both false positives (same name, different movement) and false negatives (different name, same movement) are common enough to matter.
+- **LLM-based identity resolution:** Rejected. Non-deterministic, expensive, and introduces a dependency on API availability in a stage that should be offline-capable.
+
+**Files to change:** New `pipeline/identity.py`, `pipeline/db.py`, `DECISIONS.md`.
+
+---
+
+### ADR-089: Resolution Algebra
+**Status:** Accepted
+
+**Context:** After canonicalization, the claims table contains asserted facts from multiple sources with explicit conflict annotations. Before enrichment, these conflicts must be resolved deterministically into a single canonical claim per predicate per entity. The LLM must not be involved — resolution must be reproducible without API calls and auditable after the fact.
+
+Different predicate families have different semantics and require different resolution strategies. A single rule applied uniformly across all fields produces incorrect results: union over involvement degrees is wrong (you can't union PrimeMover and Synergist), and conservative-degree over muscle lists is wrong (you'd drop muscles one source didn't mention).
+
+**Decision:** Apply rules in the following precedence order per (entity, predicate) group:
+
+1. **Consensus** — all sources assert the same value. Pass through unchanged. No conflict exists.
+
+2. **Union** — set-valued, non-exclusive fields: `muscle_involvements` (muscle presence), `exercise_style`, `movement_patterns`. Take all distinct values asserted by any source. The ancestor validator (already implemented in `enrichment/schema.py`) runs after union to detect double-counting introduced by the merge.
+
+3. **Conservative** — ordered qualifiers where a defined ranking exists. For involvement degrees: `PrimeMover > Synergist > Stabilizer > PassiveTarget`. When sources disagree on degree for the same muscle, take the lower rank. Rationale: overclaiming a muscle's role leads to worse user outcomes than underclaiming.
+
+4. **Coverage gap** — exclusive scalar fields (`is_compound`, `laterality`, `is_combination`) where exactly one source has a non-null value. Treat as union: take the value that exists. This is not a conflict — it is incompleteness in one source.
+
+5. **Defer** — genuinely contradictory exclusive scalars where multiple sources have conflicting non-null values with no structural basis to prefer one; and joint action routing conflicts (primary vs supporting) always defer regardless. Deferred claims enter the triage queue. The resolved claim is written as null and excluded from the graph until resolved.
+
+Post-enrichment: inferred claims (origin_type=inferred) fill fields absent from resolved_claims. They do not overwrite. Asserted-resolved always takes precedence.
+
+Note: a "source priority" rule (ffdb beats fed on scalar fields) was considered and rejected. Under the new architecture, source records without a structured column for a field contribute no claim at all (origin_type=absent), so apparent scalar conflicts between sources are actually coverage gaps resolved by rule 4. Source priority is not needed.
+
+**Alternatives considered:**
+- **LLM arbitration at merge time:** Rejected. Non-deterministic, expensive, contradicts the architectural principle that enrichment fills gaps rather than arbitrates.
+- **Source priority (hardcoded ffdb > fed):** Rejected. Dissolves into the coverage gap rule under correct analysis; would break when a third source is added.
+- **Majority vote:** Rejected. Requires three or more sources; deferred to future ADR when a third source is ingested.
+
+**Files to change:** New `pipeline/reconcile.py`, `pipeline/db.py`, `DECISIONS.md`.
+
+---
+
+### ADR-090: Deprecate Existing Per-Source Enriched Files
+**Status:** Accepted
+
+**Context:** Both sources currently have `enriched/` directories containing one JSON file per exercise — 873 files in free-exercise-db and ~743 files in functional-fitness-db. These files were produced by the old per-source enrichment architecture. They conflate asserted source facts with LLM-inferred claims in a single flat object, carry no provenance annotation distinguishing the two, and were produced independently per source rather than per canonical entity. They are structurally incompatible with the new claims-based pipeline (ADR-086, ADR-087).
+
+**Decision:** Delete all existing `enriched/*.json` files from both sources when implementation of the new pipeline begins. Do not attempt to migrate or adapt them.
+
+The cost is manageable:
+- Source assertion data (muscles, movement patterns, laterality, etc.) is fully recoverable from the crosswalk CSVs and raw source files — nothing is permanently lost.
+- LLM enrichment work will be redone, but under the new architecture each canonical entity is enriched once on richer input (union of both sources' asserted facts). With only 14 cross-source overlaps currently, most canonical entities are 1:1 with source records, so re-enrichment volume is approximately the same.
+- The new enrichments will be higher quality: the LLM sees more signal, produces no cross-source variance, and every output claim carries provenance.
+
+Timing: deletion occurs at the start of implementation, not before. Existing files remain as reference material until the new pipeline is ready to produce replacements.
+
+**Alternatives considered:**
+- **Migrate existing files to the new schema:** Rejected. The asserted/inferred distinction cannot be recovered retroactively — we cannot know which fields in the existing JSON came from source data vs LLM inference. A migration would produce a provenance-annotated file with incorrect provenance.
+- **Keep existing files as a bootstrap cache:** Rejected. Same problem — inferred claims would be incorrectly treated as asserted, corrupting the reconciliation stage.
+
+**Files to change:** `sources/free-exercise-db/enriched/` (delete all), `sources/functional-fitness-db/enriched/` (delete all), `TODO.md`, `DECISIONS.md`.
+
+---
+
 ## Open Questions
 
 - **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for

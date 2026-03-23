@@ -4,48 +4,46 @@ Items are grouped by theme, roughly priority-ordered within each group.
 
 ---
 
-## In progress
+## Enrichment in progress
 
-- [ ] **functional-fitness-db enrichment** — ~1645/3242 done, 14 quarantined. **Blocked:** fix HipFlexors ancestor violation before resuming (see below), then run `python3 sources/functional-fitness-db/enrich.py --concurrency 4`.
+Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider. Context cache active (`pipeline/gemini_cache_id.txt`). Rate limit: ~250 RPD → ~16-day run at 4,095 entities. Script is resume-safe via `enrichment_stamps`.
 
-- [ ] **Fix HipFlexors ancestor violation in prompt** — ADR-085 added `feg:HipFlexors` as a `MuscleRegion` with `Psoas` and `Sartorius` as narrower concepts. The model now lists both `HipFlexors` and `Psoas`/`Iliopsoas` on the same exercise, tripping the ancestor rule (`HipFlexors is an ancestor of Psoas/Iliopsoas — double-counting`). The prompt's ancestor rule section (`enrichment/prompt_template.md`) needs an explicit example showing that listing `HipFlexors` precludes listing `Psoas`, `Iliopsoas`, or `Sartorius` in the same exercise. Also retry the 2 quarantined exercises that hit this error (`Bar_Hanging_Knees_to_Wrists`, `Parallette_L_Sit_to_Pike_Press_Handstand`) after the fix.
+- [ ] **Let enrichment run to completion** — then:
+  ```bash
+  python3 pipeline/build.py
+  python3 test_shacl.py
+  ```
+- [ ] **Verify Gemini context cache** — check that `cached=~9000` appears in enrich.py output on every call. If `cached=0`, the cache creation failed and we're paying full input price per call.
 
 ---
 
-## Pipeline
+## Quarantine resolution (resolved by re-enrichment)
 
-- [ ] **Graph refresh** — `refresh.sh` exists (build → pkill mcp_server.py). Claude Desktop reloads the server automatically after the kill.
+These 4 exercises will be re-enriched under the new pipeline. Keeping for reference:
+
+- **HipHinge-in-joint-actions** (2 exercises: `Alternating_Double_Kettlebell_Bent_Over_Row`, `Alternating_Single_Arm_Kettlebell_Ballistic_Row`) — model has no joint action term for "maintaining a hip hinge position." Design decision: add `HipFlexionIsometric` or accept `HipFlexion` in supporting actions.
+- **Hallucinated muscle names** (2 exercises: `Resistance_Band_Pull_Apart` → `InfraspinatusHead`, `Single_Arm_Kettlebell_Suitcase_Alternating_Reverse_Lunge` → `LowerGastrocnemius`) — re-enrich under new pipeline.
 
 ---
 
-## Multi-source assembly
+## Pipeline improvements (post-enrichment)
 
-Design decisions needed before implementing a second source or `assemble.py`:
-
-- [ ] **Output artifact naming** — decision: top-level assembled output is `graph.ttl`. Update `assemble.py`, MCP server, and any consumers when multi-source assembly is built.
-- [ ] **Vocabulary loading responsibility** — decision: stays per-source. Each source's `build.py` remains self-contained and independently runnable. `assemble.py` de-duplicates vocabulary triples at merge time.
-- [ ] **PROV-O / catalog merge strategy** — decision: catalogs stay scoped to their source. `assemble.py` does not merge them into `graph.ttl`. A root-level `catalog.ttl` for the assembled graph is a separate future artifact if needed.
-- [ ] **Semantic reconciliation framework** — when two sources disagree on a classification (Source A: Biceps, Source B: Brachialis), what wins? Design the conflict detection and resolution model before ingesting a second source. Options: provenance-weighted priority, human triage queue, consensus rule. Needs an ADR.
+- [ ] **Triage queue tooling** — `identity.py` defers near-duplicate pairs to `possible_matches`. Build a simple CLI review tool: show pairs side by side, accept merge / separate / variant_of decisions.
+- [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end and prints a table. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
+- [ ] **Fed muscle crosswalk** — fed exercises currently have no feg-mapped muscles in resolved_claims (raw strings, no crosswalk). The LLM infers them from scratch. A crosswalk would give the LLM better grounding for 873 fed exercises.
 
 ---
 
 ## MCP server
 
-- [ ] **Claude Desktop integration test** — configure claude_desktop_config.json and test `find_substitutions` with equipment constraints end-to-end
-- [ ] **Startup time** — current approach loads ingested.ttl at server start (~0.6s). Acceptable for now; if it becomes an issue, pre-build a pyoxigraph persistent store file.
-- [ ] **Developer onboarding / quick-start** — "Time-to-First-Query < 5 minutes" path: configure MCP, run one query, see a result. No onboarding path currently documented in README or CONTRIBUTING.
-
----
-
-## Enrichment pipeline
-
+- [ ] **Claude Desktop integration test** — configure `claude_desktop_config.json` and test `find_substitutions` with equipment constraints end-to-end.
 
 ---
 
 ## Ontology and vocabulary
 
-- [ ] **Namespace** — replace `https://placeholder.url#` with a real URI before any public release. Decision: split into `https://feg.talha.foo/ontology#` (feg:) and `https://feg.talha.foo/data#` (fegd:). Requires GitHub Pages + DNS setup on talha.foo.
-- [ ] **Namespace migration** — `constants.py` and `sync_namespaces.py` are built and ready. Update `FEG_NS` in `constants.py` then run `python3 sync_namespaces.py --apply` when DNS is in place.
+- [ ] **Namespace** — replace `https://placeholder.url#` with a real URI before any public release. Decision: `https://feg.talha.foo/ontology#` (feg:) and `https://feg.talha.foo/data#` (fegd:). Requires GitHub Pages + DNS setup on talha.foo.
+- [ ] **Namespace migration** — `constants.py` and `sync_namespaces.py` are ready. Update `FEG_NS` in `constants.py` then run `python3 sync_namespaces.py --apply` when DNS is in place.
 
 ---
 
@@ -53,22 +51,17 @@ Design decisions needed before implementing a second source or `assemble.py`:
 
 - [ ] **Annotate gold standard** — review `evals/gold_annotation.xlsx`. Target: 30–50 exercises fully verified.
 - [ ] **eval.py** — automated scoring against completed gold standard (precision/recall/F1 per field).
-- [ ] **HITL correction loop** — formal mechanism for domain experts (kinesiologists, coaches) to flag incorrect classifications, with corrections feeding back into prompt grounding and ontology guidance. Seed: `evals/` annotation tooling. Needs design before building — the feedback loop architecture (triage queue → prompt update → re-enrich) is the hard part.
+- [ ] **HITL correction loop** — mechanism for domain experts to flag incorrect classifications, with corrections feeding back into prompt grounding and ontology guidance. Architecture (triage queue → prompt update → re-enrich) needs design before building.
 
 ---
 
 ## Governance and documentation
 
-- [ ] **Trend tracking for quality scorecard** — `graph_health.py` generates per-run snapshots but has no history. Consider appending summary stats to a `quality_history.csv` to show trend over time.
-- [ ] **Productized quality scorecard** — stakeholder-readable Graph Health report summarizing `validate.py` output: failure counts by dimension, % of library at completeness standard, trend over time. Replaces raw CSV as the communication artifact for collaborators and reviewers.
+- [ ] **Trend tracking for quality scorecard** — append summary stats from `validate.py` runs to `quality_history.csv` to show trend over time.
+- [ ] **Productized quality scorecard** — stakeholder-readable Graph Health report summarizing `validate.py` output.
 
 ---
 
 ## Personas and use cases
 
-Document four JTBDs in README or a dedicated PERSONAS.md to ground design decisions and communicate scope to reviewers:
-
-- [ ] **Agentic Developer** — grounding AI coaches and fitness apps in a verifiable, machine-readable source of truth for exercise classification.
-- [ ] **Content Architect** — centralized, version-controlled governance for large exercise libraries across platforms or product lines.
-- [ ] **Clinical Exercise Specialist** — prescribing programs with precision around specific joint limitations, contraindications, or rehab stages.
-- [ ] **Casual Gymgoer** — intuitive discovery by movement pattern, muscle group, or available equipment without needing anatomical vocabulary.
+Four JTBDs are documented in README.md. No further action needed.
