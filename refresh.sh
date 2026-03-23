@@ -7,7 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Building graph..."
-python3 "$SCRIPT_DIR/sources/free-exercise-db/build.py"
+python3 "$SCRIPT_DIR/pipeline/build.py"
 
 echo "Restarting MCP server..."
 if pkill -f mcp_server.py 2>/dev/null; then

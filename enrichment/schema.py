@@ -3,8 +3,8 @@ enrichment/schema.py
 
 Pydantic output model for FEG exercise enrichment — shared across all source pipelines.
 
-The ExerciseEnrichment model is the contract between the LLM and the enriched/*.json files.
-All sources produce this schema. Validators enforce ontology constraints at write time.
+The ExerciseEnrichment model is the contract between the LLM and the pipeline's
+inferred_claims table. Validators enforce ontology constraints at parse time.
 
 Call setup_validators(graphs) once after loading ontology graphs before validating any output.
 """

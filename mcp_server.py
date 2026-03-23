@@ -2,7 +2,7 @@
 """
 mcp_server.py — MCP server for the free-exercise-graph knowledge graph.
 
-Loads ingested.ttl into pyoxigraph in-process and exposes 5 tools via the
+Loads graph.ttl into pyoxigraph in-process and exposes 5 tools via the
 MCP protocol. No external services, no Docker.
 
 Usage:
@@ -38,7 +38,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from constants import FEG_NS
 
-INGESTED_TTL = PROJECT_ROOT / "sources" / "free-exercise-db" / "ingested.ttl"
+GRAPH_TTL = PROJECT_ROOT / "graph.ttl"
 
 FEG = FEG_NS
 
@@ -47,7 +47,7 @@ FEG = FEG_NS
 
 def _load_store() -> ox.Store:
     store = ox.Store()
-    store.load(INGESTED_TTL.read_bytes(), format=ox.RdfFormat.TURTLE)
+    store.load(GRAPH_TTL.read_bytes(), format=ox.RdfFormat.TURTLE)
     return store
 
 
@@ -165,11 +165,12 @@ def get_exercise(exercise_id: str) -> dict | None:
     query = f"""
     PREFIX feg: <{FEG}>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    SELECT ?label ?eq ?compound ?unilateral WHERE {{
+    SELECT ?label ?eq ?compound ?combination ?laterality WHERE {{
       feg:{exercise_id} a feg:Exercise ; rdfs:label ?label .
       OPTIONAL {{ feg:{exercise_id} feg:equipment ?eq }}
       OPTIONAL {{ feg:{exercise_id} feg:isCompound ?compound }}
-      OPTIONAL {{ feg:{exercise_id} feg:isUnilateral ?unilateral }}
+      OPTIONAL {{ feg:{exercise_id} feg:isCombination ?combination }}
+      OPTIONAL {{ feg:{exercise_id} feg:laterality ?laterality }}
     }}
     """
     rows = _sparql(query)
@@ -185,8 +186,10 @@ def get_exercise(exercise_id: str) -> dict | None:
         result["equipment"] = _local(r["eq"])
     if r["compound"]:
         result["is_compound"] = r["compound"].value == "true"
-    if r["unilateral"]:
-        result["is_unilateral"] = r["unilateral"].value == "true"
+    if r["combination"]:
+        result["is_combination"] = r["combination"].value == "true"
+    if r["laterality"]:
+        result["laterality"] = _local(r["laterality"])
 
     # Involvements
     inv_rows = _sparql(f"""

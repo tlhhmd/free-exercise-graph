@@ -148,6 +148,14 @@ are NOT joint actions — they belong only in `movement_patterns`, never here.
 <<<exercise_style_list>>>
 
 
+## Sparse input
+
+If the input contains only a name and possibly equipment — no source muscles,
+no instructions — classify using the standard biomechanical convention for that
+named movement. Do not leave fields empty because the input is sparse; use your
+knowledge of the exercise.
+
+
 ## Examples
 
 Input:
@@ -296,3 +304,65 @@ Output:
 Note: movement_patterns is ["HipHinge"] — NOT ["AntiLateralFlexion"]. The spine actively
 laterally flexes during the windmill descent; it is not isometrically resisting lateral
 flexion. SpinalLateralFlexion is the correct primary joint action, not SpinalStability.
+
+The next two examples show the same muscles assigned different degrees depending on which
+movement is dominant. Pay close attention to how hamstring degree changes.
+
+Input:
+  Name: Romanian Deadlift (RDL)
+  Equipment: Barbell
+  Is compound: true
+
+Output:
+{
+  "movement_patterns": ["HipHinge"],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+    {"muscle": "BicepsFemoris", "degree": "PrimeMover"},
+    {"muscle": "Semitendinosus", "degree": "PrimeMover"},
+    {"muscle": "Semimembranosus", "degree": "PrimeMover"},
+    {"muscle": "ErectorSpinae", "degree": "Synergist"},
+    {"muscle": "Core", "degree": "Stabilizer"}
+  ],
+  "primary_joint_actions": ["HipExtension"],
+  "supporting_joint_actions": ["SpinalStability", "KneeFlexion"],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "plane_of_motion": ["SagittalPlane"]
+}
+
+Input:
+  Name: Barbell Back Squat
+  Equipment: Barbell
+  Is compound: true
+
+Output:
+{
+  "movement_patterns": ["KneeDominant"],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {"muscle": "RectusFemoris", "degree": "PrimeMover"},
+    {"muscle": "VastusLateralis", "degree": "PrimeMover"},
+    {"muscle": "VastusMedialis", "degree": "PrimeMover"},
+    {"muscle": "VastusIntermedius", "degree": "PrimeMover"},
+    {"muscle": "GluteusMaximus", "degree": "PrimeMover"},
+    {"muscle": "BicepsFemoris", "degree": "Synergist"},
+    {"muscle": "Semitendinosus", "degree": "Synergist"},
+    {"muscle": "Semimembranosus", "degree": "Synergist"},
+    {"muscle": "ErectorSpinae", "degree": "Stabilizer"},
+    {"muscle": "Core", "degree": "Stabilizer"},
+    {"muscle": "GluteusMedius", "degree": "Stabilizer"}
+  ],
+  "primary_joint_actions": ["KneeExtension", "HipExtension"],
+  "supporting_joint_actions": ["SpinalStability"],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "plane_of_motion": ["SagittalPlane"]
+}
+
+Note: Hamstrings are PrimeMover in the RDL — they drive hip extension under a
+hip-hinge load pattern with the knee nearly fixed. In the Back Squat the quads
+dominate; hamstrings assist hip extension and stabilize the knee joint, making
+them Synergist. Same muscles, different role — driven by which joint and which
+movement pattern is dominant.

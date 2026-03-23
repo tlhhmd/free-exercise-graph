@@ -9,11 +9,11 @@ Read `DECISIONS.md` for the full ADR history before making any ontology or pipel
 
 1. **Read `DECISIONS.md`** — every non-trivial decision is documented there. Check it before touching ontology files or pipeline behaviour. ADRs are numbered sequentially; the highest number is the most recent.
 2. **Read `TODO.md`** — current open items in priority order.
-3. **Run the pipeline** to confirm your local environment is healthy before making changes.
+3. **Confirm your environment is healthy** before making changes:
 
 ```bash
 pip install -e .
-python3 sources/free-exercise-db/build.py
+python3 pipeline/build.py
 python3 test_shacl.py
 ```
 
@@ -51,12 +51,10 @@ whenever you make a change:
 | Adding new concepts or properties | MINOR |
 | Correcting labels, comments, editorial notes | PATCH |
 
-Bump only the file(s) that changed. After bumping a version, run `check_stale.py` to
-identify enriched exercises that need re-enrichment against the new vocabulary.
-
-```bash
-python3 sources/free-exercise-db/check_stale.py --verbose
-```
+Bump only the file(s) that changed. After bumping a version, any previously enriched entities
+whose `enrichment_stamps.versions_json` is behind the new version will need re-enrichment.
+Use `pipeline/enrich.py --force <entity_id>` to re-enrich specific entities, or clear stamps
+and re-run the full enrichment pass.
 
 ---
 
@@ -64,11 +62,11 @@ python3 sources/free-exercise-db/check_stale.py --verbose
 
 | File | Status | Notes |
 |---|---|---|
-| `sources/free-exercise-db/enriched/{id}.json` | **Committed** | The dataset — primary output of `enrich.py` |
-| `sources/free-exercise-db/ingested.ttl` | Gitignored (derived) | Rebuilt from `enriched/` by `build.py` |
-| `sources/free-exercise-db/raw/exercises.json` | **Committed, read-only** | Upstream source — never modify directly |
-
-`quarantine/` (failed enrichments) is gitignored — transient debugging data.
+| `sources/*/raw/` | **Committed, read-only** | Upstream source data — never modify directly |
+| `sources/*/mappings/` | **Committed** | Crosswalk CSVs used by adapters |
+| `pipeline/pipeline.db` | Gitignored (derived) | SQLite intermediate store — rebuilt by pipeline stages |
+| `pipeline/gemini_cache_id.txt` | Gitignored (runtime) | Gemini context cache ID — persists across sessions |
+| `graph.ttl` | Gitignored (derived) | Assembled by `pipeline/build.py` |
 
 ---
 
@@ -76,12 +74,34 @@ python3 sources/free-exercise-db/check_stale.py --verbose
 
 | Script | Effect |
 |---|---|
-| `fetch.py` | Overwrites `raw/exercises.json` from upstream — only run intentionally |
-| `enrich.py` | Writes one JSON file per exercise to `enriched/`; costs API tokens |
-| `check_stale.py` | Read-only; exits 0/1 |
-| `build.py` | Writes `ingested.ttl` (gitignored) |
-| `validate.py` | Writes `quality_report.csv`; exits 0/1 |
-| `test_shacl.py` | Read-only; exits 0/1 — CI gate for `build.py` regressions |
+| `sources/<source>/fetch.py` | Overwrites raw source data from upstream — only run intentionally |
+| `pipeline/identity.py` | Writes to `pipeline.db`; read-only against source files |
+| `pipeline/canonicalize.py` | Writes to `pipeline.db`; read-only against source files |
+| `pipeline/reconcile.py` | Writes to `pipeline.db`; no API calls |
+| `pipeline/enrich.py` | Writes inferred claims to `pipeline.db`; **costs API tokens** |
+| `pipeline/build.py` | Writes `graph.ttl` (gitignored) |
+| `test_shacl.py` | Read-only; exits 0/1 — CI gate |
+
+### Enrichment options
+
+```bash
+# Default provider (Anthropic)
+python3 pipeline/enrich.py --concurrency 4
+
+# Gemini
+python3 pipeline/enrich.py --provider gemini
+python3 pipeline/enrich.py --provider gemini --model gemini-3.1-pro-preview
+python3 pipeline/enrich.py --provider gemini --thinking low
+
+# Override model via env var
+FEG_PROVIDER=gemini FEG_MODEL=gemini-3.1-pro-preview python3 pipeline/enrich.py
+
+# Useful flags
+python3 pipeline/enrich.py --dry-run              # count pending, no API calls
+python3 pipeline/enrich.py --limit 10             # enrich a sample
+python3 pipeline/enrich.py --force <entity_id>    # re-enrich a specific entity
+python3 pipeline/enrich.py --dump-prompts ./out   # save prompts without calling API
+```
 
 ---
 
@@ -89,13 +109,29 @@ python3 sources/free-exercise-db/check_stale.py --verbose
 
 All URIs use `https://placeholder.url#` (prefix `feg:`) — a placeholder pending a permanent
 domain. Do not use this namespace for any external publication until it is replaced.
+Import `FEG_NS` from `constants.py` — never hardcode the namespace string in Python files.
 
 ---
 
 ## Pipeline Dependency Order
 
 ```
-fetch.py → enrich.py → check_stale.py → build.py → validate.py
+sources/*/fetch.py
+        ↓
+pipeline/identity.py
+        ↓
+pipeline/canonicalize.py
+        ↓
+pipeline/reconcile.py
+        ↓
+pipeline/enrich.py
+        ↓
+pipeline/build.py
+        ↓
+test_shacl.py
 ```
 
-`test_shacl.py` can run at any point — it uses in-memory test fixtures, not `ingested.ttl`.
+`test_shacl.py` can run at any point — it uses in-memory test fixtures, not `graph.ttl`.
+
+Each stage is resumable: re-running a stage picks up where it left off. `enrich.py` skips
+entities that already have an `enrichment_stamps` entry. Use `--force` to override.
