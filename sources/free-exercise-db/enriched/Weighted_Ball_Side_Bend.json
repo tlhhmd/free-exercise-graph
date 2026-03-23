@@ -1,0 +1,63 @@
+{
+  "name": "Weighted Ball Side Bend",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "isolation",
+  "equipment": "exercise ball",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "To begin, lie down on an exercise ball with your left side of the torso (waist, hips and shoulder) pressed against the ball.",
+    "Your feet should be on the floor while your legs are crossed and hanging from the ball. Hold a weighted plate with your right hand directly to the right side of your head. Tip: Make sure the smooth side of the plate is resting against your head.",
+    "Place your left arm across your torso so that your palm is on your obliques. There should be a right angle between your left forearm and upper arm. This is the starting position.",
+    "Raise the side of your torso up by laterally flexing at the waist while exhaling.",
+    "Hold the contraction for a second and slowly lower yourself back down to the starting position while inhaling.",
+    "Repeat for the recommended amount of repetitions.",
+    "Switch sides and repeat the exercise."
+  ],
+  "category": "strength",
+  "images": [
+    "Weighted_Ball_Side_Bend/0.jpg",
+    "Weighted_Ball_Side_Bend/1.jpg"
+  ],
+  "id": "Weighted_Ball_Side_Bend",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "Obliques",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "QuadratusLumborum",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalLateralFlexion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "Rope Crunch",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "cable",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Kneel 1-2 feet in front of a cable system with a rope attached.",
+    "After selecting an appropriate weight, grasp the rope with both hands reaching overhead. Your torso should be upright in the starting position.",
+    "To begin, flex at the spine, attempting to bring your rib cage to your legs as you pull the cable down.",
+    "Pause at the bottom of the motion, and then slowly return to the starting position.",
+    "These can be done with twists or to the side to hit the obliques."
+  ],
+  "category": "strength",
+  "images": [
+    "Rope_Crunch/0.jpg",
+    "Rope_Crunch/1.jpg"
+  ],
+  "id": "Rope_Crunch",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion"
+  ],
+  "supporting_joint_actions": [
+    "HipFlexion"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

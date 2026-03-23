@@ -1,0 +1,144 @@
+{
+  "name": "Farmer's Walk",
+  "force": null,
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "other",
+  "primaryMuscles": [
+    "forearms"
+  ],
+  "secondaryMuscles": [
+    "abdominals",
+    "glutes",
+    "hamstrings",
+    "lower back",
+    "quadriceps",
+    "traps"
+  ],
+  "instructions": [
+    "There are various implements that can be used for the farmers walk. These can also be performed with heavy dumbbells or short bars if these implements aren't available. Begin by standing between the implements.",
+    "After gripping the handles, lift them up by driving through your heels, keeping your back straight and your head up.",
+    "Walk taking short, quick steps, and don't forget to breathe. Move for a given distance, typically 50-100 feet, as fast as possible."
+  ],
+  "category": "strongman",
+  "images": [
+    "Farmers_Walk/0.jpg",
+    "Farmers_Walk/1.jpg"
+  ],
+  "id": "Farmers_Walk",
+  "movement_patterns": [
+    "Carry",
+    "AntiLateralFlexion"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "WristFlexors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "QuadratusLumborum",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalStability"
+  ],
+  "supporting_joint_actions": [
+    "ScapularRetraction",
+    "ScapularDepression",
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

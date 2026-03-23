@@ -1,0 +1,123 @@
+{
+  "name": "Bottoms-Up Clean From The Hang Position",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "kettlebells",
+  "primaryMuscles": [
+    "forearms"
+  ],
+  "secondaryMuscles": [
+    "biceps",
+    "shoulders"
+  ],
+  "instructions": [
+    "Initiate the exercise by standing upright with a kettlebell in one hand.",
+    "Swing the kettlebell back forcefully and then reverse the motion forcefully. Crush the kettlebell handle as hard as possible and raise the kettlebell to your shoulder."
+  ],
+  "category": "strength",
+  "images": [
+    "Bottoms-Up_Clean_From_The_Hang_Position/0.jpg",
+    "Bottoms-Up_Clean_From_The_Hang_Position/1.jpg"
+  ],
+  "id": "Bottoms-Up_Clean_From_The_Hang_Position",
+  "movement_patterns": [
+    "HipHinge",
+    "VerticalPull"
+  ],
+  "training_modalities": [
+    "Power"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "WristFlexors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "ElbowFlexion",
+    "ShoulderFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ScapularElevation",
+    "KneeExtension",
+    "WristFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Ballistics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

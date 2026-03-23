@@ -1,0 +1,135 @@
+{
+  "id": "Single_Arm_Kettlebell_Bottoms_Up_Front_Rack_Ipsilateral_Pistol_Squat",
+  "name": "Single Arm Kettlebell Bottoms Up Front Rack Ipsilateral Pistol Squat",
+  "equipment": [
+    "Kettlebell"
+  ],
+  "movement_patterns": [
+    "Squat"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TibialisAnterior",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeExtension",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "HipFlexion",
+    "Dorsiflexion",
+    "ShoulderFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Ipsilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Balance",
+    "Grinds"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

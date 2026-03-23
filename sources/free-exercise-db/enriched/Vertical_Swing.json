@@ -1,0 +1,122 @@
+{
+  "name": "Vertical Swing",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "dumbbell",
+  "primaryMuscles": [
+    "hamstrings"
+  ],
+  "secondaryMuscles": [
+    "glutes",
+    "quadriceps",
+    "shoulders"
+  ],
+  "instructions": [
+    "Allow the dumbbell to hang at arms length between your legs, holding it with both hands. Keep your back straight and your head up.",
+    "Swing the dumbbell between your legs, flexing at the hips and bending the knees slightly.",
+    "Powerfully reverse the motion by extending at the hips, knees, and ankles to propel yourself upward, swinging the dumbell over your head.",
+    "As you land, absorb the impact through your legs and draw the dumbbell to your torso before the next repetition."
+  ],
+  "category": "plyometrics",
+  "images": [
+    "Vertical_Swing/0.jpg",
+    "Vertical_Swing/1.jpg"
+  ],
+  "id": "Vertical_Swing",
+  "movement_patterns": [
+    "HipHinge"
+  ],
+  "training_modalities": [
+    "Power"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "Plantarflexion",
+    "ShoulderFlexion",
+    "ScapularUpwardRotation"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

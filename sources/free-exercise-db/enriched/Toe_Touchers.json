@@ -1,0 +1,66 @@
+{
+  "name": "Toe Touchers",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "To begin, lie down on the floor or an exercise mat with your back pressed against the floor. Your arms should be lying across your sides with the palms facing down.",
+    "Your legs should be touching each other. Slowly elevate your legs up in the air until they are almost perpendicular to the floor with a slight bend at the knees. Your feet should be parallel to the floor.",
+    "Move your arms so that they are fully extended at a 45 degree angle from the floor. This is the starting position.",
+    "While keeping your lower back pressed against the floor, slowly lift your torso and use your hands to try and touch your toes. Remember to exhale while perform this part of the exercise.",
+    "Slowly begin to lower your torso and arms back down to the starting position while inhaling. Remember to keep your arms straight out pointing towards your toes.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "stretching",
+  "images": [
+    "Toe_Touchers/0.jpg",
+    "Toe_Touchers/1.jpg"
+  ],
+  "id": "Toe_Touchers",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "name": "Dip Machine",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "machine",
+  "primaryMuscles": [
+    "triceps"
+  ],
+  "secondaryMuscles": [
+    "chest",
+    "shoulders"
+  ],
+  "instructions": [
+    "Sit securely in a dip machine, select the weight and firmly grasp the handles.",
+    "Now keep your elbows in at your sides in order to place emphasis on the triceps. The elbows should be bent at a 90 degree angle.",
+    "As you contract the triceps, extend your arms downwards as you exhale. Tip: At the bottom of the movement, focus on keeping a little bend in your arms to keep tension on the triceps muscle.",
+    "Now slowly let your arms come back up to the starting position as you inhale.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Dip_Machine/0.jpg",
+    "Dip_Machine/1.jpg"
+  ],
+  "id": "Dip_Machine",
+  "movement_patterns": [
+    "VerticalPush"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderExtension"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

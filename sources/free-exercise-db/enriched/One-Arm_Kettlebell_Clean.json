@@ -1,0 +1,140 @@
+{
+  "name": "One-Arm Kettlebell Clean",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "kettlebells",
+  "primaryMuscles": [
+    "hamstrings"
+  ],
+  "secondaryMuscles": [
+    "glutes",
+    "lower back",
+    "shoulders",
+    "traps"
+  ],
+  "instructions": [
+    "Place a kettlebell between your feet. As you bend down to grab the kettlebell, push your butt back and keep your eyes looking forward.",
+    "Clean the kettlebell to your shoulders by extending through the legs and hips as you raise the kettlebell towards your shoulder. The wrist should rotate as you do so.",
+    "Return the weight to the starting position."
+  ],
+  "category": "strength",
+  "images": [
+    "One-Arm_Kettlebell_Clean/0.jpg",
+    "One-Arm_Kettlebell_Clean/1.jpg"
+  ],
+  "id": "One-Arm_Kettlebell_Clean",
+  "movement_patterns": [
+    "HipHinge"
+  ],
+  "training_modalities": [
+    "Power"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "ScapularElevation",
+    "ShoulderFlexion",
+    "ElbowFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Ballistics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

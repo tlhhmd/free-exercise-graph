@@ -1,0 +1,124 @@
+{
+  "id": "Kettlebell_Dead_Clean_to_Horn_Grip_Squat",
+  "name": "Kettlebell Dead Clean to Horn Grip Squat",
+  "equipment": [
+    "Kettlebell"
+  ],
+  "movement_patterns": [
+    "HipHinge",
+    "Squat"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderExtension",
+    "ElbowFlexion",
+    "ScapularRetraction",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Ballistics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "name": "Press Sit-Up",
+  "force": "push",
+  "level": "expert",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [
+    "chest",
+    "shoulders",
+    "triceps"
+  ],
+  "instructions": [
+    "To begin, lie down on a bench with a barbell resting on your chest. Position your legs so they are secure on the extension of the abdominal bench. This is the starting position.",
+    "While inhaling, tighten your abdominals and glutes. Simultaneously curl your torso as you do when performing a sit-up and press the barbell to an overhead position while exhaling. Tip: Use your arms to push the barbell out as you perform this exercise while still focusing on the abdominal muscles.",
+    "Lower your upper body back down to the starting position while bringing the barbell back down to your torso. Remember to breathe in while lowering the body.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Press_Sit-Up/0.jpg",
+    "Press_Sit-Up/1.jpg"
+  ],
+  "id": "Press_Sit-Up",
+  "movement_patterns": [
+    "AntiExtension",
+    "HorizontalPush"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion",
+    "ElbowExtension",
+    "ShoulderFlexion"
+  ],
+  "supporting_joint_actions": [
+    "HipFlexion",
+    "ScapularProtraction"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

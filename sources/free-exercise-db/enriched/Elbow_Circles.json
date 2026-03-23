@@ -1,0 +1,82 @@
+{
+  "name": "Elbow Circles",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": null,
+  "primaryMuscles": [
+    "shoulders"
+  ],
+  "secondaryMuscles": [
+    "traps"
+  ],
+  "instructions": [
+    "Sit or stand with your feet slightly apart.",
+    "Place your hands on your shoulders with your elbows at shoulder level and pointing out.",
+    "Slowly make a circle with your elbows. Breathe out as you start the circle and breathe in as you complete the circle."
+  ],
+  "category": "stretching",
+  "images": [
+    "Elbow_Circles/0.jpg",
+    "Elbow_Circles/1.jpg"
+  ],
+  "id": "Elbow_Circles",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion",
+    "ShoulderHorizontalAdduction",
+    "ShoulderExtension",
+    "ShoulderHorizontalAbduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularUpwardRotation",
+    "ScapularDownwardRotation"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

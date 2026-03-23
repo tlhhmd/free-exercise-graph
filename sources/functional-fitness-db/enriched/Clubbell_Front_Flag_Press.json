@@ -1,0 +1,86 @@
+{
+  "id": "Clubbell_Front_Flag_Press",
+  "name": "Clubbell Front Flag Press",
+  "equipment": [
+    "Clubbell"
+  ],
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion",
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "ScapularProtraction"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

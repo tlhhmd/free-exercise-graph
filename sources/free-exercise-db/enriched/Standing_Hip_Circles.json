@@ -1,0 +1,94 @@
+{
+  "name": "Standing Hip Circles",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abductors"
+  ],
+  "secondaryMuscles": [
+    "adductors"
+  ],
+  "instructions": [
+    "Begin standing on one leg, holding to a vertical support.",
+    "Raise the unsupported knee to 90 degrees. This will be your starting position.",
+    "Open the hip as far as possible, attempting to make a big circle with your knee.",
+    "Perform this movement slowly for a number of repetitions, and repeat on the other side."
+  ],
+  "category": "stretching",
+  "images": [
+    "Standing_Hip_Circles/0.jpg",
+    "Standing_Hip_Circles/1.jpg"
+  ],
+  "id": "Standing_Hip_Circles",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMedius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipAbduction",
+    "HipAdduction",
+    "HipFlexion",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "HipExternalRotation",
+    "HipInternalRotation"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

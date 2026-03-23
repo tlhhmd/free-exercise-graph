@@ -1,0 +1,140 @@
+{
+  "name": "Atlas Stone Trainer",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "other",
+  "primaryMuscles": [
+    "lower back"
+  ],
+  "secondaryMuscles": [
+    "biceps",
+    "forearms",
+    "glutes",
+    "hamstrings",
+    "quadriceps"
+  ],
+  "instructions": [
+    "This trainer is effective for developing Atlas Stone strength for those who don't have access to stones, and are typically made from bar ends or heavy pipe.",
+    "Begin by loading the desired weight onto the bar. Straddle the weight, wrapping your arms around the implement, bending at the hips.",
+    "Begin by pulling the weight up past the knees, extending through the hips. As the weight clears the knees, it can be lapped by resting it on your thighs and sitting back, hugging it tightly to your chest.",
+    "Finish the movement by extending through your hips and knees to raise the weight as high as possible. The weight can be returned to the lap or to the ground for successive repetitions."
+  ],
+  "category": "strongman",
+  "images": [
+    "Atlas_Stone_Trainer/0.jpg",
+    "Atlas_Stone_Trainer/1.jpg"
+  ],
+  "id": "Atlas_Stone_Trainer",
+  "movement_patterns": [
+    "HipHinge"
+  ],
+  "training_modalities": [
+    "Strength"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalExtension",
+    "ElbowFlexion",
+    "ScapularRetraction"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

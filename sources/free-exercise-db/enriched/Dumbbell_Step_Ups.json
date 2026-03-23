@@ -1,0 +1,111 @@
+{
+  "name": "Dumbbell Step Ups",
+  "force": "push",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "dumbbell",
+  "primaryMuscles": [
+    "quadriceps"
+  ],
+  "secondaryMuscles": [
+    "calves",
+    "glutes",
+    "hamstrings"
+  ],
+  "instructions": [
+    "Stand up straight while holding a dumbbell on each hand (palms facing the side of your legs).",
+    "Place the right foot on the elevated platform. Step on the platform by extending the hip and the knee of your right leg. Use the heel mainly to lift the rest of your body up and place the foot of the left leg on the platform as well. Breathe out as you execute the force required to come up.",
+    "Step down with the left leg by flexing the hip and knee of the right leg as you inhale. Return to the original standing position by placing the right foot of to next to the left foot on the initial position.",
+    "Repeat with the right leg for the recommended amount of repetitions and then perform with the left leg."
+  ],
+  "category": "strength",
+  "images": [
+    "Dumbbell_Step_Ups/0.jpg",
+    "Dumbbell_Step_Ups/1.jpg"
+  ],
+  "id": "Dumbbell_Step_Ups",
+  "movement_patterns": [
+    "Lunge"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeExtension",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "Dorsiflexion",
+    "Plantarflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

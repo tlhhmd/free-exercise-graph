@@ -1,0 +1,75 @@
+{
+  "name": "Close-Grip Standing Barbell Curl",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "biceps"
+  ],
+  "secondaryMuscles": [
+    "forearms"
+  ],
+  "instructions": [
+    "Hold a barbell with both hands, palms up and a few inches apart.",
+    "Stand with your torso straight and your head up. Your feet should be about shoulder width and your elbows close to your torso. This will be your starting position. Tip: You will keep your upper arms and elbows stationary throughout the movement.",
+    "Curl the bar up in a semicircular motion until the forearms touch your biceps. Exhale as you perform this portion of the movement and contract your biceps hard for a second at the top. Tip: Avoid bending the back or using swinging motions as you lift the weight. Only the forearms should move.",
+    "Slowly go back down to the starting position as you inhale.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Close-Grip_Standing_Barbell_Curl/0.jpg",
+    "Close-Grip_Standing_Barbell_Curl/1.jpg"
+  ],
+  "id": "Close-Grip_Standing_Barbell_Curl",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsShortHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowFlexion",
+    "ForearmSupination"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

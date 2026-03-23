@@ -1,0 +1,73 @@
+{
+  "id": "Double_Indian_Club_Outer_Heart_Shaped_Swing",
+  "name": "Double Indian Club Outer Heart Shaped Swing",
+  "equipment": [
+    "IndianClub"
+  ],
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderExternalRotation",
+    "ShoulderHorizontalAbduction"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderHorizontalAdduction",
+    "ScapularRetraction"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "TransversePlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

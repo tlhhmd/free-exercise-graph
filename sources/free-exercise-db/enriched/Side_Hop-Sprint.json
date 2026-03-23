@@ -1,0 +1,129 @@
+{
+  "name": "Side Hop-Sprint",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "other",
+  "primaryMuscles": [
+    "quadriceps"
+  ],
+  "secondaryMuscles": [
+    "abductors",
+    "adductors",
+    "calves",
+    "hamstrings"
+  ],
+  "instructions": [
+    "Stand to the side of a cone or hurdle.",
+    "Begin this drill by hopping sideways over the obstacle, rebounding out of your landing to hop back to where you started.",
+    "Hop for a prescribed number or repetitions as quickly as possible, and finish this drill by sprinting a short distance upon landing the last hop."
+  ],
+  "category": "plyometrics",
+  "images": [
+    "Side_Hop-Sprint/0.jpg",
+    "Side_Hop-Sprint/1.jpg"
+  ],
+  "id": "Side_Hop-Sprint",
+  "movement_patterns": [
+    "LateralLocomotion",
+    "Locomotion"
+  ],
+  "training_modalities": [
+    "Plyometrics"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeExtension",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "HipAbduction",
+    "HipAdduction",
+    "Plantarflexion",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "id": "Dumbbell_Crush_Grip_Overhead_Tricep_Extension",
+  "name": "Dumbbell Crush Grip Overhead Tricep Extension",
+  "equipment": [
+    "Dumbbell"
+  ],
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

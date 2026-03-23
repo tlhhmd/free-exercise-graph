@@ -1,0 +1,86 @@
+{
+  "name": "Side Leg Raises",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": "body only",
+  "primaryMuscles": [
+    "adductors"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Stand next to a chair, which you may hold onto as a support. Stand on one leg. This will be your starting position.",
+    "Keeping your leg straight, raise it as far out to the side as possible, and swing it back down, allowing it to cross the opposite leg.",
+    "Repeat this swinging motion 5-10 times, increasing the range of motion as you do so."
+  ],
+  "category": "stretching",
+  "images": [
+    "Side_Leg_Raises/0.jpg",
+    "Side_Leg_Raises/1.jpg"
+  ],
+  "id": "Side_Leg_Raises",
+  "movement_patterns": [],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Gracilis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipAbduction",
+    "HipAdduction"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

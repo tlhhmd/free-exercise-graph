@@ -1,0 +1,77 @@
+{
+  "name": "Plank",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Get into a prone position on the floor, supporting your weight on your toes and your forearms. Your arms are bent and directly below the shoulder.",
+    "Keep your body straight at all times, and hold this position as long as possible. To increase difficulty, an arm or leg can be raised."
+  ],
+  "category": "strength",
+  "images": [
+    "Plank/0.jpg",
+    "Plank/1.jpg"
+  ],
+  "id": "Plank",
+  "movement_patterns": [
+    "AntiExtension"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalStability"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

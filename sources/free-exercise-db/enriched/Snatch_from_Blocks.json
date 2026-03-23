@@ -1,0 +1,170 @@
+{
+  "name": "Snatch from Blocks",
+  "force": "pull",
+  "level": "expert",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "quadriceps"
+  ],
+  "secondaryMuscles": [
+    "calves",
+    "forearms",
+    "glutes",
+    "hamstrings",
+    "lower back",
+    "shoulders",
+    "traps",
+    "triceps"
+  ],
+  "instructions": [
+    "Begin with a loaded barbell on boxes or stands of the desired height. A wide grip should be taken on the bar. The feet should be directly below the hips, with the feet turned out as needed. Lower the hips, with the chest up and the head looking forward. The shoulders should be just in front of the bar, with the elbows pointed out. This will be the starting position.",
+    "Begin the first pull by driving through the front of the heels, raising the bar from the boxes.",
+    "Transition into the second pull by extending through the hips knees and ankles, driving the bar up as quickly as possible. The bar should be close to the body. At peak extension, shrug the shoulders and allow the elbows to flex to the side.",
+    "As you move your feet into the receiving position, forcefully pull yourself below the bar as you elevate the bar overhead. The feet should move to just outside the hips, turned out as necessary. Receive the bar with your body as low as possible and the arms fully extended overhead.",
+    "Keeping the bar aligned over the front of the heels, your head and chest up, drive through heels of the feet to move to a standing position. Carefully return the weight to the boxes."
+  ],
+  "category": "olympic weightlifting",
+  "images": [
+    "Snatch_from_Blocks/0.jpg",
+    "Snatch_from_Blocks/1.jpg"
+  ],
+  "id": "Snatch_from_Blocks",
+  "movement_patterns": [
+    "HipHinge",
+    "VerticalPull",
+    "VerticalPush"
+  ],
+  "training_modalities": [
+    "Power"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension",
+    "Plantarflexion"
+  ],
+  "supporting_joint_actions": [
+    "ScapularElevation",
+    "ShoulderFlexion",
+    "ElbowExtension",
+    "ScapularUpwardRotation"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "OlympicWeightlifting"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

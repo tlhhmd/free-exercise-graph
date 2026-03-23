@@ -1,0 +1,68 @@
+{
+  "name": "Reverse Crunch",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Lie down on the floor with your legs fully extended and arms to the side of your torso with the palms on the floor. Your arms should be stationary for the entire exercise.",
+    "Move your legs up so that your thighs are perpendicular to the floor and feet are together and parallel to the floor. This is the starting position.",
+    "While inhaling, move your legs towards the torso as you roll your pelvis backwards and you raise your hips off the floor. At the end of this movement your knees will be touching your chest.",
+    "Hold the contraction for a second and move your legs back to the starting position while exhaling.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Reverse_Crunch/0.jpg",
+    "Reverse_Crunch/1.jpg"
+  ],
+  "id": "Reverse_Crunch",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalFlexion",
+    "HipFlexion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

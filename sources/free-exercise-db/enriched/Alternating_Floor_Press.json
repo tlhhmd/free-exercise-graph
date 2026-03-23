@@ -1,0 +1,103 @@
+{
+  "name": "Alternating Floor Press",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "kettlebells",
+  "primaryMuscles": [
+    "chest"
+  ],
+  "secondaryMuscles": [
+    "abdominals",
+    "shoulders",
+    "triceps"
+  ],
+  "instructions": [
+    "Lie on the floor with two kettlebells next to your shoulders.",
+    "Position one in place on your chest and then the other, gripping the kettlebells on the handle with the palms facing forward.",
+    "Extend both arms, so that the kettlebells are being held above your chest. Lower one kettlebell, bringing it to your chest and turn the wrist in the direction of the locked out kettlebell.",
+    "Raise the kettlebell and repeat on the opposite side."
+  ],
+  "category": "strength",
+  "images": [
+    "Alternating_Floor_Press/0.jpg",
+    "Alternating_Floor_Press/1.jpg"
+  ],
+  "id": "Alternating_Floor_Press",
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "SternalHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderHorizontalAdduction",
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderInternalRotation",
+    "ScapularProtraction",
+    "SpinalRotation"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [
+    "Grinds"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

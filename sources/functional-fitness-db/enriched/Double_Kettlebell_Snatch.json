@@ -1,0 +1,131 @@
+{
+  "id": "Double_Kettlebell_Snatch",
+  "name": "Double Kettlebell Snatch",
+  "equipment": [
+    "Kettlebell"
+  ],
+  "movement_patterns": [
+    "HipHinge",
+    "VerticalPush"
+  ],
+  "training_modalities": [
+    "Power"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "ShoulderFlexion",
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "KneeExtension",
+    "ScapularUpwardRotation",
+    "ScapularElevation",
+    "Plantarflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Ballistics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

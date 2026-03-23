@@ -1,0 +1,111 @@
+{
+  "id": "Single_Arm_Clubbell_Order_Alternating_Lateral_Lunge",
+  "name": "Single Arm Clubbell Order Alternating Lateral Lunge",
+  "equipment": [
+    "Clubbell"
+  ],
+  "movement_patterns": [
+    "Lunge"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorLongus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeExtension",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "HipAbduction",
+    "HipAdduction",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

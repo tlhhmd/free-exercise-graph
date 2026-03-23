@@ -1,0 +1,135 @@
+{
+  "name": "Groiners",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "adductors"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Begin in a pushup position on the floor. This will be your starting position.",
+    "Using both legs, jump forward landing with your feet next to your hands. Keep your head up as you do so.",
+    "Return to the starting position and immediately repeat the movement, continuing for 10-20 repetitions."
+  ],
+  "category": "stretching",
+  "images": [
+    "Groiners/0.jpg",
+    "Groiners/1.jpg"
+  ],
+  "id": "Groiners",
+  "movement_patterns": [
+    "Locomotion",
+    "AntiExtension"
+  ],
+  "training_modalities": [
+    "Cardio"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AdductorLongus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Gracilis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipFlexion",
+    "HipExtension",
+    "KneeFlexion",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalStability",
+    "HipAdduction"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

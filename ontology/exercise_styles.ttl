@@ -1,0 +1,82 @@
+@prefix feg: <https://placeholder.url#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+###################
+# Named Individuals - Exercise Style
+###################
+
+feg:ExerciseStyleVocabulary
+    a owl:Ontology ;
+    owl:versionInfo "1.0.0" ;
+.
+
+feg:ExerciseStyleScheme
+    a skos:ConceptScheme ;
+    rdfs:label "Exercise Style" ;
+    rdfs:comment "The training system, tradition, or methodological context an exercise belongs to. Distinct from training modality (which describes physiological adaptation). An exercise style describes where the exercise comes from — its community, technique standards, and cultural context." ;
+.
+
+feg:Bodybuilding
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Bodybuilding" ;
+    rdfs:comment "Exercises drawn from the bodybuilding tradition, emphasising muscle isolation, controlled tempo, and aesthetic development. Typically machine or dumbbell-based isolation movements." ;
+.
+
+feg:Calisthenics
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Calisthenics" ;
+    rdfs:comment "Bodyweight exercises using gymnastic and street workout principles. Emphasis on relative strength, movement skill, and progressive overload through leverage rather than external load." ;
+.
+
+feg:Powerlifting
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Powerlifting" ;
+    rdfs:comment "Exercises from the powerlifting tradition, centred on the squat, bench press, and deadlift and their close derivatives. Emphasis on maximal load in a strict movement pattern." ;
+.
+
+feg:OlympicWeightlifting
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Olympic Weightlifting" ;
+    rdfs:comment "Exercises from the sport of weightlifting: the snatch, clean and jerk, and their derivatives (hang cleans, power snatches, etc.). Emphasis on explosive force production, bar speed, and technique." ;
+.
+
+feg:Postural
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Postural" ;
+    rdfs:comment "Exercises focused on corrective movement quality, postural alignment, and neuromuscular control. Often prescribed in rehabilitation and movement screening contexts." ;
+.
+
+feg:AnimalFlow
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Animal Flow" ;
+    rdfs:comment "A ground-based movement practice inspired by animal locomotion patterns. Emphasises mobility, coordination, and movement flow across multiple planes." ;
+.
+
+feg:Ballistics
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Ballistics" ;
+    rdfs:comment "A kettlebell sport category for explosive, cyclical swinging movements — swings, cleans, snatches, and jerks performed with kettlebells. Distinct from slow-strength kettlebell work (Grinds)." ;
+.
+
+feg:Grinds
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Grinds" ;
+    rdfs:comment "A kettlebell sport category for slow-strength movements — presses, squats, deadlifts, and Turkish get-ups performed with kettlebells. Distinct from explosive cyclical movements (Ballistics)." ;
+.
+
+feg:Balance
+    a owl:NamedIndividual, feg:ExerciseStyle ;
+    skos:inScheme feg:ExerciseStyleScheme ;
+    rdfs:label "Balance" ;
+    rdfs:comment "Exercises whose primary demand is proprioceptive and vestibular challenge. The defining stimulus is maintaining equilibrium under load or in unstable conditions, not muscle development or cardiovascular adaptation." ;
+.

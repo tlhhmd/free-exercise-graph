@@ -1,0 +1,118 @@
+{
+  "id": "Parallette_L_Sit_to_Bent_Arm_Press_Handstand",
+  "name": "Parallette L Sit to Bent Arm Press Handstand",
+  "equipment": [
+    "ParalletteBar"
+  ],
+  "movement_patterns": [
+    "VerticalPush",
+    "AntiExtension"
+  ],
+  "training_modalities": [
+    "Strength"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "HipFlexors",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion",
+    "ElbowExtension",
+    "SpinalStability"
+  ],
+  "supporting_joint_actions": [
+    "ScapularUpwardRotation",
+    "ScapularProtraction",
+    "HipFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Calisthenics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

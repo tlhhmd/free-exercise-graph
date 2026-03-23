@@ -11,7 +11,7 @@ feg:MovementPatternScheme
     a skos:ConceptScheme ;
     rdfs:label "Movement Pattern Scheme" ;
     rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
-    owl:versionInfo "0.5.0" ;
+    owl:versionInfo "0.6.0" ;
 .
 
 feg:KneeDominant
@@ -160,12 +160,38 @@ feg:AntiLateralFlexion
     rdfs:comment "Exercises that train the trunk to resist lateral flexion forces — the spine is braced against a load that attempts to bend it to the side. Representative: side plank, suitcase carry, single-arm overhead carry." ;
 .
 
+feg:AntiFlexion
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:TrunkStability ;
+    rdfs:label "Anti Flexion" ;
+    skos:prefLabel "Anti Flexion" ;
+    rdfs:comment "Exercises that train the trunk to resist flexion forces — the spine is braced against a load that attempts to flex it. Representative: back extension, Superman hold, good morning with isometric hold." ;
+.
+
 feg:Locomotion
     a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
     skos:inScheme feg:MovementPatternScheme ;
     rdfs:label "Locomotion" ;
     skos:prefLabel "Locomotion" ;
     rdfs:comment "Movements involving whole-body travel through space, including running, jumping, and crawling patterns." ;
+.
+
+feg:LateralLocomotion
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:Locomotion ;
+    rdfs:label "Lateral Locomotion" ;
+    skos:prefLabel "Lateral Locomotion" ;
+    rdfs:comment "Movements involving side-to-side travel through space. Representative: lateral shuffle, lateral bound, side-step." ;
+.
+
+feg:IsometricHold
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    rdfs:label "Isometric Hold" ;
+    skos:prefLabel "Isometric Hold" ;
+    rdfs:comment "Exercises whose defining characteristic is maintaining a static position under load rather than producing movement through a range of motion. Representative: wall sit, loaded carry (static component), L-sit, bar hang. Distinct from Anti-Extension and Anti-Rotation, which are specific trunk resistance patterns." ;
 .
 
 feg:Mobility

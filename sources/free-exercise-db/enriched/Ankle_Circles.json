@@ -1,0 +1,72 @@
+{
+  "name": "Ankle Circles",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": null,
+  "primaryMuscles": [
+    "calves"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Use a sturdy object like a squat rack to hold yourself.",
+    "Lift the right leg in the air (just around 2 inches from the floor) and perform a circular motion with the big toe. Pretend that you are drawing a big circle with it. Tip: One circle equals 1 repetition. Breathe normally as you perform the movement.",
+    "When you are done with the right foot, then repeat with the left leg."
+  ],
+  "category": "stretching",
+  "images": [
+    "Ankle_Circles/0.jpg",
+    "Ankle_Circles/1.jpg"
+  ],
+  "id": "Ankle_Circles",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "TibialisAnterior",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "Plantarflexion",
+    "Dorsiflexion",
+    "AnkleEversion",
+    "AnkleInversion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

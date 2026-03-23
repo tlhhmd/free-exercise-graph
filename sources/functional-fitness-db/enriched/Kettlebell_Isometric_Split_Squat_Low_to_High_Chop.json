@@ -1,0 +1,106 @@
+{
+  "id": "Kettlebell_Isometric_Split_Squat_Low_to_High_Chop",
+  "name": "Kettlebell Isometric Split Squat Low to High Chop",
+  "equipment": [
+    "Kettlebell"
+  ],
+  "movement_patterns": [
+    "SplitSquat",
+    "Rotation"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "Obliques",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "QuadratusLumborum",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalRotation",
+    "KneeExtension",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalLateralFlexion",
+    "ScapularProtraction",
+    "ShoulderFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "TransversePlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Balance",
+    "Grinds"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

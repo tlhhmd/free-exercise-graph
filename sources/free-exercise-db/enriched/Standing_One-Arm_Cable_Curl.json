@@ -1,0 +1,69 @@
+{
+  "name": "Standing One-Arm Cable Curl",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "isolation",
+  "equipment": "cable",
+  "primaryMuscles": [
+    "biceps"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Start out by grabbing single handle next to the low pulley machine. Make sure you are far enough from the machine so that your arm is supporting the weight.",
+    "Make sure that your upper arm is stationary, perpendicular to the floor with elbows in and palms facing forward. Your non lifting arm should be grabbing your waist. This will allow you to keep your balance.",
+    "Slowly begin to curl the single handle upwards while keeping the upper arm stationary until your forearm touches your bicep while exhaling. Tip: Only the forearm should move.",
+    "Hold the contraction position as you squeeze the bicep and then lower the single handle back down to the starting position as you inhale.",
+    "Repeat for the recommended amount of repetitions.",
+    "Switch arms while performing this exercise."
+  ],
+  "category": "strength",
+  "images": [
+    "Standing_One-Arm_Cable_Curl/0.jpg",
+    "Standing_One-Arm_Cable_Curl/1.jpg"
+  ],
+  "id": "Standing_One-Arm_Cable_Curl",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ForearmSupination"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

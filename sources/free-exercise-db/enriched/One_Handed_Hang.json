@@ -1,0 +1,95 @@
+{
+  "name": "One Handed Hang",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": "other",
+  "primaryMuscles": [
+    "lats"
+  ],
+  "secondaryMuscles": [
+    "biceps"
+  ],
+  "instructions": [
+    "Grab onto a chinup bar with one hand, using a pronated grip. Keep your feet on the floor or a step. Allow the majority of your weight to hang from that hand, while keeping your feet on the ground. Hold for 10-20 seconds and switch sides."
+  ],
+  "category": "stretching",
+  "images": [
+    "One_Handed_Hang/0.jpg",
+    "One_Handed_Hang/1.jpg"
+  ],
+  "id": "One_Handed_Hang",
+  "movement_patterns": [
+    "IsometricHold"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalStability"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderAdduction",
+    "ElbowFlexion"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "FrontalPlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Calisthenics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

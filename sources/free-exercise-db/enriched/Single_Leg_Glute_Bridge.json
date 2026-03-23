@@ -1,0 +1,90 @@
+{
+  "name": "Single Leg Glute Bridge",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "glutes"
+  ],
+  "secondaryMuscles": [
+    "hamstrings"
+  ],
+  "instructions": [
+    "Lay on the floor with your feet flat and knees bent.",
+    "Raise one leg off of the ground, pulling the knee to your chest. This will be your starting position.",
+    "Execute the movement by driving through the heel, extending your hip upward and raising your glutes off of the ground.",
+    "Extend as far as possible, pause and then return to the starting position."
+  ],
+  "category": "strength",
+  "images": [
+    "Single_Leg_Glute_Bridge/0.jpg",
+    "Single_Leg_Glute_Bridge/1.jpg"
+  ],
+  "id": "Single_Leg_Glute_Bridge",
+  "movement_patterns": [
+    "HipHinge"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalStability"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

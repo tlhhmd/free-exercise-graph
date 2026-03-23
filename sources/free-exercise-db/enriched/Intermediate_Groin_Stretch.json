@@ -1,0 +1,78 @@
+{
+  "name": "Intermediate Groin Stretch",
+  "force": "static",
+  "level": "intermediate",
+  "mechanic": "isolation",
+  "equipment": "other",
+  "primaryMuscles": [
+    "hamstrings"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Lie on your back with your legs extended. Loop a belt, rope, or band around one of your feet, and swing that leg as far to the side as you can. This will be your starting position.",
+    "Pull gently on the belt to create tension in your groin and hamstring muscles. Hold for 10-20 seconds, and repeat on the other side."
+  ],
+  "category": "stretching",
+  "images": [
+    "Intermediate_Groin_Stretch/0.jpg",
+    "Intermediate_Groin_Stretch/1.jpg"
+  ],
+  "id": "Intermediate_Groin_Stretch",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "AdductorLongus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorBrevis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AdductorMagnus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Gracilis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "PassiveTarget"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipAbduction"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

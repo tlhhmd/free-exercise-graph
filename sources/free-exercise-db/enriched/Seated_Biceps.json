@@ -1,0 +1,73 @@
+{
+  "name": "Seated Biceps",
+  "force": "static",
+  "level": "expert",
+  "mechanic": "isolation",
+  "equipment": "body only",
+  "primaryMuscles": [
+    "biceps"
+  ],
+  "secondaryMuscles": [
+    "chest",
+    "shoulders"
+  ],
+  "instructions": [
+    "Sit on the floor with your knees bent and your partner standing behind you. Extend your arms straight behind you with your palms facing each other. Your partner will hold your wrists for you. This will be the starting position.",
+    "Attempt to flex your elbows, while your partner prevents any actual movement.",
+    "After 10-20 seconds, relax your arms while your partner gently pulls your wrists up to stretch your biceps. Be sure to let your partner know when the stretch is appropriate to prevent injury or overstretching."
+  ],
+  "category": "stretching",
+  "images": [
+    "Seated_Biceps/0.jpg",
+    "Seated_Biceps/1.jpg"
+  ],
+  "id": "Seated_Biceps",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PassiveTarget"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderExtension",
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "ForearmPronation"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

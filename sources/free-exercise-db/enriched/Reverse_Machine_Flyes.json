@@ -1,0 +1,71 @@
+{
+  "name": "Reverse Machine Flyes",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "machine",
+  "primaryMuscles": [
+    "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Adjust the handles so that they are fully to the rear. Make an appropriate weight selection and adjust the seat height so the handles are at shoulder level. Grasp the handles with your hands facing inwards. This will be your starting position.",
+    "In a semicircular motion, pull your hands out to your side and back, contracting your rear delts.",
+    "Keep your arms slightly bent throughout the movement, with all of the motion occurring at the shoulder joint.",
+    "Pause at the rear of the movement, and slowly return the weight to the starting position."
+  ],
+  "category": "strength",
+  "images": [
+    "Reverse_Machine_Flyes/0.jpg",
+    "Reverse_Machine_Flyes/1.jpg"
+  ],
+  "id": "Reverse_Machine_Flyes",
+  "movement_patterns": [],
+  "training_modalities": [
+    "Hypertrophy"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderHorizontalAbduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularRetraction"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "TransversePlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "name": "Barbell Deadlift",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "lower back"
+  ],
+  "secondaryMuscles": [
+    "calves",
+    "forearms",
+    "glutes",
+    "hamstrings",
+    "lats",
+    "middle back",
+    "quadriceps",
+    "traps"
+  ],
+  "instructions": [
+    "Stand in front of a loaded barbell.",
+    "While keeping the back as straight as possible, bend your knees, bend forward and grasp the bar using a medium (shoulder width) overhand grip. This will be the starting position of the exercise. Tip: If it is difficult to hold on to the bar with this grip, alternate your grip or use wrist straps.",
+    "While holding the bar, start the lift by pushing with your legs while simultaneously getting your torso to the upright position as you breathe out. In the upright position, stick your chest out and contract the back by bringing the shoulder blades back. Think of how the soldiers in the military look when they are in standing in attention.",
+    "Go back to the starting position by bending at the knees while simultaneously leaning the torso forward at the waist while keeping the back straight. When the weights on the bar touch the floor you are back at the starting position and ready to perform another repetition.",
+    "Perform the amount of repetitions prescribed in the program."
+  ],
+  "category": "strength",
+  "images": [
+    "Barbell_Deadlift/0.jpg",
+    "Barbell_Deadlift/1.jpg"
+  ],
+  "id": "Barbell_Deadlift",
+  "movement_patterns": [
+    "HipHinge"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeExtension"
+  ],
+  "supporting_joint_actions": [
+    "ScapularRetraction",
+    "SpinalStability"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Powerlifting"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

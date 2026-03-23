@@ -1,0 +1,81 @@
+{
+  "id": "Bodyweight_Seated_Wall_Angels",
+  "name": "Bodyweight Seated Wall Angels",
+  "equipment": [
+    "Bodyweight"
+  ],
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderExternalRotation",
+    "ScapularRetraction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularUpwardRotation",
+    "ShoulderFlexion",
+    "ScapularDepression"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [
+    "Postural"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

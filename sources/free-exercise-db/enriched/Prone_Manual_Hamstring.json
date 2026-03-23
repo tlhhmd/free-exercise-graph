@@ -1,0 +1,65 @@
+{
+  "name": "Prone Manual Hamstring",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": null,
+  "primaryMuscles": [
+    "hamstrings"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "You will need a partner for this exercise. Lay face down with your legs straight. Your assistant will place their hand on your heel.",
+    "To begin, flex the knee to curl your leg up. Your partner should provide resistance, starting light and increasing the pressure as the movement is completed. Communicate with your partner to monitor appropriate resistance levels.",
+    "Pause at the top, returning the leg to the starting position as your partner provides resistance going the other direction."
+  ],
+  "category": "strength",
+  "images": [
+    "Prone_Manual_Hamstring/0.jpg",
+    "Prone_Manual_Hamstring/1.jpg"
+  ],
+  "id": "Prone_Manual_Hamstring",
+  "movement_patterns": [],
+  "training_modalities": [
+    "Strength"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeFlexion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

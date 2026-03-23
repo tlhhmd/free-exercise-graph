@@ -1,0 +1,97 @@
+{
+  "name": "Kneeling Squat",
+  "force": "push",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "glutes"
+  ],
+  "secondaryMuscles": [
+    "abdominals",
+    "hamstrings",
+    "lower back"
+  ],
+  "instructions": [
+    "Set the bar to the proper height in a power rack. Kneel behind the bar; it may be beneficial to put a mat down to pad your knees. Slide under the bar, racking it across the back of your shoulders. Your shoulder blades should be retracted and the bar tight across your back. Unrack the weight.",
+    "With your head looking forward, sit back with your butt until you touch your calves.",
+    "Reverse the motion, returning the torso to an upright position."
+  ],
+  "category": "powerlifting",
+  "images": [
+    "Kneeling_Squat/0.jpg",
+    "Kneeling_Squat/1.jpg"
+  ],
+  "id": "Kneeling_Squat",
+  "movement_patterns": [
+    "Squat"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipFlexion",
+    "HipExtension"
+  ],
+  "supporting_joint_actions": [
+    "SpinalStability"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "name": "Thigh Abductor",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "machine",
+  "primaryMuscles": [
+    "abductors"
+  ],
+  "secondaryMuscles": [
+    "glutes"
+  ],
+  "instructions": [
+    "To begin, sit down on the abductor machine and select a weight you are comfortable with. When your legs are positioned properly, grip the handles on each side. Your entire upper body (from the waist up) should be stationary. This is the starting position.",
+    "Slowly press against the machine with your legs to move them away from each other while exhaling.",
+    "Feel the contraction for a second and begin to move your legs back to the starting position while breathing in. Note: Remember to keep your upper body stationary to prevent any injuries from occurring.",
+    "Repeat for the recommended amount of repetitions."
+  ],
+  "category": "strength",
+  "images": [
+    "Thigh_Abductor/0.jpg",
+    "Thigh_Abductor/1.jpg"
+  ],
+  "id": "Thigh_Abductor",
+  "movement_patterns": [],
+  "training_modalities": [
+    "Hypertrophy"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "GluteusMedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipAbduction"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "FrontalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

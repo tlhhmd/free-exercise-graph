@@ -1,0 +1,109 @@
+{
+  "name": "Board Press",
+  "force": "push",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "barbell",
+  "primaryMuscles": [
+    "triceps"
+  ],
+  "secondaryMuscles": [
+    "chest",
+    "forearms",
+    "lats",
+    "shoulders"
+  ],
+  "instructions": [
+    "Begin by lying on the bench, getting your head beyond the bar if possible. One to five boards, made out of 2x6's, can be screwed together and held in place by a training partner, bands, or just tucked under your shirt.",
+    "Tuck your feet underneath you and arch your back. Using the bar to help support your weight, lift your shoulder off the bench and retract them, squeezing the shoulder blades together. Use your feet to drive your traps into the bench. Maintain this tight body position throughout the movement.",
+    "You can take a standard bench grip, or shoulder width to focus on the triceps. Pull the bar out of the rack without protracting your shoulders. The bar, wrist, and elbow should stay in line at all times. Focus on squeezing the bar and trying to pull it apart.",
+    "Lower the bar to the boards, and then drive the bar up with as much force as possible. The elbows should be tucked in until lockout."
+  ],
+  "category": "powerlifting",
+  "images": [
+    "Board_Press/0.jpg",
+    "Board_Press/1.jpg"
+  ],
+  "id": "Board_Press",
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "training_modalities": [
+    "Strength"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension",
+    "ShoulderHorizontalAdduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularRetraction",
+    "ShoulderFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "TransversePlane"
+  ],
+  "exercise_style": [
+    "Powerlifting"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

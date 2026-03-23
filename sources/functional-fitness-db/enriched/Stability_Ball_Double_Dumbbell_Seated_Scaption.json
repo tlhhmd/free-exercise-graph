@@ -1,0 +1,68 @@
+{
+  "id": "Stability_Ball_Double_Dumbbell_Seated_Scaption",
+  "name": "Stability Ball Double Dumbbell Seated Scaption",
+  "equipment": [
+    "ExerciseBall",
+    "Dumbbell"
+  ],
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion",
+    "ShoulderAbduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularUpwardRotation"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

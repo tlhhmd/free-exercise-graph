@@ -1,0 +1,69 @@
+{
+  "name": "IT Band and Glute Stretch",
+  "force": "static",
+  "level": "intermediate",
+  "mechanic": null,
+  "equipment": "other",
+  "primaryMuscles": [
+    "abductors"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Loop a belt, rope, or band around one of your feet, and swing that leg across your body to the opposite side, keeping the leg extended as you lay on the ground. This will be your starting position.",
+    "Keeping your foot off of the floor, pull on the belt, using the tension to pull the toes up. Hold for 10-20 seconds, and repeat on the other side."
+  ],
+  "category": "stretching",
+  "images": [
+    "IT_Band_and_Glute_Stretch/0.jpg",
+    "IT_Band_and_Glute_Stretch/1.jpg"
+  ],
+  "id": "IT_Band_and_Glute_Stretch",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "TensorFasciaeLatae",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "GluteusMinimus",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "PassiveTarget"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipHorizontalAdduction"
+  ],
+  "supporting_joint_actions": [
+    "HipAdduction"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "TransversePlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

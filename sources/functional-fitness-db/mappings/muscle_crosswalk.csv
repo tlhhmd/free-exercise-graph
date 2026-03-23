@@ -1,0 +1,58 @@
+source_value,feg_local_name,target_class,status
+Abdominals,Abdominals,feg:MuscleRegion,matched
+Abductors,Abductors,feg:MuscleRegion,matched
+Adductor Magnus,AdductorMagnus,feg:MuscleHead,matched
+Adductors,Adductors,feg:MuscleRegion,matched
+Anconeus,Anconeus,feg:MuscleGroup,matched
+Anterior Deltoids,AnteriorDeltoid,feg:MuscleHead,matched
+Back,MiddleBack,feg:MuscleRegion,matched
+Biceps,Biceps,feg:MuscleRegion,matched
+Biceps Brachii,BicepsBrachii,feg:MuscleGroup,matched
+Biceps Femoris,BicepsFemoris,feg:MuscleHead,matched
+Brachialis,Brachialis,feg:MuscleGroup,matched
+Brachioradialis,Brachioradialis,feg:MuscleGroup,matched
+Calves,Calves,feg:MuscleRegion,matched
+Chest,Chest,feg:MuscleRegion,matched
+Erector Spinae,ErectorSpinae,feg:MuscleGroup,matched
+Extensor Digitorum Longus,ExtensorDigitorumLongus,feg:MuscleGroup,matched
+Extensor Hallucis Longus,ExtensorHallucisLongus,feg:MuscleGroup,matched
+Flexor Carpi Radialis,FlexorCarpiRadialis,feg:MuscleHead,matched
+Forearms,Forearms,feg:MuscleRegion,matched
+Gastrocnemius,Gastrocnemius,feg:MuscleGroup,matched
+Glutes,Glutes,feg:MuscleRegion,matched
+Gluteus Maximus,GluteusMaximus,feg:MuscleGroup,matched
+Gluteus Medius,GluteusMedius,feg:MuscleGroup,matched
+Gluteus Minimus,GluteusMinimus,feg:MuscleGroup,matched
+Hamstrings,Hamstrings,feg:MuscleRegion,matched
+Hip Flexors,HipFlexors,feg:MuscleRegion,matched
+Iliopsoas,Iliopsoas,feg:MuscleHead,matched
+Infraspinatus,Infraspinatus,feg:MuscleHead,matched
+Lateral Deltoids,LateralDeltoid,feg:MuscleHead,matched
+Latissimus Dorsi,LatissimusDorsi,feg:MuscleGroup,matched
+Levator Scapulae,LevatorScapulae,feg:MuscleGroup,matched
+Medial Deltoids,LateralDeltoid,feg:MuscleHead,matched
+Obliques,Obliques,feg:MuscleGroup,matched
+Pectoralis Major,PectoralisMajor,feg:MuscleGroup,matched
+Posterior Deltoids,PosteriorDeltoid,feg:MuscleHead,matched
+Quadriceps,Quadriceps,feg:MuscleRegion,matched
+Quadriceps Femoris,Quadriceps,feg:MuscleGroup,matched
+Rectus Abdominis,RectusAbdominis,feg:MuscleGroup,matched
+Rectus Femoris,RectusFemoris,feg:MuscleHead,matched
+Rhomboids,Rhomboids,feg:MuscleGroup,matched
+Serratus Anterior,SerratusAnterior,feg:MuscleGroup,matched
+Shins,Shins,feg:MuscleRegion,matched
+Shoulders,Shoulders,feg:MuscleRegion,matched
+Soleus,Soleus,feg:MuscleGroup,matched
+Subscapularis,Subscapularis,feg:MuscleHead,matched
+Supraspinatus,Supraspinatus,feg:MuscleHead,matched
+Tensor Fasciae Latae,TensorFasciaeLatae,feg:MuscleGroup,matched
+Teres Major,TeresMajor,feg:MuscleGroup,matched
+Teres Minor,TeresMinor,feg:MuscleHead,matched
+Tibialis Anterior,TibialisAnterior,feg:MuscleGroup,matched
+Tibialis Posterior,TibialisPosterior,feg:MuscleGroup,matched
+Transverse Abdominis,TransverseAbdominis,feg:MuscleGroup,matched
+Trapezius,Traps,feg:MuscleRegion,matched
+Triceps,Triceps,feg:MuscleRegion,matched
+Triceps Brachii,TricepsBrachii,feg:MuscleGroup,matched
+Upper Trapezius,UpperTrapezius,feg:MuscleHead,matched
+Vastus Mediais,VastusMedialis,feg:MuscleHead,matched

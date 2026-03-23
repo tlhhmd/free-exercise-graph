@@ -9,7 +9,7 @@
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph Ontology" ;
     rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
-    owl:versionInfo "0.5.0" ;
+    owl:versionInfo "1.0.0" ;
 .
 
 ###################
@@ -86,6 +86,24 @@ feg:JointAction
     rdfs:comment "A mechanical action occurring at a specific joint during an exercise. Joint actions describe what the body is doing at the level of individual joints, independent of how the exercise is categorised by other movement pattern terminology. A single exercise may involve multiple joint actions." ;
 .
 
+feg:Laterality
+    a owl:Class ;
+    rdfs:label "Laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body. Four values: Bilateral, Unilateral, Contralateral, Ipsilateral. See laterality.ttl for named individuals." ;
+.
+
+feg:PlaneOfMotion
+    a owl:Class ;
+    rdfs:label "Plane of Motion" ;
+    rdfs:comment "One of the three cardinal planes of human movement: Sagittal, Frontal, or Transverse. See planes_of_motion.ttl for named individuals." ;
+.
+
+feg:ExerciseStyle
+    a owl:Class ;
+    rdfs:label "Exercise Style" ;
+    rdfs:comment "The training system, tradition, or methodological context an exercise belongs to. Distinct from feg:TrainingModality, which describes physiological adaptation. See exercise_styles.ttl for named individuals." ;
+.
+
 ###################
 # Object Properties
 ###################
@@ -101,7 +119,7 @@ feg:hasInvolvement
 feg:muscle
     a owl:ObjectProperty ;
     rdfs:label "muscle" ;
-    rdfs:comment "Relates a muscle involvement instance to the muscle being recruited." ;
+    rdfs:comment "Prefer the most specific term available: MuscleHead > MuscleGroup > MuscleRegion. Use a region term only if no group applies; use a group term only if no head applies. Exception: groups marked useGroupLevel=true are the correct term — do not descend to their heads. Exception: Core (a MuscleGroup under Abdominals) is a convenience term permitted on compound movements where abdominal bracing is incidental; it must always be assigned as Stabilizer. Critical: joint action concept names (e.g. ScapularUpwardRotation, HipFlexion, ElbowFlexion, ScapularRetraction) are NOT muscle names — never use a joint action concept as a muscle value. TricepsBrachii (group) must not be used — always decompose into TricepsLongHead, TricepsLateralHead, and TricepsMedialHead, including for Stabilizer and Synergist roles; TricepsLongHead is meaningfully distinct as it crosses the shoulder joint. On Mobility exercises and passive stretches, minimise Stabilizers — include one only when there is a clear active stabilisation demand; do not routinely add Core or RotatorCuff. A muscle may not appear more than once across an exercise's involvements — if the same muscle would be assigned at two different degrees, use the higher-priority degree only (PrimeMover > Synergist > Stabilizer). An exercise may not list both a muscle and any of its SKOS ancestors — this double-counts the same muscle mass; use the most specific term only." ;
     rdfs:domain feg:MuscleInvolvement ;
     rdfs:range feg:Muscle ;
 .
@@ -109,7 +127,7 @@ feg:muscle
 feg:degree
     a owl:ObjectProperty ;
     rdfs:label "degree" ;
-    rdfs:comment "Relates a muscle involvement instance to the degree to which the muscle is recruited." ;
+    rdfs:comment "PrimeMover: the muscle directly produces the exercise's defining movement. Synergist: assists or fine-tunes the prime mover. Stabilizer: isometrically holds a joint or segment — does not contribute to the primary movement. PassiveTarget: tissue being lengthened or mobilised — Mobility and SoftTissue exercises only. Every exercise must have at least one PrimeMover, or at least one PassiveTarget for Mobility and SoftTissue exercises. Core must always be assigned as Stabilizer — for dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
     rdfs:domain feg:MuscleInvolvement ;
     rdfs:range feg:InvolvementDegree ;
 .
@@ -117,7 +135,7 @@ feg:degree
 feg:movementPattern
     a owl:ObjectProperty ;
     rdfs:label "movement pattern" ;
-    rdfs:comment "Relates an exercise to its fundamental movement pattern." ;
+    rdfs:comment "Use the most specific pattern that applies — prefer child patterns over parent patterns (e.g. Squat over KneeDominant, HorizontalPush over Push). Use a parent only when no child fits. Compound exercises may have more than one pattern. If no pattern fits well, return an empty array — do not force an ill-fitting label. Isolation exercises that are not curls, rows, presses, or hinges often have no clean pattern. Push and Pull patterns require multi-joint force production. Single-joint isolation movements (bicep curls, lateral raises, triceps extensions, leg extensions/curls) have no movement pattern — return empty array. Do not assign Pull to curls or Push to raises." ;
     rdfs:domain feg:Exercise ;
     rdfs:range feg:MovementPattern ;
 .
@@ -133,7 +151,7 @@ feg:equipment
 feg:trainingModality
     a owl:ObjectProperty ;
     rdfs:label "training modality" ;
-    rdfs:comment "Relates an exercise to the physiological adaptation it primarily targets." ;
+    rdfs:comment "Assign only when the modality is a defining characteristic of the exercise, not merely its typical training context. Plyometrics: explosive intent is the defining feature. Mobility: flexibility or range of motion is the defining feature. Cardio: cardiovascular adaptation is the defining feature. Omit for most resistance training exercises — a barbell squat, bench press, or deadlift has no defining modality." ;
     rdfs:domain feg:Exercise ;
     rdfs:range feg:TrainingModality ;
 .
@@ -150,7 +168,7 @@ feg:primaryJointAction
     a owl:ObjectProperty ;
     rdfs:subPropertyOf feg:jointAction ;
     rdfs:label "primary joint action" ;
-    rdfs:comment "A joint action that directly produces the exercise's defining movement. These are the actions being trained — the mechanical reason the exercise exists. Assign only the actions that constitute the defining stimulus. An exercise typically has 1–3 primary joint actions. Leaf-level concepts only — do not assign joint grouping nodes." ;
+    rdfs:comment "Assign the joint actions that directly produce the exercise's defining movement — the mechanical reason the exercise exists. For a deadlift: HipExtension, KneeExtension. For a curl: ElbowFlexion. Typically 1–3 per exercise. Leaf-level concepts only — do not assign joint grouping nodes (Shoulder, Hip, etc.). Anti-movement rule: if the exercise is AntiExtension → SpinalStability; AntiRotation → SpinalStability; AntiLateralFlexion → SpinalStability. In all three cases the spine is isometrically resisting — not producing — movement. Do NOT assign SpinalExtension, SpinalRotation, or SpinalLateralFlexion to these exercises." ;
     rdfs:domain feg:Exercise ;
     rdfs:range feg:JointAction ;
 .
@@ -159,7 +177,7 @@ feg:supportingJointAction
     a owl:ObjectProperty ;
     rdfs:subPropertyOf feg:jointAction ;
     rdfs:label "supporting joint action" ;
-    rdfs:comment "A joint action that contributes meaningfully to the exercise but is not its defining stimulus. Assign only actions relevant for substitution, fatigue, or coordination — not a complete biomechanical inventory. When in doubt, omit. An exercise typically has 0–3 supporting joint actions. Leaf-level concepts only." ;
+    rdfs:comment "Assign joint actions that contribute meaningfully but are not the defining stimulus — only those relevant for substitution decisions, fatigue accumulation, or inter-muscular coordination. This is not a biomechanical inventory: omit incidental or purely stabilising actions. Leave empty if nothing qualifies. Typically 0–3 per exercise. Leaf-level concepts only. Setup-position rule: do not assign joint actions that describe the starting position of the exercise — only actions that occur during the movement itself. Examples: bent knees at the start of a glute bridge are setup, not KneeFlexion as a joint action; semi-locked knees during a good morning are setup, not a movement action. Ankle mechanics for sagittal plane lifts: for squats, deadlifts, and lunges the relevant ankle action is Dorsiflexion (the ankle dorsiflexes to allow depth). AnkleEversion and AnkleInversion are movement faults, not defining supporting actions in these exercises." ;
     rdfs:domain feg:Exercise ;
     rdfs:range feg:JointAction ;
 .
@@ -179,7 +197,8 @@ feg:legacySourceId
 feg:isUnilateral
     a owl:DatatypeProperty ;
     rdfs:label "is unilateral" ;
-    rdfs:comment "True if the exercise is performed one limb at a time. When absent, bilateral execution is assumed." ;
+    owl:deprecated true ;
+    rdfs:comment "DEPRECATED — replaced by feg:laterality (ADR-075). This property cannot distinguish Contralateral and Ipsilateral exercises from plain Unilateral. Use feg:laterality with feg:Bilateral, feg:Unilateral, feg:Contralateral, or feg:Ipsilateral instead. Will be removed in a subsequent MAJOR version bump after re-enrichment." ;
     rdfs:domain feg:Exercise ;
     rdfs:range xsd:boolean ;
 .
@@ -187,9 +206,41 @@ feg:isUnilateral
 feg:isCompound
     a owl:DatatypeProperty ;
     rdfs:label "is compound" ;
-    rdfs:comment "True if the exercise involves meaningful force production across multiple joints. When absent or false, the exercise is an isolation movement. This is a convenience flag for program design use cases — the full mechanical picture is captured by feg:jointAction." ;
+    rdfs:comment "Set to true when the exercise involves meaningful force production across multiple joints (e.g. squat, deadlift, bench press, row). Omit or set to false for single-joint isolation exercises (e.g. bicep curl, leg extension, lateral raise). When in doubt, count primary joint actions: two or more distinct joints contributing to force production indicates compound." ;
     rdfs:domain feg:Exercise ;
     rdfs:range xsd:boolean ;
+.
+
+feg:laterality
+    a owl:ObjectProperty ;
+    rdfs:label "laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body. Use feg:Bilateral for symmetric two-limb exercises. Use feg:Unilateral for exercises performed one limb at a time. Use feg:Contralateral when opposite limbs work together (e.g. bird dog, dead bug). Use feg:Ipsilateral when same-side limbs work together. Replaces the deprecated feg:isUnilateral boolean (ADR-075)." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:Laterality ;
+.
+
+feg:isCombination
+    a owl:DatatypeProperty ;
+    rdfs:label "is combination" ;
+    rdfs:comment "Set to true when the exercise is a deliberate sequence of two independent movements performed as one (e.g. squat-to-press, deadlift-to-row, lunge-to-curl). Distinct from feg:isCompound, which refers to joint mechanics. A combination exercise is always compound, but a compound exercise is not necessarily a combination. Omit or set to false for single-movement exercises." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean ;
+.
+
+feg:planeOfMotion
+    a owl:ObjectProperty ;
+    rdfs:label "plane of motion" ;
+    rdfs:comment "The cardinal plane(s) in which the primary movement of the exercise occurs. An exercise may involve multiple planes. Use feg:SagittalPlane for forward/backward movement, feg:FrontalPlane for side-to-side movement, feg:TransversePlane for rotational movement." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:PlaneOfMotion ;
+.
+
+feg:exerciseStyle
+    a owl:ObjectProperty ;
+    rdfs:label "exercise style" ;
+    rdfs:comment "The training system, tradition, or methodological context the exercise belongs to. Assign only when the exercise has a clear home in a named tradition (e.g. a Turkish Get-Up is unambiguously Grinds/kettlebell; a barbell back squat is not exclusively Powerlifting). Do not assign when the exercise is generic. Multiple styles permitted where genuinely appropriate." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:ExerciseStyle ;
 .
 
 feg:useGroupLevel

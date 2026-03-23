@@ -11,7 +11,7 @@ feg:JointActionScheme
     a skos:ConceptScheme ;
     rdfs:label "Joint Action Scheme" ;
     rdfs:comment "A controlled vocabulary of joint actions used to describe the mechanical basis of exercises. Joint grouping nodes organise actions by joint; only leaf-level JointAction individuals should be assigned to exercises via feg:jointAction." ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.2.0" ;
 .
 
 ###################
@@ -98,6 +98,15 @@ feg:ShoulderExternalRotation
     rdfs:comment "Rotating the humerus outward away from the midline. Primary drivers: infraspinatus, teres minor." ;
 .
 
+feg:ShoulderCircumduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Shoulder ;
+    rdfs:label "Shoulder Circumduction" ;
+    skos:prefLabel "Shoulder Circumduction" ;
+    rdfs:comment "Circular movement of the arm combining flexion, abduction, extension, and adduction in sequence. Relevant for battle rope circles, macebell halos, and arm circle drills." ;
+.
+
 ###################
 # Elbow
 ###################
@@ -164,6 +173,7 @@ feg:ScapularDepression
     skos:broader feg:Scapula ;
     rdfs:label "Scapular Depression" ;
     skos:prefLabel "Scapular Depression" ;
+    skos:altLabel "ShoulderDepression" ;
     rdfs:comment "Pulling the shoulder blades downward. Primary drivers: lower trapezius, pectoralis minor." ;
 .
 

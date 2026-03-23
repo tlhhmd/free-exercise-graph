@@ -1,0 +1,114 @@
+{
+  "id": "Kettlebell_Alternating_Halo_to_Horn_Grip_Bottoms_Up_Squat",
+  "name": "Kettlebell Alternating Halo to Horn Grip Bottoms Up Squat",
+  "equipment": [
+    "Kettlebell"
+  ],
+  "movement_patterns": [
+    "Rotation",
+    "Squat"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "KneeExtension",
+    "HipExtension",
+    "SpinalRotation"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderHorizontalAbduction",
+    "ShoulderFlexion",
+    "ScapularRetraction",
+    "Dorsiflexion"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "TransversePlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Grinds"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

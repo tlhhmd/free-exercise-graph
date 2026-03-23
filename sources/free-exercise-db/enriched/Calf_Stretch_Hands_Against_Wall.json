@@ -1,0 +1,61 @@
+{
+  "name": "Calf Stretch Hands Against Wall",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": null,
+  "primaryMuscles": [
+    "calves"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Stand facing a wall from several feet away. Stagger your stance, placing one foot forward.",
+    "Lean forward and rest your hands on the wall, keeping your heel, hip and head in a straight line.",
+    "Attempt to keep your heel on the ground. Hold for 10-20 seconds and then switch sides."
+  ],
+  "category": "stretching",
+  "images": [
+    "Calf_Stretch_Hands_Against_Wall/0.jpg",
+    "Calf_Stretch_Hands_Against_Wall/1.jpg"
+  ],
+  "id": "Calf_Stretch_Hands_Against_Wall",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "Gastrocnemius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Soleus",
+      "degree": "PassiveTarget"
+    }
+  ],
+  "primary_joint_actions": [
+    "Dorsiflexion"
+  ],
+  "supporting_joint_actions": [],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Postural"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

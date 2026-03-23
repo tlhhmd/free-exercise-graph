@@ -7,19 +7,16 @@ Callers are responsible for loading graphs and supplying URIs. This module
 has no knowledge of any specific project, namespace, or file layout.
 
 Public API:
-    skos_tree                   - render a SKOS concept scheme as an indented tree
-    group_level_muscles         - list muscle groups where heads should not be used
-    property_comment            - extract rdfs:comment from a SHACL property shape
-    sparql_constraint_comments  - extract instructional comments from SPARQL constraints
-    render                      - render a <<<placeholder>>> template file
+    skos_tree           - render a SKOS concept scheme as an indented tree
+    group_level_muscles - list muscle groups where heads should not be used
+    property_comment    - extract rdfs:comment from an OWL property definition
+    render              - render a <<<placeholder>>> template file
 """
 
 from pathlib import Path
 
-from rdflib import Graph, Namespace, URIRef
+from rdflib import Graph, URIRef
 from rdflib.namespace import RDF, RDFS, SKOS
-
-SH = Namespace("http://www.w3.org/ns/shacl#")
 
 
 def _local(uri: URIRef) -> str:
@@ -102,28 +99,10 @@ def group_level_muscles(g: Graph, use_group_level_prop: URIRef) -> str:
     return "\n".join(f"- {m}" for m in sorted(muscles))
 
 
-def property_comment(g: Graph, target_class: URIRef, path: URIRef) -> str:
-    """Return rdfs:comment from the property shape for the given path on the
-    shape targeting target_class. Returns empty string if not found."""
-    for shape in g.subjects(SH.targetClass, target_class):
-        for prop_shape in g.objects(shape, SH.property):
-            if (prop_shape, SH.path, path) in g:
-                comment = g.value(prop_shape, RDFS.comment)
-                if comment:
-                    return str(comment)
-    return ""
-
-
-def sparql_constraint_comments(g: Graph) -> list[str]:
-    """Return rdfs:comment from SPARQL constraints that carry one.
-    Constraints without rdfs:comment are structural validation rules, not LLM instructions."""
-    comments = []
-    for shape in g.subjects(RDF.type, SH.NodeShape):
-        for sparql_node in g.objects(shape, SH.sparql):
-            comment = g.value(sparql_node, RDFS.comment)
-            if comment:
-                comments.append(str(comment))
-    return comments
+def property_comment(g: Graph, prop: URIRef) -> str:
+    """Return rdfs:comment from the OWL property definition. Returns empty string if not found."""
+    comment = g.value(prop, RDFS.comment)
+    return str(comment) if comment else ""
 
 
 def render(template_path: Path | str, variables: dict[str, str]) -> str:

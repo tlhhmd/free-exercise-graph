@@ -1,0 +1,86 @@
+{
+  "id": "Clubbell_Inside_Pendulum_to_Inside_Pullover",
+  "name": "Clubbell Inside Pendulum to Inside Pullover",
+  "equipment": [
+    "Clubbell"
+  ],
+  "movement_patterns": [
+    "Rotation"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Obliques",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristExtensors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderExtension",
+    "ShoulderAdduction"
+  ],
+  "supporting_joint_actions": [
+    "SpinalRotation",
+    "ElbowFlexion"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": true,
+  "plane_of_motion": [
+    "TransversePlane",
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Grinds"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

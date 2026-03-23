@@ -1,0 +1,74 @@
+{
+  "id": "Cable_Straight_Bar_Pullover",
+  "name": "Cable Straight Bar Pullover",
+  "equipment": [
+    "Cable"
+  ],
+  "movement_patterns": [
+    "HorizontalPull"
+  ],
+  "training_modalities": [
+    "Hypertrophy"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "PectoralisMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderExtension"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderAdduction",
+    "ScapularRetraction"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

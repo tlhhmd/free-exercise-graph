@@ -1,0 +1,90 @@
+{
+  "id": "Ring_Chin_Up",
+  "name": "Ring Chin Up",
+  "equipment": [
+    "GymnasticRings"
+  ],
+  "movement_patterns": [
+    "VerticalPull"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Brachialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Brachioradialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TeresMajor",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LowerTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderAdduction",
+    "ElbowFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ScapularDepression",
+    "ScapularRetraction",
+    "ShoulderExtension"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Calisthenics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

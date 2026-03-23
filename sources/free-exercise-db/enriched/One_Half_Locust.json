@@ -1,0 +1,104 @@
+{
+  "name": "One Half Locust",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": null,
+  "equipment": null,
+  "primaryMuscles": [
+    "quadriceps"
+  ],
+  "secondaryMuscles": [
+    "abdominals",
+    "biceps",
+    "chest"
+  ],
+  "instructions": [
+    "Lie facedown on the floor.",
+    "Put your left hand under your left hipbone to pad your hip and pubic bone.",
+    "Bend your right knee so you can hold the foot in your right hand.",
+    "Lift the foot in the air and simultaneously lift your shoulders off the floor. This also stretches the right hip flexor and the chest and shoulders. Switch sides. If it doesn't bother your back, you can try it with both arms and legs at the same time."
+  ],
+  "category": "stretching",
+  "images": [
+    "One_Half_Locust/0.jpg",
+    "One_Half_Locust/1.jpg"
+  ],
+  "id": "One_Half_Locust",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusFemoris",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "Iliopsoas",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsBrachii",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "HipExtension",
+    "KneeFlexion"
+  ],
+  "supporting_joint_actions": [
+    "SpinalExtension",
+    "ShoulderExtension"
+  ],
+  "is_compound": false,
+  "laterality": "Unilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

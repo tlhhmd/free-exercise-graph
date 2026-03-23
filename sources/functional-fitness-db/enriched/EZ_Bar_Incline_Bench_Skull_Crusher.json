@@ -1,0 +1,68 @@
+{
+  "id": "EZ_Bar_Incline_Bench_Skull_Crusher",
+  "name": "EZ Bar Incline Bench Skull Crusher",
+  "equipment": [
+    "EZBar",
+    "BenchIncline"
+  ],
+  "movement_patterns": [],
+  "training_modalities": [
+    "Hypertrophy"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "Anconeus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderFlexion"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

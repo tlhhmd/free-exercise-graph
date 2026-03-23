@@ -1,0 +1,125 @@
+{
+  "name": "Standing Cable Lift",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "cable",
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [
+    "shoulders"
+  ],
+  "instructions": [
+    "Connect a standard handle on a tower, and move the cable to the lowest pulley position.",
+    "With your side to the cable, grab the handle with one hand and step away from the tower. You should be approximately arm's length away from the pulley, with the tension of the weight on the cable. Your outstretched arm should be aligned with the cable.",
+    "With your feet positioned shoulder width apart, squat down and grab the handle with both hands. Your arms should still be fully extended.",
+    "In one motion, pull the handle up and across your body until your arms are in a fully-extended position above your head.",
+    "Keep your back straight and your arms close to your body as you pivot your back foot and straighten your legs to get a full range of motion.",
+    "Retract your arms and then your body. Return to the neutral position in a slow and controlled manner.",
+    "Repeat to failure.",
+    "Then, reposition and repeat the same series of movements on the opposite side."
+  ],
+  "category": "strength",
+  "images": [
+    "Standing_Cable_Lift/0.jpg",
+    "Standing_Cable_Lift/1.jpg"
+  ],
+  "id": "Standing_Cable_Lift",
+  "movement_patterns": [
+    "Rotation"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "Obliques",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "TransverseAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "LateralDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RectusFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusLateralis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusMedialis",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "VastusIntermedius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "UpperTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "QuadratusLumborum",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalRotation",
+    "SpinalLateralFlexion"
+  ],
+  "supporting_joint_actions": [
+    "ShoulderFlexion",
+    "KneeExtension",
+    "HipExtension",
+    "ScapularUpwardRotation"
+  ],
+  "is_compound": true,
+  "laterality": "Unilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "TransversePlane",
+    "SagittalPlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

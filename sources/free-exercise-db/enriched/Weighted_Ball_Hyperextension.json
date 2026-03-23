@@ -1,0 +1,93 @@
+{
+  "name": "Weighted Ball Hyperextension",
+  "force": "pull",
+  "level": "intermediate",
+  "mechanic": "compound",
+  "equipment": "exercise ball",
+  "primaryMuscles": [
+    "lower back"
+  ],
+  "secondaryMuscles": [
+    "glutes",
+    "hamstrings",
+    "middle back"
+  ],
+  "instructions": [
+    "To begin, lie down on an exercise ball with your torso pressing against the ball and parallel to the floor. The ball of your feet should be pressed against the floor to help keep you balanced. Place a weighted plate under your chin or behind your neck. This is the starting position.",
+    "Slowly raise your torso up by bending at the waist and lower back. Remember to exhale during this movement.",
+    "Hold the contraction on your lower back for a second and lower your torso back down to the starting position while inhaling.",
+    "Repeat for the recommended amount of repetitions prescribed in your program."
+  ],
+  "category": "strength",
+  "images": [
+    "Weighted_Ball_Hyperextension/0.jpg",
+    "Weighted_Ball_Hyperextension/1.jpg"
+  ],
+  "id": "Weighted_Ball_Hyperextension",
+  "movement_patterns": [
+    "AntiFlexion"
+  ],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "GluteusMaximus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "BicepsFemoris",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semitendinosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Semimembranosus",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "GluteusMedius",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "SpinalExtension"
+  ],
+  "supporting_joint_actions": [
+    "HipExtension"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

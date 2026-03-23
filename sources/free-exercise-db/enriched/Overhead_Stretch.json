@@ -1,0 +1,87 @@
+{
+  "name": "Overhead Stretch",
+  "force": "static",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": null,
+  "primaryMuscles": [
+    "abdominals"
+  ],
+  "secondaryMuscles": [
+    "chest",
+    "forearms",
+    "lats",
+    "triceps"
+  ],
+  "instructions": [
+    "Standing straight up, lace your fingers together and open your palms to the ceiling. Keep your shoulders down as you extend your arms up.",
+    "To create a full torso stretch, pull your tailbone down and stabilize your torso as you do this. Stretch the muscles on both the front and the back of the torso."
+  ],
+  "category": "stretching",
+  "images": [
+    "Overhead_Stretch/0.jpg",
+    "Overhead_Stretch/1.jpg"
+  ],
+  "id": "Overhead_Stretch",
+  "movement_patterns": [
+    "Mobility"
+  ],
+  "training_modalities": [
+    "Mobility"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "RectusAbdominis",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "LatissimusDorsi",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "PassiveTarget"
+    },
+    {
+      "muscle": "ErectorSpinae",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderFlexion",
+    "ScapularUpwardRotation"
+  ],
+  "supporting_joint_actions": [
+    "ElbowExtension",
+    "SpinalExtension"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "SagittalPlane"
+  ],
+  "exercise_style": [],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

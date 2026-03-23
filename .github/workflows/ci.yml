@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: SHACL unit tests
+        run: python3 test_shacl.py
+
+      - name: Build graph
+        run: python3 sources/free-exercise-db/build.py
+
+      - name: Quality scorecard
+        run: python3 sources/free-exercise-db/validate.py --csv /tmp/quality_report.csv
+        timeout-minutes: 10

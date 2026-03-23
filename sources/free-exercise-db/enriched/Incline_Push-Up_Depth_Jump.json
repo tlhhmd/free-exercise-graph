@@ -1,0 +1,102 @@
+{
+  "name": "Incline Push-Up Depth Jump",
+  "force": "push",
+  "level": "beginner",
+  "mechanic": "compound",
+  "equipment": "other",
+  "primaryMuscles": [
+    "chest"
+  ],
+  "secondaryMuscles": [
+    "shoulders",
+    "triceps"
+  ],
+  "instructions": [
+    "For this drill you will need a box about 12 inches high, and two thick mats or aerobics steps.",
+    "Place the steps just outside of your shoulders, and place your feet on top of the box so that you are in an incline pushup position, your hands just inside the steps. This will be your starting position.",
+    "Begin by bending at the elbows to lower your body, quickly reversing position to push your body off of the ground. As you leave the ground, move your hands onto the steps, bending your elbows to absorb the impact.",
+    "Repeat the motion to return to the starting position."
+  ],
+  "category": "plyometrics",
+  "images": [
+    "Incline_Push-Up_Depth_Jump/0.jpg",
+    "Incline_Push-Up_Depth_Jump/1.jpg"
+  ],
+  "id": "Incline_Push-Up_Depth_Jump",
+  "movement_patterns": [
+    "HorizontalPush"
+  ],
+  "training_modalities": [
+    "Plyometrics"
+  ],
+  "muscle_involvements": [
+    {
+      "muscle": "ClavicularHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "SternalHead",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "AnteriorDeltoid",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLongHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsLateralHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "TricepsMedialHead",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "SerratusAnterior",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Core",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Stabilizer"
+    },
+    {
+      "muscle": "WristFlexors",
+      "degree": "Stabilizer"
+    }
+  ],
+  "primary_joint_actions": [
+    "ElbowExtension",
+    "ShoulderHorizontalAdduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularProtraction"
+  ],
+  "is_compound": true,
+  "laterality": "Bilateral",
+  "is_combination": false,
+  "plane_of_motion": [
+    "SagittalPlane",
+    "FrontalPlane"
+  ],
+  "exercise_style": [
+    "Calisthenics"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}

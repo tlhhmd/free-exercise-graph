@@ -9,7 +9,7 @@
 
 feg:EquipmentVocabulary
     a owl:Ontology ;
-    owl:versionInfo "0.1.0" ;
+    owl:versionInfo "0.2.0" ;
 .
 
 
@@ -89,4 +89,213 @@ feg:Other
     a owl:NamedIndividual, feg:Equipment ;
     rdfs:label "Other" ;
     rdfs:comment "Equipment not covered by the current vocabulary. Indicates a known gap in the source dataset." ;
+.
+
+feg:AbWheel
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Ab Wheel" ;
+    rdfs:comment "A small wheel with handles used for rollout exercises targeting the core." ;
+.
+
+feg:BattleRopes
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Battle Ropes" ;
+    rdfs:comment "Heavy ropes anchored at one end, used for wave and slam exercises targeting conditioning and upper body." ;
+.
+
+feg:BenchFlat
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bench (Flat)" ;
+    skos:altLabel "Flat Bench" ;
+    rdfs:comment "A flat weight bench used as a surface or support for pressing, rowing, and hip thrust exercises." ;
+.
+
+feg:BenchIncline
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bench (Incline)" ;
+    skos:altLabel "Incline Bench" ;
+    rdfs:comment "An adjustable bench set at an incline angle, used for incline pressing and prone row variations." ;
+.
+
+feg:BenchDecline
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bench (Decline)" ;
+    skos:altLabel "Decline Bench" ;
+    rdfs:comment "A bench angled downward, used for decline pressing and decline curl variations." ;
+.
+
+feg:BulgarianBag
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Bulgarian Bag" ;
+    rdfs:comment "A crescent-shaped sand-filled bag worn over the shoulders, used for rotational and throwing movements." ;
+.
+
+feg:ClimbingRope
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Climbing Rope" ;
+    rdfs:comment "A thick rope suspended from above, used for rope climbing and hanging exercises." ;
+.
+
+feg:Clubbell
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Clubbell" ;
+    rdfs:comment "A club-shaped weight used for circular and swinging movements emphasising shoulder and wrist mobility." ;
+.
+
+feg:EZBar
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "EZ Bar" ;
+    skos:altLabel "E-Z Curl Bar" ;
+    rdfs:comment "A short angled barbell designed to reduce wrist strain during curling and skull crusher movements." ;
+.
+
+feg:GravityBoots
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Gravity Boots" ;
+    rdfs:comment "Ankle hooks that attach to a pull-up bar, allowing the user to hang inverted for core and back exercises." ;
+.
+
+feg:GymnasticRings
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Gymnastic Rings" ;
+    skos:altLabel "Rings" ;
+    rdfs:comment "Suspended wooden or plastic rings used for bodyweight pulling, pushing, and stability exercises." ;
+.
+
+feg:HeavySandbag
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Heavy Sandbag" ;
+    rdfs:comment "A large sand-filled bag used for carrying, lifting, and throwing exercises. Heavier and less structured than a standard sandbag." ;
+.
+
+feg:IndianClub
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Indian Club" ;
+    rdfs:comment "A bottle-shaped club swung through circular patterns to develop shoulder mobility and coordination." ;
+.
+
+feg:Landmine
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Landmine" ;
+    rdfs:comment "A barbell sleeve anchored at floor level, creating a pivot point for rotational and pressing movements." ;
+.
+
+feg:Macebell
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Macebell" ;
+    skos:altLabel "Mace" ;
+    rdfs:comment "A long-handled implement with a heavy ball at one end, swung in circular patterns around the body." ;
+.
+
+feg:Miniband
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Miniband" ;
+    skos:altLabel "Mini Band" ;
+    rdfs:comment "A small loop resistance band placed around the ankles, knees, or wrists to add resistance to bodyweight movements." ;
+.
+
+feg:ParalletteBar
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Parallette Bars" ;
+    skos:altLabel "Parallettes" ;
+    rdfs:comment "Low parallel bars placed on the floor, used for push-up and L-sit variations and hand balancing." ;
+.
+
+feg:PlyoBox
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Plyo Box" ;
+    skos:altLabel "Plyometric Box" ;
+    rdfs:comment "A sturdy box used for box jumps, step-ups, elevated push-ups, and hip thrust setup." ;
+.
+
+feg:PullUpBar
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Pull Up Bar" ;
+    skos:altLabel "Pull-Up Bar" ;
+    rdfs:comment "A fixed overhead bar used for pull-ups, chin-ups, hanging core exercises, and muscle-ups." ;
+.
+
+feg:ResistanceBand
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Resistance Band" ;
+    skos:altLabel "Band" ;
+    rdfs:comment "A flat loop or tube resistance band used to add or accommodate load. Distinct from Miniband (loop around limbs) and Superband (large loop for assisted pull-ups)." ;
+.
+
+feg:Sandbag
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Sandbag" ;
+    rdfs:comment "A sand-filled bag with handles, used as a free weight for carrying, pressing, and squatting exercises." ;
+.
+
+feg:SlamBall
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Slam Ball" ;
+    rdfs:comment "A heavy, non-bouncing rubber ball used for overhead slam and rotational throw exercises." ;
+.
+
+feg:SlantBoard
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Slant Board" ;
+    rdfs:comment "An angled platform that elevates the heels, used for cyclist squats and ankle mobility work." ;
+.
+
+feg:Sled
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Sled" ;
+    rdfs:comment "A weighted sled pushed or pulled across a surface for conditioning and lower body strength work." ;
+.
+
+feg:SledgeHammer
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Sledge Hammer" ;
+    skos:altLabel "Sledgehammer" ;
+    rdfs:comment "A heavy hammer swung against a tire for conditioning and rotational power work." ;
+.
+
+feg:Sliders
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Sliders" ;
+    skos:altLabel "Gliding Discs" ;
+    rdfs:comment "Small discs placed under the hands or feet to allow sliding on a surface, used for lunge, push-up, and core variations." ;
+.
+
+feg:Superband
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Superband" ;
+    skos:altLabel "Pull-Up Band" ;
+    rdfs:comment "A large loop resistance band used for assisted pull-ups, hip activation, and banded stretching." ;
+.
+
+feg:SuspensionTrainer
+    a owl:NamedIndividual, feg:Equipment ;
+    skos:altLabel "TRX" ;
+    rdfs:label "Suspension Trainer" ;
+    rdfs:comment "Adjustable straps anchored overhead, allowing bodyweight exercises with variable instability. Common brand: TRX." ;
+.
+
+feg:Tire
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Tire" ;
+    rdfs:comment "A large vehicle tire used as a target for sledgehammer slams or flipped for conditioning work." ;
+.
+
+feg:TrapBar
+    a owl:NamedIndividual, feg:Equipment ;
+    skos:altLabel "Hex Bar" ;
+    rdfs:label "Trap Bar" ;
+    rdfs:comment "A hexagonal or diamond-shaped bar that allows the lifter to stand inside it, used for deadlifts and shrugs." ;
+.
+
+feg:WallBall
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Wall Ball" ;
+    rdfs:comment "A large, soft medicine ball thrown against a wall for squat-to-throw conditioning exercises." ;
+.
+
+feg:WeightPlate
+    a owl:NamedIndividual, feg:Equipment ;
+    rdfs:label "Weight Plate" ;
+    skos:altLabel "Plate" ;
+    rdfs:comment "A standard barbell weight plate used as a standalone implement for overhead, carry, and rotational exercises." ;
 .

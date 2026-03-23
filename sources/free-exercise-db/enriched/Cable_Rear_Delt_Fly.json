@@ -1,0 +1,69 @@
+{
+  "name": "Cable Rear Delt Fly",
+  "force": "pull",
+  "level": "beginner",
+  "mechanic": "isolation",
+  "equipment": "cable",
+  "primaryMuscles": [
+    "shoulders"
+  ],
+  "secondaryMuscles": [],
+  "instructions": [
+    "Adjust the pulleys to the appropriate height and adjust the weight. The pulleys should be above your head.",
+    "Grab the left pulley with your right hand and the right pulley with your left hand, crossing them in front of you. This will be your starting position.",
+    "Initiate the movement by moving your arms back and outward, keeping your arms straight as you execute the movement.",
+    "Pause at the end of the motion before returning the handles to the start position."
+  ],
+  "category": "strength",
+  "images": [
+    "Cable_Rear_Delt_Fly/0.jpg",
+    "Cable_Rear_Delt_Fly/1.jpg"
+  ],
+  "id": "Cable_Rear_Delt_Fly",
+  "movement_patterns": [],
+  "training_modalities": [],
+  "muscle_involvements": [
+    {
+      "muscle": "PosteriorDeltoid",
+      "degree": "PrimeMover"
+    },
+    {
+      "muscle": "RotatorCuff",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "Rhomboids",
+      "degree": "Synergist"
+    },
+    {
+      "muscle": "MiddleTrapezius",
+      "degree": "Synergist"
+    }
+  ],
+  "primary_joint_actions": [
+    "ShoulderHorizontalAbduction"
+  ],
+  "supporting_joint_actions": [
+    "ScapularRetraction",
+    "ShoulderExternalRotation"
+  ],
+  "is_compound": false,
+  "laterality": "Bilateral",
+  "plane_of_motion": [
+    "TransversePlane"
+  ],
+  "exercise_style": [
+    "Bodybuilding"
+  ],
+  "vocabulary_versions": {
+    "ontology": "1.0.0",
+    "muscles": "0.11.0",
+    "movement_patterns": "0.6.0",
+    "joint_actions": "0.1.0",
+    "modalities": "0.2.0",
+    "degrees": "0.2.2",
+    "laterality": "1.0.0",
+    "planes_of_motion": "1.0.0",
+    "exercise_styles": "1.0.0"
+  }
+}
