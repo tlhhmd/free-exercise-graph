@@ -124,10 +124,10 @@ free-exercise-graph/
 
 ## Docs by Audience
 
-- **New engineer / ontology engineer:** start with [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md), then [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md), then [CONTRIBUTING.md](/Users/talha/Code/free-exercise-graph/CONTRIBUTING.md)
-- **Operator running the full pipeline:** use [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md)
-- **Ontologist / taxonomy reviewer:** read [DECISIONS.md](/Users/talha/Code/free-exercise-graph/DECISIONS.md), [ontology](/Users/talha/Code/free-exercise-graph/ontology), [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md), and [docs/quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
-- **Product / PM / portfolio reviewer:** read this README, [docs/reconciliation_example.md](/Users/talha/Code/free-exercise-graph/docs/reconciliation_example.md), and [codexlog.md](/Users/talha/Code/free-exercise-graph/codexlog.md)
+- **New engineer / ontology engineer:** start with [docs/system_contracts.md](docs/system_contracts.md), then [docs/sqlite_data_model.md](docs/sqlite_data_model.md), then [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Operator running the full pipeline:** use [docs/full_run_playbook.md](docs/full_run_playbook.md)
+- **Ontologist / taxonomy reviewer:** read [DECISIONS.md](DECISIONS.md), [ontology/](ontology/), [docs/sqlite_data_model.md](docs/sqlite_data_model.md), and [docs/quality_surfaces.md](docs/quality_surfaces.md)
+- **Product / PM / portfolio reviewer:** read this README, [docs/reconciliation_example.md](docs/reconciliation_example.md), and [codexlog.md](codexlog.md)
 
 ---
 
