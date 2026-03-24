@@ -1,0 +1,391 @@
+:root {
+  --bg: #f8f8f7;
+  --surface: #ffffff;
+  --surface-2: #f1f0ef;
+  --border: #e5e4e2;
+  --text: #1c1c1a;
+  --text-2: #6b6b67;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+
+  --deg-prime: #dc2626;
+  --deg-synergist: #ea580c;
+  --deg-stabilizer: #2563eb;
+  --deg-passive: #94a3b8;
+
+  --nav-h: 60px;
+  --radius: 10px;
+  --gap: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  padding-bottom: var(--nav-h);
+  overscroll-behavior: none;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+
+.view { display: none; padding: var(--gap); max-width: 680px; margin: 0 auto; }
+.view.active { display: block; }
+
+/* ── Bottom nav ─────────────────────────────────────────────────────────── */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-2);
+  font-size: 11px; font-weight: 500;
+  min-height: 44px;
+  transition: color 0.15s;
+}
+.nav-btn svg { width: 22px; height: 22px; stroke-width: 1.8; }
+.nav-btn.active { color: var(--accent); }
+
+/* ── Search & filters ───────────────────────────────────────────────────── */
+
+.search-bar {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+  padding: var(--gap) 0 8px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+}
+.search-bar input:focus { border-color: var(--accent); }
+
+.filter-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 0 4px;
+  scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 32px;
+  display: flex; align-items: center;
+  transition: all 0.15s;
+}
+.filter-chip.active {
+  background: var(--accent); border-color: var(--accent);
+  color: #fff;
+}
+.filter-chip.clear-btn {
+  border-color: #fca5a5; color: var(--deg-prime);
+}
+
+.filter-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 8px;
+  display: none;
+}
+.filter-panel.open { display: block; }
+.filter-panel-title {
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.filter-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-tag {
+  padding: 4px 10px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer; background: var(--bg);
+  min-height: 30px; display: flex; align-items: center;
+}
+.filter-tag.active {
+  background: var(--accent-soft); border-color: var(--accent);
+  color: var(--accent); font-weight: 500;
+}
+
+/* ── Result count ───────────────────────────────────────────────────────── */
+
+.result-count {
+  font-size: 13px; color: var(--text-2);
+  margin: 4px 0 8px;
+}
+
+/* ── Exercise cards ─────────────────────────────────────────────────────── */
+
+.exercise-list { display: flex; flex-direction: column; gap: 8px; }
+
+.exercise-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+  cursor: pointer;
+  display: flex; flex-direction: column; gap: 5px;
+  min-height: 44px;
+  transition: border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.exercise-card:active { background: var(--surface-2); }
+
+.card-header {
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.card-name {
+  font-size: 15px; font-weight: 500; flex: 1; line-height: 1.3;
+}
+.badge {
+  flex-shrink: 0; align-self: flex-start;
+  padding: 2px 7px; border-radius: 8px;
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.badge-compound { background: #fef3c7; color: #92400e; }
+.badge-isolation { background: var(--surface-2); color: var(--text-2); }
+.badge-combo { background: #ede9fe; color: #5b21b6; }
+
+.card-meta {
+  font-size: 13px; color: var(--text-2);
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.muscle-pill {
+  padding: 1px 7px; border-radius: 8px; font-size: 12px;
+}
+.pill-prime { background: #fee2e2; color: var(--deg-prime); }
+.pill-synergist { background: #ffedd5; color: var(--deg-synergist); }
+.pill-stabilizer { background: var(--accent-soft); color: var(--accent); }
+
+/* ── Detail sheet ───────────────────────────────────────────────────────── */
+
+.sheet-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: flex-end;
+}
+.sheet-overlay.open { display: flex; }
+
+.sheet {
+  width: 100%; max-width: 680px; margin: 0 auto;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--gap) calc(var(--gap) + env(safe-area-inset-bottom));
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 10px auto 16px;
+}
+
+.sheet-title {
+  font-size: 19px; font-weight: 600; line-height: 1.3;
+  margin-bottom: 4px;
+}
+.sheet-subtitle {
+  font-size: 13px; color: var(--text-2); margin-bottom: 16px;
+}
+.sheet-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+
+.section-label {
+  font-size: 11px; font-weight: 700; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin: 16px 0 8px;
+}
+
+/* Muscle involvement bars */
+.muscle-bars { display: flex; flex-direction: column; gap: 5px; }
+.muscle-bar {
+  display: flex; align-items: center; gap: 8px;
+}
+.muscle-bar-name { font-size: 13px; width: 130px; flex-shrink: 0; }
+.muscle-bar-track {
+  flex: 1; height: 6px; background: var(--surface-2);
+  border-radius: 3px; overflow: hidden;
+}
+.muscle-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.bar-prime { background: var(--deg-prime); width: 100%; }
+.bar-synergist { background: var(--deg-synergist); width: 65%; }
+.bar-stabilizer { background: var(--deg-stabilizer); width: 35%; }
+.bar-passive { background: var(--deg-passive); width: 20%; }
+
+.degree-tag {
+  font-size: 11px; padding: 1px 6px; border-radius: 6px;
+}
+.deg-prime { background: #fee2e2; color: var(--deg-prime); }
+.deg-synergist { background: #ffedd5; color: var(--deg-synergist); }
+.deg-stabilizer { background: var(--accent-soft); color: var(--accent); }
+.deg-passive { background: var(--surface-2); color: var(--text-2); }
+
+/* Tags (patterns, JAs, equipment) */
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  padding: 4px 10px; border-radius: 8px;
+  font-size: 13px; background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border);
+}
+.tag-primary { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+/* Substitutes */
+.sub-list { display: flex; flex-direction: column; gap: 6px; }
+.sub-card {
+  padding: 10px 12px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; font-size: 14px;
+}
+.sub-card:active { background: var(--surface-2); }
+.sub-why { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+/* ── Body map tab ────────────────────────────────────────────────────────── */
+
+.view-toggle {
+  display: flex; gap: 6px; margin-bottom: 12px;
+}
+.view-toggle-btn {
+  flex: 1; padding: 9px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); font-size: 14px; font-weight: 500;
+  cursor: pointer; color: var(--text-2);
+}
+.view-toggle-btn.active {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+
+.anatomy-wrap {
+  display: flex; justify-content: center;
+  margin-bottom: 16px;
+}
+.anatomy-wrap svg {
+  width: 100%; max-width: 240px; height: auto;
+}
+
+.muscle-region { cursor: pointer; transition: opacity 0.15s, filter 0.15s; }
+.muscle-region:hover, .muscle-region:active { opacity: 0.75; }
+.muscle-region.highlighted { filter: brightness(0.85); }
+
+.muscle-list { display: flex; flex-direction: column; gap: 4px; }
+.muscle-group-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer;
+  font-size: 14px;
+  -webkit-tap-highlight-color: transparent;
+}
+.muscle-group-row:active { background: var(--surface-2); }
+.muscle-group-row.active {
+  background: var(--accent-soft); border-color: var(--accent);
+  color: var(--accent); font-weight: 500;
+}
+.muscle-count { font-size: 12px; color: var(--text-2); }
+.muscle-group-row.active .muscle-count { color: var(--accent); opacity: 0.7; }
+
+/* ── Vocabulary tab ─────────────────────────────────────────────────────── */
+
+.vocab-section { margin-bottom: 12px; }
+.vocab-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer; font-weight: 600; font-size: 15px;
+  -webkit-tap-highlight-color: transparent;
+}
+.vocab-section-header.open { border-radius: var(--radius) var(--radius) 0 0; }
+.vocab-chevron { transition: transform 0.2s; font-size: 12px; color: var(--text-2); }
+.vocab-section-header.open .vocab-chevron { transform: rotate(180deg); }
+
+.vocab-items {
+  display: none;
+  border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  overflow: hidden;
+}
+.vocab-items.open { display: block; }
+
+.vocab-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; font-size: 14px;
+  background: var(--surface);
+  -webkit-tap-highlight-color: transparent;
+}
+.vocab-item:last-child { border-bottom: none; }
+.vocab-item:active { background: var(--surface-2); }
+.vocab-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.vocab-item.child { padding-left: 28px; font-size: 13px; }
+.vocab-item-count {
+  font-size: 12px; color: var(--text-2); background: var(--surface-2);
+  padding: 1px 7px; border-radius: 8px; flex-shrink: 0;
+}
+.vocab-item.active .vocab-item-count { background: var(--accent); color: #fff; }
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+
+.empty {
+  text-align: center; padding: 48px 16px;
+  color: var(--text-2); font-size: 15px;
+}
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+
+.degree-legend {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 4px;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-2);
+}
+.legend-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
