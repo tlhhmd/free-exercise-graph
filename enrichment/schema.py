@@ -108,30 +108,53 @@ class ExerciseEnrichment(BaseModel):
 
     @model_validator(mode="after")
     def check_vocabulary(self) -> "ExerciseEnrichment":
-        errors = []
-        for ja in self.primary_joint_actions:
-            if ja not in _KNOWN_VOCAB.get("joint_actions", set()):
-                errors.append(f"Unknown primary_joint_action: {ja!r}")
-        for ja in self.supporting_joint_actions:
-            if ja not in _KNOWN_VOCAB.get("joint_actions", set()):
-                errors.append(f"Unknown supporting_joint_action: {ja!r}")
-        for mp in self.movement_patterns:
-            if mp not in _KNOWN_VOCAB.get("movement_patterns", set()):
-                errors.append(f"Unknown movement_pattern: {mp!r}")
-        for tm in self.training_modalities:
-            if tm not in _KNOWN_VOCAB.get("training_modalities", set()):
-                errors.append(f"Unknown training_modality: {tm!r}")
-        for inv in self.muscle_involvements:
-            if inv.muscle not in _KNOWN_VOCAB.get("muscles", set()):
-                errors.append(f"Unknown muscle: {inv.muscle!r}")
-        for pom in self.plane_of_motion:
-            if pom not in _KNOWN_VOCAB.get("planes_of_motion", set()):
-                errors.append(f"Unknown plane_of_motion: {pom!r}")
-        for es in self.exercise_style:
-            if es not in _KNOWN_VOCAB.get("exercise_styles", set()):
-                errors.append(f"Unknown exercise_style: {es!r}")
-        if errors:
-            raise ValueError("; ".join(errors))
+        """Strip unknown vocab terms and warn — do not hard-fail."""
+        warns = []
+
+        ja_vocab = _KNOWN_VOCAB.get("joint_actions", set())
+        bad_pja = [ja for ja in self.primary_joint_actions if ja not in ja_vocab]
+        if bad_pja:
+            self.primary_joint_actions = [ja for ja in self.primary_joint_actions if ja in ja_vocab]
+            warns.extend(f"stripped unknown primary_joint_action: {ja!r}" for ja in bad_pja)
+
+        bad_sja = [ja for ja in self.supporting_joint_actions if ja not in ja_vocab]
+        if bad_sja:
+            self.supporting_joint_actions = [ja for ja in self.supporting_joint_actions if ja in ja_vocab]
+            warns.extend(f"stripped unknown supporting_joint_action: {ja!r}" for ja in bad_sja)
+
+        mp_vocab = _KNOWN_VOCAB.get("movement_patterns", set())
+        bad_mp = [mp for mp in self.movement_patterns if mp not in mp_vocab]
+        if bad_mp:
+            self.movement_patterns = [mp for mp in self.movement_patterns if mp in mp_vocab]
+            warns.extend(f"stripped unknown movement_pattern: {mp!r}" for mp in bad_mp)
+
+        tm_vocab = _KNOWN_VOCAB.get("training_modalities", set())
+        bad_tm = [tm for tm in self.training_modalities if tm not in tm_vocab]
+        if bad_tm:
+            self.training_modalities = [tm for tm in self.training_modalities if tm in tm_vocab]
+            warns.extend(f"stripped unknown training_modality: {tm!r}" for tm in bad_tm)
+
+        mu_vocab = _KNOWN_VOCAB.get("muscles", set())
+        bad_mu = [inv.muscle for inv in self.muscle_involvements if inv.muscle not in mu_vocab]
+        if bad_mu:
+            self.muscle_involvements = [inv for inv in self.muscle_involvements if inv.muscle in mu_vocab]
+            warns.extend(f"stripped unknown muscle: {m!r}" for m in bad_mu)
+
+        pom_vocab = _KNOWN_VOCAB.get("planes_of_motion", set())
+        bad_pom = [pom for pom in self.plane_of_motion if pom not in pom_vocab]
+        if bad_pom:
+            self.plane_of_motion = [pom for pom in self.plane_of_motion if pom in pom_vocab]
+            warns.extend(f"stripped unknown plane_of_motion: {pom!r}" for pom in bad_pom)
+
+        es_vocab = _KNOWN_VOCAB.get("exercise_styles", set())
+        bad_es = [es for es in self.exercise_style if es not in es_vocab]
+        if bad_es:
+            self.exercise_style = [es for es in self.exercise_style if es in es_vocab]
+            warns.extend(f"stripped unknown exercise_style: {es!r}" for es in bad_es)
+
+        if warns:
+            print(f"  ⚠ vocab: {'; '.join(warns)}", file=sys.stderr)
+
         return self
 
     @model_validator(mode="after")
@@ -145,9 +168,15 @@ class ExerciseEnrichment(BaseModel):
 
     @model_validator(mode="after")
     def check_core_stabilizer(self) -> "ExerciseEnrichment":
+        """Correct Core to Stabilizer if assigned a different degree — do not hard-fail."""
+        corrected = []
         for inv in self.muscle_involvements:
             if inv.muscle == "Core" and inv.degree != "Stabilizer":
-                raise ValueError(f"Core must be Stabilizer, got {inv.degree!r}")
+                print(f"  ⚠ corrected Core from {inv.degree!r} to 'Stabilizer'", file=sys.stderr)
+                corrected.append(MuscleInvolvement(muscle="Core", degree="Stabilizer"))
+            else:
+                corrected.append(inv)
+        self.muscle_involvements = corrected
         return self
 
     @model_validator(mode="after")
@@ -167,24 +196,32 @@ class ExerciseEnrichment(BaseModel):
 
     @model_validator(mode="after")
     def check_no_duplicate_muscles(self) -> "ExerciseEnrichment":
+        """Keep first occurrence of each muscle, strip duplicates, warn."""
         seen: set[str] = set()
+        deduped = []
         for inv in self.muscle_involvements:
             if inv.muscle in seen:
-                raise ValueError(f"Muscle {inv.muscle!r} appears more than once")
-            seen.add(inv.muscle)
+                print(f"  ⚠ stripped duplicate muscle: {inv.muscle!r}", file=sys.stderr)
+            else:
+                seen.add(inv.muscle)
+                deduped.append(inv)
+        self.muscle_involvements = deduped
         return self
 
     @model_validator(mode="after")
     def check_no_ancestor_overlap(self) -> "ExerciseEnrichment":
+        """Strip ancestor when both ancestor and descendant are present, warn."""
         muscles = {inv.muscle for inv in self.muscle_involvements}
-        errors = [
-            f"{anc!r} is an ancestor of {m!r} — double-counting"
-            for m in muscles
-            for anc in _ANCESTOR_MAP.get(m, frozenset())
-            if anc in muscles
-        ]
-        if errors:
-            raise ValueError("; ".join(errors))
+        to_remove: set[str] = set()
+        warns = []
+        for m in muscles:
+            for anc in _ANCESTOR_MAP.get(m, frozenset()):
+                if anc in muscles and anc not in to_remove:
+                    to_remove.add(anc)
+                    warns.append(f"stripped ancestor {anc!r} (descendant {m!r} present)")
+        if to_remove:
+            self.muscle_involvements = [inv for inv in self.muscle_involvements if inv.muscle not in to_remove]
+            print(f"  ⚠ ancestor overlap: {'; '.join(warns)}", file=sys.stderr)
         return self
 
 
