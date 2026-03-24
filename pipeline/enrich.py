@@ -205,6 +205,13 @@ def run(
     conn = get_connection(db_path)
 
     already_done = {r[0] for r in conn.execute("SELECT entity_id FROM enrichment_stamps").fetchall()}
+    failure_counts = {
+        r[0]: r[1]
+        for r in conn.execute(
+            "SELECT entity_id, COUNT(*) FROM enrichment_failures GROUP BY entity_id"
+        ).fetchall()
+    }
+    MAX_FAILURES = 3
 
     entities = conn.execute(
         "SELECT entity_id, display_name FROM entities ORDER BY entity_id"
@@ -213,13 +220,15 @@ def run(
     if force:
         force_set = set(force)
         pending = [e for e in entities if e["entity_id"] in force_set]
-        # Remove existing stamps for forced re-enrichment
+        # Remove existing stamps and failure history for forced re-enrichment
         with conn:
             for eid in force_set:
                 conn.execute("DELETE FROM enrichment_stamps WHERE entity_id = ?", (eid,))
                 conn.execute("DELETE FROM inferred_claims WHERE entity_id = ?", (eid,))
+                conn.execute("DELETE FROM enrichment_failures WHERE entity_id = ?", (eid,))
     else:
-        pending = [e for e in entities if e["entity_id"] not in already_done]
+        quarantined = {eid for eid, n in failure_counts.items() if n >= MAX_FAILURES}
+        pending = [e for e in entities if e["entity_id"] not in already_done and e["entity_id"] not in quarantined]
 
     if limit:
         pending = list(pending)
@@ -227,7 +236,13 @@ def run(
         pending = pending[:limit]
 
     if dry_run:
-        print(f"Pending: {len(pending)} / {len(entities)} entities")
+        quarantined = {eid for eid, n in failure_counts.items() if n >= MAX_FAILURES}
+        print(f"Pending:     {len(pending)} / {len(entities)} entities")
+        print(f"Done:        {len(already_done)}")
+        print(f"Quarantined: {len(quarantined)} (≥{MAX_FAILURES} failures)")
+        if quarantined:
+            for eid in sorted(quarantined):
+                print(f"  {eid}  ({failure_counts[eid]} failures)")
         conn.close()
         return
 
@@ -278,6 +293,11 @@ def run(
             completed += 1
             if err:
                 print(f"  ❌ [{completed}/{total}] {display_name}  {err}", flush=True)
+                with get_connection(db_path) as write_conn:
+                    write_conn.execute(
+                        "INSERT INTO enrichment_failures (entity_id, failed_at, error) VALUES (?, ?, ?)",
+                        (entity_id, datetime.now(timezone.utc).isoformat(), str(err)),
+                    )
             else:
                 with get_connection(db_path) as write_conn:
                     _write_inferred(write_conn, entity_id, fields, vocab_vers, model=llm.model)
@@ -300,10 +320,26 @@ def main() -> None:
     parser.add_argument("--model",        default=None, help="model id (default: FEG_MODEL env var, else provider default)")
     parser.add_argument("--thinking",     default=None, metavar="LEVEL",
                         help="Gemini thinking level: minimal | low | medium | high")
+    parser.add_argument("--quarantine",   action="store_true",
+                        help="Print entities with ≥3 failures and exit")
     args = parser.parse_args()
 
     from dotenv import load_dotenv
     load_dotenv()
+
+    if args.quarantine:
+        conn = get_connection(DB_PATH)
+        rows = conn.execute(
+            "SELECT entity_id, COUNT(*) as n FROM enrichment_failures GROUP BY entity_id HAVING n >= 3 ORDER BY n DESC"
+        ).fetchall()
+        conn.close()
+        if not rows:
+            print("No quarantined entities.")
+        else:
+            print(f"{len(rows)} quarantined entity(s):")
+            for r in rows:
+                print(f"  {r[0]}  ({r[1]} failures)")
+        return
 
     run(
         limit=args.limit,
