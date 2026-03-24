@@ -48,6 +48,18 @@ def _local(uri) -> str:
     return str(uri).split("#")[-1]
 
 
+def _term_value(term) -> str:
+    """Return the plain lexical value for pyoxigraph or rdflib terms."""
+    if hasattr(term, "value"):
+        return str(term.value)
+    return str(term)
+
+
+def _term_local(term) -> str:
+    value = _term_value(term)
+    return value.split("#")[-1]
+
+
 def _label(g: Graph, uri) -> str:
     lbl = g.value(uri, RDFS.label)
     if lbl:
@@ -300,7 +312,7 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
     store.load(graph_path.read_bytes(), format=ox.RdfFormat.TURTLE)
 
     def local(node) -> str:
-        return str(node).split("#")[-1]
+        return _term_local(node)
 
     def sparql(q: str):
         return store.query(q)
@@ -315,10 +327,10 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
     """)
     ex_index: dict[str, dict] = {}
     for row in ex_rows:
-        uri = str(row["ex"])
+        uri = _term_value(row["ex"])
         ex_index[uri] = {
-            "id": str(row["eid"]),
-            "name": str(row["label"]),
+            "id": _term_value(row["eid"]),
+            "name": _term_value(row["label"]),
             "muscles": [], "patterns": [], "primaryJA": [], "supportingJA": [],
             "equipment": [], "laterality": None, "modality": None,
             "style": [], "compound": False, "combination": False,
@@ -326,7 +338,7 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
 
     def bulk(q: str, key: str, multi: bool = True):
         for row in sparql(q):
-            uri = str(row["ex"])
+            uri = _term_value(row["ex"])
             if uri not in ex_index:
                 continue
             val = local(row[key])
@@ -342,7 +354,7 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
             ?ex feg:hasInvolvement ?inv . ?inv feg:muscle ?muscle ; feg:degree ?degree .
         }}
     """):
-        uri = str(row["ex"])
+        uri = _term_value(row["ex"])
         if uri in ex_index:
             ex_index[uri]["muscles"].append([local(row["muscle"]), local(row["degree"])])
 
@@ -355,21 +367,21 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
         ("exerciseStyle", "style"),
     ]:
         for row in sparql(f"PREFIX feg: <{FEG_NS}> SELECT ?ex ?v WHERE {{ ?ex feg:{prop} ?v }}"):
-            uri = str(row["ex"])
+            uri = _term_value(row["ex"])
             if uri in ex_index:
                 ex_index[uri][key].append(local(row["v"]))
 
     for prop, key in [("laterality", "laterality"), ("trainingModality", "modality")]:
         for row in sparql(f"PREFIX feg: <{FEG_NS}> SELECT ?ex ?v WHERE {{ ?ex feg:{prop} ?v }}"):
-            uri = str(row["ex"])
+            uri = _term_value(row["ex"])
             if uri in ex_index:
                 ex_index[uri][key] = local(row["v"])
 
     for prop, key in [("isCompound", "compound"), ("isCombination", "combination")]:
         for row in sparql(f"PREFIX feg: <{FEG_NS}> SELECT ?ex ?v WHERE {{ ?ex feg:{prop} ?v }}"):
-            uri = str(row["ex"])
+            uri = _term_value(row["ex"])
             if uri in ex_index:
-                ex_index[uri][key] = str(row["v"]).lower() == "true"
+                ex_index[uri][key] = _term_value(row["v"]).lower() == "true"
 
     # Sort muscles by degree priority
     for ex in ex_index.values():
