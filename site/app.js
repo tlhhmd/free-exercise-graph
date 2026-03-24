@@ -38,18 +38,49 @@ const state = {
 // ── Data loading ─────────────────────────────────────────────────────────────
 
 async function loadData() {
-  const [exRes, vocRes] = await Promise.all([
-    fetch("data.json"),
-    fetch("vocab.json"),
-  ]);
-  state.exercises = await exRes.json();
-  state.vocab = await vocRes.json();
-  init();
+  try {
+    const [stateExercises, stateVocab] = await Promise.all([
+      loadJson("data.json"),
+      loadJson("vocab.json"),
+    ]);
+    if (!Array.isArray(stateExercises)) {
+      throw new Error("data.json did not return an exercise array");
+    }
+    if (!stateVocab || typeof stateVocab !== "object") {
+      throw new Error("vocab.json did not return an object");
+    }
+    state.exercises = stateExercises;
+    state.vocab = stateVocab;
+    init();
+  } catch (err) {
+    console.error(err);
+    renderFatalError(err);
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function el(id) { return document.getElementById(id); }
+
+async function loadJson(path) {
+  const res = await fetch(path);
+  if (!res.ok) {
+    throw new Error(`${path} failed to load (${res.status} ${res.statusText})`);
+  }
+  return res.json();
+}
+
+function renderFatalError(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  el("result-count").textContent = "Site data failed to load";
+  el("exercise-list").innerHTML = `
+    <div class="empty">
+      <strong>Static site data failed to load.</strong><br>
+      ${message}<br><br>
+      Make sure the deployed artifact includes <code>data.json</code> and <code>vocab.json</code>
+      in the same directory as <code>index.html</code>.
+    </div>`;
+}
 
 function labelFor(id) {
   // Try vocab lookup first, then split camelCase
