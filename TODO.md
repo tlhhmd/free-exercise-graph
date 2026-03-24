@@ -30,9 +30,12 @@ Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider.
 ---
 
 
+## Pipeline improvements (pre-enrichment)
+
+- [ ] **Run triage queue** — `pipeline/triage.py` is built; 64 open pairs. Run it, then re-run `pipeline/reconcile.py` to regenerate resolved_claims for merged entities.
+
 ## Pipeline improvements (post-enrichment)
 
-- [ ] **Triage queue tooling** — `identity.py` defers near-duplicate pairs to `possible_matches`. Build a simple CLI review tool: show pairs side by side, accept merge / separate / variant_of decisions.
 - [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end and prints a table. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
 ---
 

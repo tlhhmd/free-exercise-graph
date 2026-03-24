@@ -78,6 +78,7 @@ and re-run the full enrichment pass.
 | `pipeline/identity.py` | Writes to `pipeline.db`; read-only against source files |
 | `pipeline/canonicalize.py` | Writes to `pipeline.db`; read-only against source files |
 | `pipeline/reconcile.py` | Writes to `pipeline.db`; no API calls |
+| `pipeline/triage.py` | Writes to `pipeline.db`; interactive; applies merges immediately |
 | `pipeline/enrich.py` | Writes inferred claims to `pipeline.db`; **costs API tokens** |
 | `pipeline/build.py` | Writes `graph.ttl` (gitignored) |
 | `test_shacl.py` | Read-only; exits 0/1 — CI gate |
