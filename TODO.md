@@ -34,6 +34,12 @@ Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider.
 
 - [ ] **Decide on enrichment provider and kick off run** — see section above.
 
+## Provenance (post-enrichment)
+
+- [ ] **PROV-O in graph** — `enrichment_stamps.model` is now stored. Update `build.py` to emit `prov:wasAttributedTo` on inferred claims, and `prov:wasGeneratedBy` for the enrichment activity (model, timestamp). Requires ontology additions: import PROV-O, define enrichment activity class. Write ADR first.
+- [ ] **SHACL/ontology: isolation exercise movement patterns** — 12 exercises have no movement pattern because the vocabulary lacks isolation patterns (ElbowFlexion, HipAbduction, etc.). Decide: add them, or accept that isolation exercises have no pattern. ADR required.
+- [ ] **SHACL/ontology: Mobility/SoftTissue PrimeMover exemption** — 4 stretches correctly have only PassiveTarget muscles but will fail `sh:minCount 1` PrimeMover. Relax constraint for passive exercises. ADR required.
+
 ## Pipeline improvements (post-enrichment)
 
 - [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end and prints a table. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
