@@ -1,8 +1,8 @@
 # free-exercise-graph
 
-A semantic knowledge graph of exercises built on top of open exercise datasets. This project enriches flat source data with a formal ontology and a multi-stage LLM classification pipeline, then materialises the result as RDF and serves it via MCP.
+**free-exercise-graph** is a semantic knowledge graph of exercises built on an OWL ontology and SHACL constraints. Use it to find true substitutes, audit what your program is actually training, and build workouts that aren't tied to how any single source labels a movement.
 
-This is a portfolio project targeting senior ontology and knowledge graph engineering roles. The governance discipline (ADRs, vocabulary versioning, SHACL validation), the "vocabularies are for users" design principle, and the three-layer movement model are all intentional design signals.
+It pulls from multiple open datasets and gives them a consistent structure through a shared ontology. Exercises are enriched via LLM classification into ontology-defined fields — prompts are dynamically generated from the ontology to constrain outputs to a controlled vocabulary. Across sources, exercises that describe the same movement are linked together, even when named or described differently.
 
 ---
 
@@ -76,12 +76,24 @@ free-exercise-graph/
 
   pipeline/
     db.py                          SQLite schema and connection helper
+    artifacts.py                   shared helper for exports, raw-response archives, release bundles
+    run.py                         canonical runner for rebuilds and stage orchestration
+    canonicalize.py                Stage 1: load source records + asserted claims into SQLite
     identity.py                    Stage 2: resolve source records into canonical entities
-    canonicalize.py                Stage 3: aggregate asserted facts per entity
-    reconcile.py                   Stage 4: deterministic conflict resolution (no LLM)
-    enrich.py                      Stage 5: LLM enrichment pass — fills gaps in resolved claims
-    build.py                       Stage 6: assemble graph.ttl from resolved + inferred claims
+    reconcile.py                   Stage 3: deterministic conflict resolution (no LLM)
+    enrich.py                      Stage 4: LLM enrichment pass — fills gaps in resolved claims
+    build.py                       Stage 5: assemble graph.ttl from resolved + inferred claims
+    validate.py                    data quality scorecard (validity / uniqueness / integrity / timeliness / completeness)
+    triage.py                      interactive review queue for ambiguous identity matches
+    db_backup.py                   snapshot/restore helper for pipeline.db
+    export_enrichment.py           portable JSONL export of paid-for enrichment state
+    import_enrichment.py           restore exported enrichment into a deterministic rebuild
+    release_bundle.py              freeze DB + graph + scorecard into a timestamped bundle
     pipeline.db                    SQLite intermediate store (gitignored)
+    backups/                       SQLite snapshots created before risky resets
+    exports/                       portable JSONL enrichment exports
+    artifacts/raw_responses/       archived raw LLM inputs/outputs per enrichment run
+    releases/                      timestamped release bundles for restore/demo handoff
 
   enrichment/
     service.py                     ontology loading, prompt assembly, LLM response parsing
@@ -93,13 +105,29 @@ free-exercise-graph/
 
   evals/                           gold standard annotation and eval tooling
   queries/                         example SPARQL discovery queries
+  docs/
+    system_contracts.md            source-of-truth boundaries, reset/replay semantics
+    full_run_playbook.md           step-by-step safe runbook for local full runs
+    sqlite_data_model.md           SQLite table dictionary, ERD, and RDF mapping
+    quality_surfaces.md            SHACL vs validate.py vs CI
+    triage_workflow.md             human-in-the-loop review and restamp loop
+    reconciliation_example.md      worked example: Dead Bug across all pipeline stages
   mcp_server.py                    MCP server: 5 tools backed by pyoxigraph in-process
-  test_shacl.py                    SHACL constraint test harness (11 tests)
+  test_shacl.py                    SHACL constraint test harness (14 tests)
   constants.py                     single source of truth for FEG_NS namespace
-  refresh.sh                       rebuild graph.ttl + restart MCP server
+  codexlog.md                      refactor log: what changed and why
   DECISIONS.md                     full ADR history
   TODO.md                          open items
 ```
+
+---
+
+## Docs by Audience
+
+- **New engineer / ontology engineer:** start with [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md), then [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md), then [CONTRIBUTING.md](/Users/talha/Code/free-exercise-graph/CONTRIBUTING.md)
+- **Operator running the full pipeline:** use [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md)
+- **Ontologist / taxonomy reviewer:** read [DECISIONS.md](/Users/talha/Code/free-exercise-graph/DECISIONS.md), [ontology](/Users/talha/Code/free-exercise-graph/ontology), [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md), and [docs/quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
+- **Product / PM / portfolio reviewer:** read this README, [docs/reconciliation_example.md](/Users/talha/Code/free-exercise-graph/docs/reconciliation_example.md), and [codexlog.md](/Users/talha/Code/free-exercise-graph/codexlog.md)
 
 ---
 
@@ -114,13 +142,12 @@ sources/*/raw/              upstream source data (read-only)
   adapter.py                normalise per-source records into a common schema
         │
         ▼
+ canonicalize.py            load source records + asserted claims into SQLite
+        │
+        ▼
   identity.py               resolve source records into canonical entities
                             weighted biomechanical similarity scoring
                             ambiguous matches deferred, not blocked
-        │
-        ▼
- canonicalize.py            aggregate asserted facts per canonical entity
-                            detect and classify conflicts explicitly
         │
         ▼
   reconcile.py              deterministic resolution algebra (no LLM)
@@ -139,15 +166,14 @@ sources/*/raw/              upstream source data (read-only)
         ▼
    graph.ttl                assembled knowledge graph (gitignored)
         │
-   ┌────┴────────────────┐
-   ▼                     ▼
-validate.py          test_shacl.py
-6-dimension          SHACL shapes
-quality scorecard    CI gate
+   ┌────┴─────────────────────┐
+   ▼                          ▼
+validate.py               test_shacl.py
+data product health       ontology/shape regression tests
         │
         ▼
-mcp_server.py        pyoxigraph in-process SPARQL
-5 MCP tools          search, get, substitute, hierarchy, joint-action
+mcp_server.py             pyoxigraph in-process SPARQL
+5 MCP tools               search, get, substitute, hierarchy, joint-action
 ```
 
 See ADR-086–090 in `DECISIONS.md` for the full architecture rationale.
@@ -198,11 +224,14 @@ Every version bump requires an ADR in `DECISIONS.md`.
 
 ### Quick start: Time-to-First-Query
 
-**1. Build the graph** (requires enrichment to have run):
+**1. Build the graph**:
 
 ```bash
-python3 pipeline/build.py
+python3 pipeline/run.py --to build
 ```
+
+For the fully enriched graph, enrichment should already have run. The same command is
+also useful for deterministic rebuilds that preserve existing enrichment state.
 
 **2. Configure Claude Desktop** — add to `~/.claude/claude_desktop_config.json`:
 
@@ -256,55 +285,86 @@ Set in environment or a `.env` file.
 
 ### Run the pipeline
 
+`pipeline/run.py` is the canonical entrypoint. By default it rebuilds the deterministic
+stages (`canonicalize -> identity -> reconcile -> build`) without calling the LLM.
+For the safest full local workflow, follow [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md).
+
 ```bash
 # 1. Fetch upstream sources (skip if raw/ files already present)
 python3 sources/free-exercise-db/fetch.py
 python3 sources/functional-fitness-db/fetch.py
 
-# 2. Resolve source records into canonical entities
-python3 pipeline/identity.py
+# 2. Snapshot current SQLite state if you care about existing enrichment
+python3 pipeline/db_backup.py backup
 
-# 3. Aggregate asserted facts
+# 3. Deterministic rebuild from source truth (safe default, no API calls)
+python3 pipeline/run.py --to build
+
+# 4. Full run including enrichment (costs API tokens; auto-exports JSONL afterward)
+python3 pipeline/run.py --with-enrich --to build --concurrency 4
+python3 pipeline/run.py --with-enrich --to build --provider gemini --concurrency 4
+
+# 5. Validation surfaces
+python3 pipeline/validate.py --verbose
+python3 test_shacl.py
+
+# 6. Freeze a release/demo bundle
+python3 pipeline/release_bundle.py
+
+# 7. Full rebuild from scratch (explicitly resets SQLite only)
+python3 pipeline/run.py --reset-db --yes-reset-db --to build
+```
+
+### Manual stage order
+
+If you need the individual scripts, the order is:
+
+```bash
 python3 pipeline/canonicalize.py
-
-# 4. Deterministic conflict resolution
+python3 pipeline/identity.py
 python3 pipeline/reconcile.py
-
-# 5. LLM enrichment (costs API tokens — see provider options below)
-python3 pipeline/enrich.py --concurrency 4
-python3 pipeline/enrich.py --provider gemini --concurrency 4
-python3 pipeline/enrich.py --dry-run    # count pending without calling API
-
-# 6. Assemble graph
+python3 pipeline/enrich.py        # optional / costs tokens
 python3 pipeline/build.py
-
-# 7. SHACL test gate
+python3 pipeline/validate.py
 python3 test_shacl.py
 ```
+
+Important:
+- Re-running upstream stages after changing source truth may require `--reset-db` on the runner.
+- Existing enrichment state is preserved by default. The repo will not drop already-paid-for LLM output unless you explicitly choose a destructive rebuild path.
+- `pipeline/run.py --reset-db` now auto-backs up SQLite by default and requires `--yes-reset-db` when LLM state is present.
+- `pipeline/enrich.py` archives raw responses under `pipeline/artifacts/raw_responses/` and the canonical runner auto-exports enrichment JSONL after a successful enrich stage.
+- If you need to restore enrichment into a deterministic rebuild, use `python3 pipeline/import_enrichment.py <artifact.jsonl>`.
 
 ### Start the MCP server
 
 ```bash
 python3 mcp_server.py
-# or to rebuild and restart:
-bash refresh.sh
+# rebuild first if needed:
+python3 pipeline/run.py --to build
 ```
 
 ---
 
 ## Current Status
 
+Latest completed full enriched local run:
+
 | Metric | Value |
 |---|---|
 | Source exercises | 4,113 (873 free-exercise-db + 3,240 functional-fitness-db) |
-| Canonical entities | 4,095 (after identity resolution) |
-| Enriched | in progress |
+| Canonical entities | 3,450 (after identity resolution) |
+| Enriched | 3,450 / 3,450 (100%) |
+| Graph triples | 238,390 |
 | Ontology files | 11 (independently versioned) |
-| ADRs | 90 |
-| SHACL test cases | 11 / 11 passing |
-| Joint action vocabulary | 45 actions, 9 joint groups |
+| ADRs | 105 |
+| SHACL test cases | 14 / 14 passing |
+| Joint action vocabulary | 46 actions, 9 joint groups |
 
 ---
+
+Deterministic rebuilds from source truth may differ slightly from the latest enriched run
+while triage/review work is still being folded back into the canonical entity layer.
 
 ## Namespace
 
