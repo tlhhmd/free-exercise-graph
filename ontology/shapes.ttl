@@ -9,7 +9,7 @@
 feg:ShapesGraph
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph SHACL Shapes" ;
-    owl:versionInfo "0.9.0" ;
+    owl:versionInfo "0.11.0" ;
 .
 
 ###################
@@ -58,6 +58,23 @@ feg:ExerciseShape
                 FILTER NOT EXISTS {
                     $this feg:hasInvolvement ?inv .
                     ?inv feg:degree feg:PrimeMover .
+                }
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PassiveTarget .
+                }
+            }
+        """ ;
+    ] ;
+
+    # must have at least one primaryJointAction, unless all involvements are PassiveTarget
+    sh:sparql [
+        sh:message "An exercise must have at least one primaryJointAction, unless it has only PassiveTarget involvements (Mobility/SoftTissue exercises)." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this feg:primaryJointAction ?ja .
                 }
                 FILTER NOT EXISTS {
                     $this feg:hasInvolvement ?inv .
@@ -154,6 +171,18 @@ feg:ExerciseShape
         sh:path feg:supportingJointAction ;
         sh:class feg:JointAction ;
         sh:message "Supporting joint action must be a known JointAction individual." ;
+    ] ;
+
+    # a joint action may not appear in both primary and supporting
+    sh:sparql [
+        sh:message "A joint action may not appear in both primaryJointAction and supportingJointAction." ;
+        sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:primaryJointAction ?ja ;
+                      feg:supportingJointAction ?ja .
+            }
+        """ ;
     ] ;
 
     # isCompound if present must be a single boolean

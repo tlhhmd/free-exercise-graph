@@ -13,7 +13,7 @@ feg:MuscleScheme a skos:ConceptScheme ;
     rdfs:label "Muscle Vocabulary" ;
     skos:prefLabel "Muscle Vocabulary" ;
     rdfs:comment "SKOS concept scheme organizing muscles by region." ;
-    owl:versionInfo "0.12.0" .
+    owl:versionInfo "0.12.1" .
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SHOULDERS
@@ -312,12 +312,14 @@ feg:Obliques a feg:MuscleGroup, skos:Concept ;
 feg:ExternalOblique a feg:MuscleHead, skos:Concept ;
     rdfs:label "External Oblique" ;
     skos:prefLabel "External Oblique" ;
+    skos:altLabel "ObliqueExternal" ;
     skos:broader feg:Obliques ;
     skos:inScheme feg:MuscleScheme .
 
 feg:InternalOblique a feg:MuscleHead, skos:Concept ;
     rdfs:label "Internal Oblique" ;
     skos:prefLabel "Internal Oblique" ;
+    skos:altLabel "ObliqueInternal" ;
     skos:broader feg:Obliques ;
     skos:inScheme feg:MuscleScheme .
 

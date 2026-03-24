@@ -6,6 +6,8 @@ Stage 4: Single LLM pass per canonical entity.
 Reads resolved_claims per entity, formats a user message, calls the LLM via
 the configured provider, and writes inferred claims to inferred_claims.
 Asserted resolved_claims always take precedence — enrichment only fills gaps.
+Each run also archives raw responses and parsed outputs under
+pipeline/artifacts/raw_responses/.
 
 Provider selection (in priority order):
   --provider / --model CLI flags
@@ -35,6 +37,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from pipeline.db import DB_PATH, get_connection
+from pipeline.artifacts import ARTIFACTS_DIR, make_timestamped_dir, utc_timestamp, write_json
 from enrichment.providers import make_provider
 from enrichment.service import (
     build_system_prompt,
@@ -195,6 +198,50 @@ def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict, mo
         )
 
 
+def _usage_payload(usage) -> dict | None:
+    if usage is None:
+        return None
+    return {
+        "input_tokens": usage.input_tokens,
+        "output_tokens": usage.output_tokens,
+        "cached_tokens": usage.cached_tokens,
+        "thinking_tokens": usage.thinking_tokens,
+    }
+
+
+def _archive_result(
+    run_dir: Path,
+    *,
+    entity_id: str,
+    display_name: str,
+    provider_name: str,
+    model: str,
+    user_message: str,
+    raw_response: str | None,
+    parsed_fields: dict | None,
+    warnings: list[tuple[str, str]],
+    usage,
+    error: Exception | None,
+) -> None:
+    payload = {
+        "entity_id": entity_id,
+        "display_name": display_name,
+        "captured_at": utc_timestamp(compact=False),
+        "provider": provider_name,
+        "model": model,
+        "user_message": user_message,
+        "raw_response": raw_response,
+        "parsed_fields": parsed_fields,
+        "warnings": [
+            {"predicate": predicate, "stripped_value": stripped_value}
+            for predicate, stripped_value in warnings
+        ],
+        "usage": _usage_payload(usage),
+        "error": str(error) if error else None,
+    }
+    write_json(run_dir / f"{entity_id}.json", payload)
+
+
 # ─── Main enrichment loop ─────────────────────────────────────────────────────
 
 def run(
@@ -278,6 +325,24 @@ def run(
     llm = make_provider(provider=provider, model=model, thinking_level=thinking_level)
     total = len(pending)
     print(f"Enriching {total} entities (provider={llm.__class__.__name__} model={llm.model} concurrency={concurrency})...")
+    archive_dir = make_timestamped_dir(
+        ARTIFACTS_DIR / "raw_responses",
+        "enrich",
+        llm.__class__.__name__,
+        llm.model,
+    )
+    (archive_dir / "system_prompt.txt").write_text(system_prompt)
+    write_json(
+        archive_dir / "manifest.json",
+        {
+            "started_at": utc_timestamp(compact=False),
+            "provider": llm.__class__.__name__,
+            "model": llm.model,
+            "db_path": str(db_path),
+            "pending_count": total,
+        },
+    )
+    print(f"Archiving raw enrichment outputs to {archive_dir}")
 
     def process(entity_row):
         entity_id    = entity_row["entity_id"]
@@ -285,19 +350,42 @@ def run(
         thread_conn = get_connection(db_path)
         user_msg = _format_user_message(thread_conn, entity_id, display_name)
         thread_conn.close()
+        raw = None
         try:
             raw, usage = llm.call(system_prompt, user_msg)
             enrichment = parse_enrichment(raw)
-            return entity_id, display_name, enrichment.model_dump(exclude_none=True), enrichment._warnings, usage, None
+            return (
+                entity_id,
+                display_name,
+                user_msg,
+                raw,
+                enrichment.model_dump(exclude_none=True),
+                enrichment._warnings,
+                usage,
+                None,
+            )
         except Exception as e:
-            return entity_id, display_name, None, [], None, e
+            return entity_id, display_name, user_msg, raw, None, [], None, e
 
     completed = 0
     with ThreadPoolExecutor(max_workers=concurrency) as executor:
         futures = {executor.submit(process, e): e for e in pending}
         for future in as_completed(futures):
-            entity_id, display_name, fields, warns, usage, err = future.result()
+            entity_id, display_name, user_msg, raw, fields, warns, usage, err = future.result()
             completed += 1
+            _archive_result(
+                archive_dir,
+                entity_id=entity_id,
+                display_name=display_name,
+                provider_name=llm.__class__.__name__,
+                model=llm.model,
+                user_message=user_msg,
+                raw_response=raw,
+                parsed_fields=fields,
+                warnings=warns,
+                usage=usage,
+                error=err,
+            )
             if err:
                 print(f"  ❌ [{completed}/{total}] {display_name}  {err}", flush=True)
                 with get_connection(db_path) as write_conn:

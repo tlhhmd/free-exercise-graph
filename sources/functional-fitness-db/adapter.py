@@ -215,6 +215,12 @@ def get_exercises() -> list[dict]:
             "source":       SOURCE,
             "display_name": name,
             "equipment":    equipment,
+            "raw_data": {
+                "equipment": equipment,
+                "style_raw": style_raw,
+                "laterality_raw": laterality_raw,
+                "mechanics_raw": mechanics_raw,
+            },
             "known": {
                 "muscles":                   muscles,
                 "movement_patterns":         movement_patterns,

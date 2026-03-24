@@ -33,9 +33,9 @@ Changes to enrichment prompt rules, build logic, or SHACL constraints follow the
 
 There are no versioned releases in the traditional sense. The `main` branch is the canonical state of the graph. "Release" means:
 
-- All enriched exercises pass SHACL validation (exit 0 from `validate.py`)
+- `python3 pipeline/run.py --to build` completes without error
+- `python3 pipeline/validate.py` reports no failures
 - All SHACL unit tests pass (exit 0 from `test_shacl.py`)
-- `build.py` completes without error
 - CI passes
 
 Breaking changes (concept removals, URI renames) require:

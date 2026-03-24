@@ -32,6 +32,7 @@ Entity ID conventions:
 Usage:
     python3 pipeline/identity.py
     python3 pipeline/identity.py --dry-run   # print clusters, no writes
+    python3 pipeline/identity.py --drop-enrichment   # allow destructive entity-id removal
 """
 
 import argparse
@@ -43,7 +44,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from pipeline.db import DB_PATH, get_connection
+from pipeline.db import DB_PATH, delete_entity_runtime_state, entity_ids_with_llm_state, get_connection
 
 # Source name prefixes for single-source entities
 _SOURCE_PREFIX = {
@@ -233,7 +234,7 @@ def _make_entity_id(norm_name: str, source: str, source_id: str, merged: bool) -
     return f"{prefix}_{source_id}"
 
 
-def cluster(conn, dry_run: bool = False) -> dict:
+def cluster(conn, dry_run: bool = False, drop_enrichment: bool = False) -> dict:
     """Build entity clusters. Returns summary stats dict."""
     records = conn.execute(
         "SELECT source, source_id, display_name FROM source_records ORDER BY source, source_id"
@@ -364,19 +365,47 @@ def cluster(conn, dry_run: bool = False) -> dict:
 
     # Write
     with conn:
-        conn.execute("DELETE FROM inferred_claims")
-        conn.execute("DELETE FROM enrichment_stamps")
         conn.execute("DELETE FROM resolved_claims")
-        conn.execute("DELETE FROM conflicts")
         conn.execute("DELETE FROM possible_matches")
         conn.execute("DELETE FROM entity_sources")
-        conn.execute("DELETE FROM entities")
+        conn.execute("DELETE FROM conflicts")
 
-        for e in entities:
-            if e.get("_absorbed"):
-                continue
+        current_ids = {
+            r[0] for r in conn.execute("SELECT entity_id FROM entities").fetchall()
+        }
+        new_entity_rows = [e for e in entities if not e.get("_absorbed")]
+        new_ids = {e["entity_id"] for e in new_entity_rows}
+        removed_ids = current_ids - new_ids
+        protected_ids = entity_ids_with_llm_state(conn)
+        protected_removed = removed_ids & protected_ids
+        if protected_removed and not drop_enrichment:
+            sample = ", ".join(sorted(protected_removed)[:5])
+            more = f" (+{len(protected_removed) - 5} more)" if len(protected_removed) > 5 else ""
+            raise RuntimeError(
+                "identity.py would remove entity IDs that already have persisted enrichment state: "
+                f"{sample}{more}. Re-run with --dry-run to inspect the new clustering, or use "
+                "`python3 pipeline/canonicalize.py --reset` / `python3 pipeline/run.py --reset-db` "
+                "if you intentionally want a full rebuild."
+            )
+
+        removable = removed_ids - protected_ids
+        delete_entity_runtime_state(conn, removable)
+        if removable:
+            conn.executemany(
+                "DELETE FROM entities WHERE entity_id = ?",
+                [(entity_id,) for entity_id in sorted(removable)],
+            )
+
+        for e in new_entity_rows:
             conn.execute(
-                "INSERT INTO entities (entity_id, display_name, status) VALUES (?, ?, ?)",
+                """
+                INSERT INTO entities (entity_id, display_name, status)
+                VALUES (?, ?, ?)
+                ON CONFLICT(entity_id)
+                DO UPDATE SET
+                    display_name = excluded.display_name,
+                    status = excluded.status
+                """,
                 (e["entity_id"], e["display_name"], e["status"]),
             )
             for source, source_id, confidence in e["sources"]:
@@ -408,14 +437,25 @@ def cluster(conn, dry_run: bool = False) -> dict:
     }
 
 
+def run(*, db_path=DB_PATH, dry_run: bool = False, drop_enrichment: bool = False) -> dict:
+    conn = get_connection(db_path)
+    try:
+        return cluster(conn, dry_run=dry_run, drop_enrichment=drop_enrichment)
+    finally:
+        conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Cluster source records into canonical entities.")
     parser.add_argument("--dry-run", action="store_true", help="Print clusters without writing")
+    parser.add_argument(
+        "--drop-enrichment",
+        action="store_true",
+        help="Allow removal of entities even if they already have persisted enrichment state",
+    )
     args = parser.parse_args()
 
-    conn = get_connection(DB_PATH)
-    stats = cluster(conn, dry_run=args.dry_run)
-    conn.close()
+    stats = run(dry_run=args.dry_run, drop_enrichment=args.drop_enrichment)
 
     if not args.dry_run:
         print(f"Entities:  {stats['entities']}")
