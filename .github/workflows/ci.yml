@@ -23,3 +23,29 @@ jobs:
 
       - name: SHACL unit tests
         run: python3 test_shacl.py
+
+      - name: Rebuild graph from source truth
+        run: python3 pipeline/run.py --reset-db --to build
+
+      - name: Data quality scorecard
+        run: python3 pipeline/validate.py --verbose
+
+      - name: Smoke query against rebuilt graph
+        run: |
+          python3 - <<'EOF'
+          from rdflib import Graph
+          g = Graph()
+          g.parse("graph.ttl", format="turtle")
+          triples = len(g)
+          print(f"graph.ttl: {triples} triples")
+          assert triples > 0, "graph.ttl is empty"
+          result = list(g.query("""
+              PREFIX feg: <https://placeholder.url#>
+              PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+              SELECT (COUNT(?e) AS ?n) WHERE {
+                ?e a feg:Exercise .
+                FILTER NOT EXISTS { ?e rdfs:label ?l }
+              }
+          """))
+          assert int(result[0][0]) == 0, "Some exercises are missing labels"
+          EOF

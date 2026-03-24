@@ -20,10 +20,15 @@ Predicate vocabulary (claims.predicate):
   movement_pattern_hint  — value = feg local name (rerouted from style col in ffdb)
   equipment              — value = feg local name
 
+Replay contract:
+  - safe to rerun for unchanged source-record sets
+  - refuses to silently delete source records already referenced downstream
+  - use --reset (or pipeline/run.py --reset-db) for an intentional full rebuild
+
 Usage:
     python3 pipeline/canonicalize.py                    # all sources
     python3 pipeline/canonicalize.py --source free-exercise-db
-    python3 pipeline/canonicalize.py --reset            # drop and recreate all tables
+    python3 pipeline/canonicalize.py --reset --yes-reset  # drop and recreate all tables
 """
 
 import argparse
@@ -35,7 +40,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from pipeline.db import DB_PATH, get_connection, init_db
+from pipeline.db import DB_PATH, entity_ids_with_llm_state, get_connection, init_db, reset_db
+from pipeline.db_backup import backup_db
 
 _SOURCES = {
     "free-exercise-db":       "sources.free-exercise-db.adapter",
@@ -72,7 +78,12 @@ def _write_source(conn, source: str, exercises: list[dict]) -> int:
 
         # ── source_records ────────────────────────────────────────────────
         conn.execute(
-            "INSERT OR REPLACE INTO source_records (source, source_id, display_name) VALUES (?, ?, ?)",
+            """
+            INSERT INTO source_records (source, source_id, display_name)
+            VALUES (?, ?, ?)
+            ON CONFLICT(source, source_id)
+            DO UPDATE SET display_name = excluded.display_name
+            """,
             (source, source_id, display_name),
         )
 
@@ -84,11 +95,16 @@ def _write_source(conn, source: str, exercises: list[dict]) -> int:
         if muscles_hint := known.get("muscles_hint"):
             instructions_parts.append(f"Source muscles — {muscles_hint}")
         instructions = "\n".join(instructions_parts) or None
-        raw_data     = json.dumps({"equipment": ex.get("equipment", [])})
+        raw_data     = json.dumps(ex.get("raw_data", {"equipment": ex.get("equipment", [])}))
         conn.execute(
-            """INSERT OR REPLACE INTO source_metadata
-               (source, source_id, instructions, raw_data)
-               VALUES (?, ?, ?, ?)""",
+            """
+            INSERT INTO source_metadata (source, source_id, instructions, raw_data)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(source, source_id)
+            DO UPDATE SET
+                instructions = excluded.instructions,
+                raw_data = excluded.raw_data
+            """,
             (source, source_id, instructions, raw_data),
         )
 
@@ -177,14 +193,54 @@ def run(sources: list[str], db_path=DB_PATH) -> None:
         exercises = adapter.get_exercises()
         print(f"  {len(exercises)} exercises")
 
-        # Clear existing claims for this source before re-inserting
+        incoming_ids = {ex["id"] for ex in exercises}
+        existing_ids = {
+            r[0]
+            for r in conn.execute(
+                "SELECT source_id FROM source_records WHERE source = ?",
+                (source,),
+            ).fetchall()
+        }
+        obsolete_ids = sorted(existing_ids - incoming_ids)
+        if obsolete_ids:
+            placeholders = ", ".join("?" for _ in obsolete_ids)
+            refs = conn.execute(
+                f"""
+                SELECT COUNT(*)
+                FROM entity_sources
+                WHERE source = ? AND source_id IN ({placeholders})
+                """,
+                (source, *obsolete_ids),
+            ).fetchone()[0]
+            if refs:
+                names = ", ".join(obsolete_ids[:5])
+                more = f" (+{len(obsolete_ids) - 5} more)" if len(obsolete_ids) > 5 else ""
+                raise SystemExit(
+                    "canonicalize.py detected obsolete source records that are already referenced "
+                    "downstream. To protect existing entity mappings and enrichments, it will not "
+                    f"delete them automatically. Obsolete IDs: {names}{more}. "
+                    "Use `python3 pipeline/run.py --reset-db --to build` to rebuild from source truth."
+                )
+
+        # Clear structured claims/metadata for this source before re-inserting.
+        # source_records are preserved and upserted so downstream entity mappings remain valid.
         with conn:
             conn.execute("DELETE FROM source_claims WHERE source = ?", (source,))
             conn.execute("DELETE FROM source_metadata WHERE source = ?", (source,))
-            conn.execute("DELETE FROM source_records WHERE source = ?", (source,))
 
         with conn:
             n = _write_source(conn, source, exercises)
+
+            if obsolete_ids:
+                rows = [(source, source_id) for source_id in obsolete_ids]
+                conn.executemany(
+                    "DELETE FROM source_metadata WHERE source = ? AND source_id = ?",
+                    rows,
+                )
+                conn.executemany(
+                    "DELETE FROM source_records WHERE source = ? AND source_id = ?",
+                    rows,
+                )
 
         rows = conn.execute(
             "SELECT COUNT(*) FROM source_claims WHERE source = ?", (source,)
@@ -204,12 +260,33 @@ def main() -> None:
         "--reset", action="store_true",
         help="Drop and recreate all pipeline tables before running",
     )
+    parser.add_argument(
+        "--yes-reset",
+        action="store_true",
+        help="Acknowledge that --reset discards persisted LLM enrichment state",
+    )
+    parser.add_argument(
+        "--no-backup-before-reset",
+        action="store_true",
+        help="Skip the automatic SQLite backup that normally runs before --reset",
+    )
     args = parser.parse_args()
 
     if args.reset:
-        print("Resetting pipeline database...")
+        protected_ids: set[str] = set()
         if DB_PATH.exists():
-            DB_PATH.unlink()
+            with get_connection(DB_PATH) as conn:
+                protected_ids = entity_ids_with_llm_state(conn)
+            if protected_ids and not args.yes_reset:
+                raise SystemExit(
+                    "--reset would discard persisted LLM enrichment state. "
+                    "Re-run with --yes-reset to confirm."
+                )
+            if not args.no_backup_before_reset:
+                backup_path = backup_db(db_path=DB_PATH)
+                print(f"Automatic backup before reset: {backup_path}")
+        print("Resetting pipeline database...")
+        reset_db(DB_PATH)
 
     sources = [args.source] if args.source else list(_SOURCES.keys())
     run(sources)

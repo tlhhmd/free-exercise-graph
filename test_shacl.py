@@ -69,12 +69,13 @@ def _fresh(vocab: Graph) -> Graph:
 
 
 def _make_exercise(g: Graph, ex_id: str) -> None:
-    """Add a minimal valid enriched exercise to the graph (HipHinge, GluteusMaximus PrimeMover)."""
+    """Add a minimal valid enriched exercise to the graph (HipHinge, GluteusMaximus PrimeMover, HipExtension primary JA)."""
     ex = FEG[f"ex_{ex_id}"]
     inv = FEG[f"inv_{ex_id}_GluteusMaximus_PrimeMover"]
     g.add((ex, RDF.type, FEG.Exercise))
     g.add((ex, RDFS.label, Literal(f"Test Exercise {ex_id}", datatype=XSD.string)))
     g.add((ex, FEG.movementPattern, FEG.HipHinge))
+    g.add((ex, FEG.primaryJointAction, FEG.HipExtension))
     g.add((ex, FEG.hasInvolvement, inv))
     g.add((inv, RDF.type, FEG.MuscleInvolvement))
     g.add((inv, FEG.muscle, FEG.GluteusMaximus))
@@ -228,6 +229,30 @@ def main() -> None:
     _make_exercise(g, "T10")
     g.add((FEG["ex_T10"], FEG.primaryJointAction, FEG.Shoulder))
     ok("T10 primaryJointAction using grouping node", *_validate(g, shapes), "Primary joint action")
+
+    # T11 ── No primaryJointAction on a non-passive exercise ─────────────────
+    g = _fresh(vocab)
+    _make_exercise(g, "T11")
+    g.remove((FEG["ex_T11"], FEG.primaryJointAction, None))
+    ok("T11 no primaryJointAction (non-passive)", *_validate(g, shapes), "primaryJointAction")
+
+    # T11b ── No primaryJointAction on a passive exercise — should pass ───────
+    g = _fresh(vocab)
+    _make_exercise(g, "T11b")
+    ex = FEG["ex_T11b"]
+    g.remove((FEG["ex_T11b"], FEG.primaryJointAction, None))
+    # replace PrimeMover with PassiveTarget
+    inv = FEG["inv_T11b_GluteusMaximus_PrimeMover"]
+    g.remove((inv, FEG.degree, FEG.PrimeMover))
+    g.add((inv, FEG.degree, FEG.PassiveTarget))
+    ok_clean("T11b no primaryJointAction (passive exercise — exempt)", *_validate(g, shapes))
+
+    # T12 ── Same JA in both primary and supporting ───────────────────────────
+    g = _fresh(vocab)
+    _make_exercise(g, "T12")
+    g.add((FEG["ex_T12"], FEG.primaryJointAction, FEG.HipExtension))
+    g.add((FEG["ex_T12"], FEG.supportingJointAction, FEG.HipExtension))
+    ok("T12 JA in both primary and supporting", *_validate(g, shapes), "both primaryJointAction and supportingJointAction")
 
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'─' * 50}")

@@ -37,7 +37,6 @@ collaborative partner, not just an executor.
 - `mcp_server.py` — MCP server backed by pyoxigraph in-process
 - `test_shacl.py` — SHACL unit test suite
 - `constants.py` — single source of truth for `FEG_NS`; import from here, never hardcode
-- `refresh.sh` — rebuild graph + restart MCP server
 
 ---
 
@@ -138,7 +137,25 @@ python3 pipeline/enrich.py
 python3 pipeline/enrich.py --limit 10 --concurrency 4
 python3 pipeline/enrich.py --force <ENTITY_ID>
 python3 pipeline/enrich.py --dump-prompts <DIR>    # save prompts without calling LLM
+python3 pipeline/enrich.py --dry-run               # count pending without API calls
+python3 pipeline/enrich.py --restamp <TERM>        # re-enrich entities that had TERM stripped
+python3 pipeline/enrich.py --quarantine            # list entities with ≥3 failures
 ```
+
+**Failure handling:** Enrichment failures are written to `enrichment_failures`. Entities with ≥3 failures are skipped (quarantined) by default; use `--force` to retry and clear failure history.
+
+**Vocabulary warnings:** Unknown vocab terms are stripped at validation time (not hard-failed), allowing partial enrichment to succeed. The one exception is `check_prime_mover` — no PrimeMover/PassiveTarget is a genuine failure. Stripped terms are persisted to `enrichment_warnings` for recovery via `--restamp` after vocabulary updates.
+
+**Model tracking:** `enrichment_stamps.model` records which LLM model enriched each entity.
+
+**Additional DB tables:**
+
+| Table | Purpose |
+|---|---|
+| `enrichment_failures` | `(entity_id, failed_at, error)` — API/validation errors |
+| `enrichment_warnings` | `(entity_id, predicate, stripped_value, enriched_at)` — stripped vocab terms |
+
+`enrichment_stamps` also carries a `model TEXT` column for provenance.
 
 ### Stage 6 — build.py
 Assembles RDF from resolved and inferred claims. Asserted claims always take precedence over inferred. Writes `graph.ttl`.
@@ -147,16 +164,22 @@ Assembles RDF from resolved and inferred claims. Asserted claims always take pre
 python3 pipeline/build.py
 ```
 
-### validate.py — 6-dimension quality scorecard
+### validate.py — data quality scorecard (ADR-095)
+
+5-dimension scorecard against the live SQLite DB and graph. Run after every build.
+
+```bash
+python3 pipeline/validate.py --verbose        # fast (no SHACL)
+python3 pipeline/validate.py --shacl --verbose  # full (slow, ~45s via oxrdflib)
+```
 
 | Dimension    | Severity | What it checks |
 |---|---|---|
-| validity     | fail | SHACL conformance |
-| uniqueness   | fail | duplicate involvements, JAs, patterns |
-| integrity    | fail | every vocab reference resolves to a known ontology term |
-| timeliness   | warn | enriched exercises have current vocabulary_versions stamps |
-| consistency  | warn | cross-field rules (JA ↔ pattern, isCompound ↔ JA count) |
-| completeness | warn | movement patterns, involvements, and primary JAs present |
+| validity     | fail | SHACL conformance (requires `--shacl`) |
+| uniqueness   | fail | duplicate exercise labels |
+| integrity    | fail | every vocab reference in inferred_claims resolves to a known ontology term |
+| timeliness   | warn | unresolved enrichment_warnings (stripped terms not yet restamped) |
+| completeness | warn | movement patterns, muscle involvements, and primary JAs present |
 
 **URI conventions (ADR-040):**
 - Exercises: `feg:ex_{id}` (avoids leading numeral / invalid NCName issues)

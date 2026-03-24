@@ -29,6 +29,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from pipeline.artifacts import ARTIFACTS_DIR, make_timestamped_dir, utc_timestamp, write_json
 from pipeline.db import DB_PATH, get_connection
 from enrichment.service import load_graphs, vocabulary_versions
 from enrichment.schema import setup_validators
@@ -128,6 +129,17 @@ def ingest(
 
     responses = dest.inlined_responses
     print(f"\nIngesting {len(responses)} responses...")
+    archive_dir = make_timestamped_dir(ARTIFACTS_DIR / "raw_responses", "batch-ingest", job_name)
+    write_json(
+        archive_dir / "manifest.json",
+        {
+            "started_at": utc_timestamp(compact=False),
+            "job_name": job_name,
+            "db_path": str(db_path),
+            "response_count": len(responses),
+        },
+    )
+    print(f"Archiving batch responses to {archive_dir}")
 
     # Build manifest for fallback entity_id lookup
     manifest = _load_manifest()
@@ -149,17 +161,51 @@ def ingest(
 
         if not entity_id:
             print(f"  ⚠️  [{i}] Could not resolve entity_id — skipping")
+            write_json(
+                archive_dir / f"unresolved-{i}.json",
+                {
+                    "index": i,
+                    "captured_at": utc_timestamp(compact=False),
+                    "entity_id": None,
+                    "metadata": meta,
+                    "error": "Could not resolve entity_id",
+                },
+            )
             failed += 1
             continue
 
         if inlined_resp.error:
             print(f"  ❌ [{i}] {entity_id}  error={inlined_resp.error}", flush=True)
+            write_json(
+                archive_dir / f"{entity_id}.json",
+                {
+                    "index": i,
+                    "captured_at": utc_timestamp(compact=False),
+                    "entity_id": entity_id,
+                    "metadata": meta,
+                    "raw_response": None,
+                    "parsed_fields": None,
+                    "error": str(inlined_resp.error),
+                },
+            )
             failed += 1
             continue
 
         resp = inlined_resp.response
         if not resp or not resp.text:
             print(f"  ❌ [{i}] {entity_id}  empty response", flush=True)
+            write_json(
+                archive_dir / f"{entity_id}.json",
+                {
+                    "index": i,
+                    "captured_at": utc_timestamp(compact=False),
+                    "entity_id": entity_id,
+                    "metadata": meta,
+                    "raw_response": None,
+                    "parsed_fields": None,
+                    "error": "empty response",
+                },
+            )
             failed += 1
             continue
 
@@ -168,6 +214,18 @@ def ingest(
             fields = enrichment.model_dump(exclude_none=True)
         except Exception as e:
             print(f"  ❌ [{i}] {entity_id}  parse error: {e}", flush=True)
+            write_json(
+                archive_dir / f"{entity_id}.json",
+                {
+                    "index": i,
+                    "captured_at": utc_timestamp(compact=False),
+                    "entity_id": entity_id,
+                    "metadata": meta,
+                    "raw_response": resp.text,
+                    "parsed_fields": None,
+                    "error": str(e),
+                },
+            )
             failed += 1
             continue
 
@@ -176,6 +234,22 @@ def ingest(
             write_conn.execute("DELETE FROM inferred_claims WHERE entity_id = ?", (entity_id,))
             write_conn.execute("DELETE FROM enrichment_stamps WHERE entity_id = ?", (entity_id,))
             _write_inferred(write_conn, entity_id, fields, vocab_vers)
+        write_json(
+            archive_dir / f"{entity_id}.json",
+            {
+                "index": i,
+                "captured_at": utc_timestamp(compact=False),
+                "entity_id": entity_id,
+                "metadata": meta,
+                "raw_response": resp.text,
+                "parsed_fields": fields,
+                "warnings": [
+                    {"predicate": predicate, "stripped_value": stripped_value}
+                    for predicate, stripped_value in enrichment._warnings
+                ],
+                "error": None,
+            },
+        )
 
         ok += 1
         if ok % 100 == 0:

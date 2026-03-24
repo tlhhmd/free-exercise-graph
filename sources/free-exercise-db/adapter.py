@@ -99,6 +99,12 @@ def get_exercises() -> list[dict]:
             "source": SOURCE,
             "display_name": name,
             "equipment": equipment,
+            "raw_data": {
+                "equipment": equipment,
+                "primaryMuscles": primary_muscles,
+                "secondaryMuscles": secondary_muscles,
+                "instructions": ex.get("instructions", []) or [],
+            },
             "known": {
                 "muscles":       [],          # no feg crosswalk — muscles stored as hint text only
                 "muscles_hint":  muscles_hint, # raw muscle strings for LLM context

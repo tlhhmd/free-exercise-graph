@@ -17,11 +17,23 @@ logs/
 dist/
 sources/free-exercise-db/runs/
 
-# Pipeline intermediate store and assembled graph
+# Pipeline runtime artifacts (not committed)
 pipeline/pipeline.db
+pipeline/backups/
+pipeline/artifacts/
+pipeline/exports/
+pipeline/releases/
 pipeline/gemini_cache_id.txt
 pipeline/batch_job_id.txt
 pipeline/batch_manifest.json
+
+# SQLite WAL transient files
+pipeline/pipeline.db-shm
+pipeline/pipeline.db-wal
+*.db-shm
+*.db-wal
+
+# Derived graph output
 graph.ttl
 
 # Local environment files
@@ -30,6 +42,8 @@ graph.ttl
 
 # Notebooks and working files
 *.ipynb
+!graph_explorer.ipynb
+!pipeline_playbook.ipynb
 
 # Log files
 *.log

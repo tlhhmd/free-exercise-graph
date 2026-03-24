@@ -13,9 +13,17 @@ Read `DECISIONS.md` for the full ADR history before making any ontology or pipel
 
 ```bash
 pip install -e .
-python3 pipeline/build.py
+python3 pipeline/db_backup.py backup
+python3 pipeline/run.py --to build
 python3 test_shacl.py
 ```
+
+Then read:
+- [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md)
+- [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md)
+- [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md)
+- [docs/quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
+- [docs/triage_workflow.md](/Users/talha/Code/free-exercise-graph/docs/triage_workflow.md)
 
 ---
 
@@ -56,6 +64,12 @@ whose `enrichment_stamps.versions_json` is behind the new version will need re-e
 Use `pipeline/enrich.py --force <entity_id>` to re-enrich specific entities, or clear stamps
 and re-run the full enrichment pass.
 
+**Vocabulary-update recovery:** If a new term was previously stripped by the validator (recorded in `enrichment_warnings`), use `--restamp <term>` to automatically re-enrich all affected entities:
+
+```bash
+python3 pipeline/enrich.py --restamp HipCircumduction
+```
+
 ---
 
 ## Which Outputs Are Committed vs. Derived
@@ -65,8 +79,13 @@ and re-run the full enrichment pass.
 | `sources/*/raw/` | **Committed, read-only** | Upstream source data — never modify directly |
 | `sources/*/mappings/` | **Committed** | Crosswalk CSVs used by adapters |
 | `pipeline/pipeline.db` | Gitignored (derived) | SQLite intermediate store — rebuilt by pipeline stages |
+| `pipeline/exports/*.jsonl` | Gitignored (derived) | Portable export of enrichment state for restore/migration |
+| `pipeline/artifacts/raw_responses/` | Gitignored (derived) | Archived prompts/raw model outputs for enrichment runs |
+| `pipeline/releases/` | Gitignored (derived) | Timestamped release bundles (DB + graph + scorecard) |
 | `pipeline/gemini_cache_id.txt` | Gitignored (runtime) | Gemini context cache ID — persists across sessions |
 | `graph.ttl` | Gitignored (derived) | Assembled by `pipeline/build.py` |
+
+Source-of-truth boundaries are described in [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md).
 
 ---
 
@@ -81,6 +100,12 @@ and re-run the full enrichment pass.
 | `pipeline/triage.py` | Writes to `pipeline.db`; interactive; applies merges immediately |
 | `pipeline/enrich.py` | Writes inferred claims to `pipeline.db`; **costs API tokens** |
 | `pipeline/build.py` | Writes `graph.ttl` (gitignored) |
+| `pipeline/run.py` | Canonical orchestrator for rebuilds and stage execution |
+| `pipeline/validate.py` | Graph-level data quality scorecard |
+| `pipeline/db_backup.py` | Backup/list/restore helper for SQLite enrichment state |
+| `pipeline/export_enrichment.py` | Portable JSONL export of paid-for enrichment state |
+| `pipeline/import_enrichment.py` | Restore exported enrichment into the current deterministic DB |
+| `pipeline/release_bundle.py` | Freeze current DB + graph + scorecard into a timestamped bundle |
 | `test_shacl.py` | Read-only; exits 0/1 — CI gate |
 
 ### Enrichment options
@@ -103,6 +128,10 @@ python3 pipeline/enrich.py --limit 10             # enrich a sample
 python3 pipeline/enrich.py --force <entity_id>    # re-enrich a specific entity
 python3 pipeline/enrich.py --dump-prompts ./out   # save prompts without calling API
 ```
+
+Important:
+- successful enrichment runs now archive raw responses to `pipeline/artifacts/raw_responses/`
+- `pipeline/run.py --with-enrich ...` auto-exports JSONL to `pipeline/exports/` unless disabled
 
 ### Gemini Batch API (faster, 50% cheaper)
 
@@ -147,14 +176,35 @@ pipeline/identity.py
         ↓
 pipeline/reconcile.py
         ↓
-pipeline/enrich.py
+pipeline/enrich.py          (optional / token-costing)
         ↓
 pipeline/build.py
+        ↓
+pipeline/validate.py
         ↓
 test_shacl.py
 ```
 
 `test_shacl.py` can run at any point — it uses in-memory test fixtures, not `graph.ttl`.
 
-Each stage is resumable: re-running a stage picks up where it left off. `enrich.py` skips
-entities that already have an `enrichment_stamps` entry. Use `--force` to override.
+The canonical way to run this is:
+
+```bash
+python3 pipeline/run.py --to build
+```
+
+Add `--with-enrich` only when you intentionally want to call the LLM.
+
+### Reset / replay semantics
+
+- Deterministic rebuild only: `python3 pipeline/run.py --to build`
+- Full rebuild from source truth: `python3 pipeline/run.py --reset-db --yes-reset-db --to build`
+- Full rebuild including enrichment: `python3 pipeline/run.py --reset-db --yes-reset-db --with-enrich --to build`
+
+Important:
+- Existing enrichment state is preserved by default.
+- Upstream stage reruns that would invalidate existing entity mappings may require `--reset-db`.
+- `pipeline/enrich.py` skips entities that already have an `enrichment_stamps` entry. Use `--force` to override.
+- `--reset-db` auto-backs up SQLite by default and requires `--yes-reset-db` when LLM state exists.
+- Before experimental pipeline surgery, still take an explicit backup with `python3 pipeline/db_backup.py backup`.
+- If you need a safe operator checklist, use [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md).

@@ -2745,15 +2745,20 @@ The LLM never arbitrates disagreements. It receives one clean, conflict-free can
 
 **Context:** The rearchitected pipeline (ADR-086) introduces multiple intermediate stages — identity clustering, canonical sparse layer, conflict detection, resolution, triage queue — each of which produces structured relational state. The current pattern of one JSON file per exercise is not well-suited to this workload: identity clusters are join queries, conflict detection is a group-by and filter, the triage queue is a filtered view of a conflicts table, and audit queries ("why did this muscle get this degree?") are provenance joins. All of these require hand-rolling joins and indexes in Python when working with JSON files.
 
-**Decision:** Use SQLite for all intermediate pipeline state. Key tables:
+**Decision:** Use SQLite for all intermediate pipeline state. The implemented schema separates source-record assertions, canonical deterministic output, and LLM-derived output rather than storing everything in one generic claims table. Key tables:
 
-- `entities` — one row per canonical entity (`entity_id`, `display_name`, `status`: resolved/deferred)
+- `source_records` — one row per source exercise record (`source`, `source_id`, `display_name`)
+- `source_claims` — source-asserted facts attached to a source record (`predicate`, `value`, `qualifier`, `origin_type`)
+- `source_metadata` — instructions text and source-specific JSON context used for prompting/debugging
+- `entities` — one row per canonical entity (`entity_id`, `display_name`, `status`)
 - `entity_sources` — maps source records to canonical entities (`entity_id`, `source`, `source_id`, `confidence`)
 - `possible_matches` — links ambiguous identity candidates (`entity_id_a`, `entity_id_b`, `score`, `status`)
-- `claims` — all asserted and inferred claims with provenance (`entity_id`, `predicate`, `value`, `qualifier`, `origin`, `source`, `claim_type`: asserted/inferred, `origin_type`: structured/absent/inferred)
-- `conflicts` — detected conflicts over asserted claims (`conflict_id`, `entity_id`, `predicate`, `value`, `description`, `status`: open/resolved/deferred)
-- `resolved_claims` — output of reconcile.py (`entity_id`, `predicate`, `value`, `qualifier`, `resolution_method`, `conflict_id`)
-- `triage_queue` — deferred conflicts awaiting human review (`conflict_id`, `entity_id`, `description`, `options`, `status`)
+- `conflicts` — detected conflicts over canonical reconciliation (`conflict_id`, `entity_id`, `predicate`, `description`, `status`)
+- `resolved_claims` — deterministic canonical output of `reconcile.py` (`entity_id`, `predicate`, `value`, `qualifier`, `resolution_method`, `conflict_id`)
+- `inferred_claims` — LLM-derived gap-filling claims at canonical-entity grain
+- `enrichment_stamps` — vocabulary versions, timestamps, and model provenance per enriched entity
+- `enrichment_warnings` — stripped values that can later be recovered via targeted restamping
+- `enrichment_failures` — retry/quarantine bookkeeping for failed enrichments
 
 Raw LLM responses are retained as JSON files (one per entity) for debuggability — they are large and unstructured and not queried programmatically.
 
@@ -2929,18 +2934,317 @@ Adding isometric variants creates two compounding problems:
 
 ---
 
+### ADR-095: Data quality scorecard — pipeline/validate.py + SHACL additions
+
+**Decision:** Build `pipeline/validate.py` as a standalone quality scorecard reporting on 5 dimensions. Simultaneously extend `shapes.ttl` with two new structural constraints, bumping it from `0.9.0` to `0.11.0`.
+
+**Scorecard dimensions:**
+
+| Dimension | Severity | What it reports |
+|---|---|---|
+| Validity | fail | SHACL violation count and offending entities — run against `graph.ttl` |
+| Uniqueness | fail | Duplicate exercise labels (placeholder; broader deduplication TBD) |
+| Integrity | fail | Vocab references in `inferred_claims` that don't resolve to a known ontology term — DB-level check, catches pipeline bugs before build |
+| Timeliness | warn | Outstanding `enrichment_warnings` not yet resolved via `--restamp` |
+| Completeness | warn | Exercises missing `movementPattern`, `hasInvolvement`, `primaryJointAction`; involvements missing `degree` |
+
+**Dimensions explicitly excluded:**
+- *Consistency* — measures cross-system agreement as data moves between systems. This is a single-system deterministic pipeline; the concept does not apply.
+- *Accuracy* — whether enrichment assignments are correct. That is the domain of `eval.py` + gold standard annotation, not the scorecard. The scorecard reports well-formedness and coverage, not correctness.
+
+**Timeliness rationale:** Version-stamp comparison (enrichment_stamps.versions_json vs. current owl:versionInfo) was considered but rejected. Whether a vocabulary bump is relevant to a specific exercise is not calculable from the data alone — a bicep curl enriched before a glutes taxonomy update is not stale with respect to its own fields. `enrichment_warnings` is the correct proxy: it records terms that were stripped at enrichment time and not yet recovered, which is the actionable staleness signal.
+
+**SHACL additions (shapes.ttl 0.9.0 → 0.11.0):**
+
+1. **primaryJointAction requirement** (0.9.0 → 0.10.0, MINOR): Every exercise must have at least one `feg:primaryJointAction`, with an exemption for exercises whose involvements are exclusively `PassiveTarget` (Mobility/SoftTissue exercises). Mirrors the existing PrimeMover exemption pattern. Test: T11 (violation), T11b (passive exempt, no violation).
+
+2. **JA primary+supporting overlap** (0.10.0 → 0.11.0, MINOR): A joint action may not appear in both `feg:primaryJointAction` and `feg:supportingJointAction` on the same exercise. Test: T12.
+
+**Completeness and SHACL relationship:** SHACL enforces structural constraints; the scorecard reports on them independently. These are different jobs. The scorecard has value as a communication artifact — a reader should be able to understand data quality in one place without running SHACL separately.
+
+**Baseline `_make_exercise` updated:** Added `feg:primaryJointAction feg:HipExtension` to the shared test helper to satisfy the new constraint across all existing test cases.
+
+---
+
+### ADR-096: useGroupLevel normalization in build.py
+
+**Decision:** Apply `useGroupLevel` normalization in `build.py` at graph assembly time. When a muscle claim references a head whose parent group has `useGroupLevel=true`, replace it with the group-level term before emitting RDF. Per-exercise deduplication keeps the highest-priority degree (PrimeMover > Synergist > Stabilizer > PassiveTarget) when normalization maps multiple heads to the same group.
+
+**Rationale:** SHACL validation against the real graph (enabled by ADR-095) revealed 102 `useGroupLevel` violations — all from source-asserted head-level muscles (Infraspinatus, TeresMinor, Supraspinatus, Subscapularis → RotatorCuff; FlexorCarpiRadialis → WristFlexors). These came from resolved_claims, which the enrichment schema validator never processes. Fixing them in resolved_claims would rewrite source data; fixing them in build.py enforces vocabulary policy at output time without touching source fidelity.
+
+**Scope:** `_build_group_level_map()` loads `useGroupLevel=true` groups from `muscles.ttl` at build time. The mapping is applied to all muscle claims (resolved and inferred) before RDF emission. The `_add_entity()` function deduplicates by muscle name after normalization, keeping the highest-priority degree.
+
+**No vocabulary changes. No version bumps.**
+
+---
+
+### ADR-097: Muscle claim merge strategy — union with resolved-degree precedence
+
+**Decision:** Change `_effective_claims()` in `build.py` to use a **union** strategy for muscle claims rather than source-or-inferred exclusivity. For any muscle present in both resolved and inferred claims, the resolved degree takes precedence. Muscles present only in inferred claims are included. Muscles present only in resolved claims are included.
+
+**Rationale:** SHACL validation revealed a major defect: 2,701 of 3,450 exercises (78%) had source-asserted muscles, causing all inferred muscle claims to be silently dropped. Source muscle lists are partial by design — sources typically list 1-3 primary muscles. Enrichment provides the complete picture. Under the original exclusive strategy, the graph's muscle data for 78% of exercises reflected only the source subset, effectively making enrichment a no-op for muscle data. 6 exercises had SHACL-visible PrimeMover violations; the remaining 2,695 had silent coverage and degree gaps.
+
+**Merge semantics:** For each muscle, take the resolved degree if present, otherwise take the inferred degree. Include all muscles from either source. `useGroupLevel` normalization (ADR-096) and ancestor stripping are applied after merging.
+
+**PrimeMover escalation:** One exception to resolved-degree precedence — if enrichment assigns PrimeMover and resolved assigns a lower degree for the same muscle, the inferred PrimeMover wins. Rationale: enrichment was specifically designed to identify prime movers accurately; sources are often rough about degrees and commonly downgrade PrimeMover to Synergist. Suppressing a PrimeMover assignment is a worse error than escalating a Synergist to PrimeMover. Discovered during SHACL validation: `ffdb_Dumbbell_Crush_Grip_Otis_Up` had `RectusAbdominis Synergist` in source (wrong) and `RectusAbdominis PrimeMover` from enrichment (correct).
+
+**Why resolved degree takes precedence otherwise:** Sources assert degrees from curated human data. LLM-inferred degrees are probabilistic. Where both exist for the same muscle, the human assertion is generally more reliable — except for PrimeMover (see above).
+
+**No vocabulary changes. No version bumps.**
+
+---
+
 ## Open Questions
 
 - **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for
   isolation exercises (curls, lateral raises). Whether to add `ElbowFlexion`,
   `ShoulderAbduction`, etc. as movement pattern concepts — and whether these are peers
   to existing patterns or a separate layer — is an open vocabulary design question.
-- **Mobility/SoftTissue Prime Mover exemption:** The SHACL `minCount 1` PrimeMover
-  constraint is semantically wrong for passive stretches and soft tissue work. Options:
-  relax globally for Mobility/SoftTissue exercises, or add a `PassiveTarget` involvement
-  degree. ADR required before implementation.
-- **movementPattern sh:minCount:** Relaxed to 0 in ADR-044. Should tighten back to 1
-  (with Mobility/SoftTissue exemption) once movement pattern coverage criteria are established.
+- **movementPattern sh:minCount:** Relaxed to 0 in ADR-044. 521 exercises (15%) have no pattern — 459 isolations (intentional), 53 compound exercises (backlog, including ab/core and conditioning exercises), 9 passive/SMR (exempt). Decision pending on whether to add isolation-level or CoreFlexion patterns. See TODO.
+
+---
+
+### ADR-098: Pipeline runner and stage lifecycle contract
+**Status:** Accepted
+
+**Context:** The multi-stage pipeline is now the canonical architecture, but stage order, reset semantics, and rebuild expectations are currently split across README, CONTRIBUTING, CI, and individual scripts. A new engineer can understand the architecture, but still has to infer how to safely run it. This is especially risky because some stages persist derived state in SQLite and others consume that derived state.
+
+**Decision:** Introduce a first-class pipeline runner and explicit lifecycle contract.
+
+1. Add `pipeline/run.py` as the canonical orchestration entrypoint for local development, CI, and onboarding.
+2. Support stage-based execution (`canonicalize`, `identity`, `reconcile`, `enrich`, `build`, `validate`) with a documented default order.
+3. Make reset semantics explicit and opt-in:
+   - default mode preserves existing enrichment outputs and stamps
+   - `--reset-db` rebuilds the SQLite database from source truth only
+   - no command may delete or invalidate enrichment artifacts unless explicitly requested
+4. Treat `graph.ttl` and validation outputs as rebuildable derived artifacts.
+
+**Rationale:** The project needs one obvious way to run the system. A runner also gives CI and documentation one contract to point at instead of repeating script order in multiple places.
+
+**Alternatives considered:**
+- Keep separate stage scripts only: rejected. Too much operational knowledge remains implicit.
+- Hide the pipeline behind `refresh.sh`: rejected. Shell wrappers are fine for convenience, but the contract should live in Python with argument-level affordances and docs.
+
+**Files to change:** new `pipeline/run.py`, `README.md`, `CONTRIBUTING.md`, `.github/workflows/ci.yml`, `TODO.md`.
+
+---
+
+### ADR-099: SQLite schema hardening and replay-safe stage resets
+**Status:** Accepted
+
+**Context:** The SQLite database is now the intermediate system of record for the pipeline, but replay/reset behavior is still encoded informally in stage scripts. Some stages delete rows that are still referenced downstream, and the currently used runtime tables (`enrichment_warnings`, `enrichment_failures`, `model` on `enrichment_stamps`) are not described centrally.
+
+**Decision:** Centralize schema ownership in `pipeline/db.py` and add replay-safe reset helpers.
+
+1. `pipeline/db.py` is the authoritative schema contract for all pipeline tables.
+2. Add explicit helper functions for:
+   - schema initialization
+   - stage-aware downstream invalidation
+   - full DB reset
+3. Encode the runtime tables used by enrichment and validation directly in the schema contract:
+   - `enrichment_stamps` includes `model`
+   - `enrichment_warnings`
+   - `enrichment_failures`
+4. Stage reruns must clear dependent derived state in a deterministic order instead of relying on ad hoc `DELETE` sequences embedded in each script.
+5. Existing LLM enrichments must be preserved unless the operator explicitly chooses a reset path that discards them.
+
+**Rationale:** The most important refactor is making the storage lifecycle legible and safe. Replayability is a product requirement for a pipeline like this, not just an implementation detail.
+
+**Alternatives considered:**
+- Document “always delete the DB first”: rejected. Too destructive, and it conflicts with the goal of preserving already-paid-for enrichment output.
+- Add SQLite `ON DELETE CASCADE` everywhere: rejected for now. It obscures lifecycle intent and makes it easier to accidentally wipe valuable enrichment state.
+
+**Files to change:** `pipeline/db.py`, `pipeline/canonicalize.py`, `pipeline/identity.py`, `pipeline/reconcile.py`, `pipeline/enrich.py`, `pipeline/run.py`.
+
+---
+
+### ADR-100: Quality surfaces split into unit tests, scorecard, and release checks
+**Status:** Accepted
+
+**Context:** The project now has three distinct quality needs:
+- ontology/unit-level structural testing
+- graph-level product quality reporting
+- release/CI gating
+
+These are related but not identical jobs. When they are blended together, it becomes harder for engineers and PMs to know what each command proves.
+
+**Decision:** Keep the quality stack split into three named surfaces:
+
+1. `test_shacl.py` remains the fast unit-level constraint harness.
+2. `pipeline/validate.py` remains the graph-level scorecard for validity, uniqueness, integrity, timeliness, and completeness.
+3. CI and release docs must explicitly state which checks are gating and which are informational.
+
+The docs will describe these as:
+- `test_shacl.py`: ontology/shape regression safety
+- `pipeline/validate.py`: data product health
+- CI: minimum release confidence
+
+**Rationale:** This keeps quality communication clear across engineers, ontologists, and product stakeholders.
+
+**Alternatives considered:**
+- Collapse everything into SHACL: rejected. SHACL is essential but not enough to express timeliness, integrity over intermediate tables, or product completeness.
+- Collapse everything into `validate.py`: rejected. Unit-level shape regressions need a fast, isolated harness.
+
+**Files to change:** `README.md`, `CONTRIBUTING.md`, `.github/workflows/ci.yml`, new quality-oriented documentation.
+
+---
+
+### ADR-101: Onboarding package for engineers, ontologists, and product stakeholders
+**Status:** Accepted
+
+**Context:** The repo now contains enough architecture, vocabulary, and operational detail that it can support several audiences, but the guidance is spread across README, CONTRIBUTING, TODO, and the reconciliation case study. A newcomer should not need oral explanation to understand the system.
+
+**Decision:** Add a small documentation package that makes the repo self-explanatory:
+
+1. Keep README as the top-level product and architecture overview.
+2. Keep CONTRIBUTING as the operational runbook.
+3. Add focused docs for:
+   - system contracts / source-of-truth boundaries
+   - quality surfaces and release checks
+   - triage / HITL workflow
+4. Add `codexlog.md` to summarize this refactor and its rationale in plain language.
+
+**Rationale:** The project is now substantial enough that “just read the code” is not a good onboarding strategy.
+
+**Alternatives considered:**
+- Put everything in README: rejected. It would become too long and less usable.
+- Keep docs only in ADRs: rejected. ADRs preserve history; they are not the best first-stop onboarding surface.
+
+**Files to change:** new docs under `docs/`, `README.md`, `CONTRIBUTING.md`, `GOVERNANCE.md`, `codexlog.md`.
+
+---
+
+### ADR-102: CI must prove rebuildability from source truth
+**Status:** Accepted
+
+**Context:** The project now has a useful scorecard and committed graph artifact, but a serious semantic pipeline should also prove it can rebuild itself from source truth. Otherwise CI can pass while the orchestration path quietly regresses.
+
+**Decision:** CI must exercise a rebuild path in addition to validation.
+
+Minimum CI contract:
+1. Install dependencies.
+2. Run `test_shacl.py`.
+3. Build a fresh pipeline DB from source truth.
+4. Run reconciliation and graph assembly.
+5. Run one smoke validation/query check against the rebuilt graph.
+
+CI may use a reduced/fast validation mode for runtime reasons, but it must not depend solely on a pre-existing `graph.ttl`.
+
+**Rationale:** Rebuildability is the most important system-level trust signal for this repo.
+
+**Alternatives considered:**
+- Validate only the committed graph: rejected. Useful, but insufficient.
+- Run full LLM enrichment in CI: rejected. Too expensive and unstable for a default gate.
+
+**Files to change:** `.github/workflows/ci.yml`, `pipeline/run.py`, docs describing CI expectations.
+
+---
+
+### ADR-103: LLM enrichment must be exportable outside SQLite
+**Status:** Accepted
+
+**Context:** Paid-for enrichment currently lives in SQLite runtime tables
+(`inferred_claims`, `enrichment_stamps`, `enrichment_warnings`,
+`enrichment_failures`). That makes the pipeline operationally convenient, but
+too fragile: resetting or replacing `pipeline.db` can destroy expensive work
+with no portable recovery artifact.
+
+**Decision:** Introduce a first-class enrichment export/import surface.
+
+1. Add `pipeline/export_enrichment.py` to write one portable JSONL artifact per
+   export run.
+2. Add `pipeline/import_enrichment.py` to restore exported enrichment into a
+   deterministic SQLite rebuild.
+3. The export format must include:
+   - entity identity (`entity_id`, `display_name`)
+   - inferred claims
+   - enrichment stamp metadata (`versions_json`, `enriched_at`, `model`)
+   - enrichment warnings
+   - enrichment failures
+4. The canonical runner should automatically export enrichment after a
+   successful enrichment stage unless explicitly disabled.
+
+**Rationale:** SQLite is still the live runtime store, but it can no longer be
+the only durable home for paid-for inference output.
+
+**Alternatives considered:**
+- Keep manual `sqlite3 .dump` as the only backup path: rejected. Too easy to
+  forget and too coarse for routine workflow.
+- Export only `graph.ttl`: rejected. The built graph loses runtime provenance,
+  warnings, and enrichment bookkeeping needed for recovery.
+
+**Files to change:** new `pipeline/export_enrichment.py`, new
+`pipeline/import_enrichment.py`, `pipeline/run.py`, `README.md`,
+`CONTRIBUTING.md`, `docs/system_contracts.md`.
+
+---
+
+### ADR-104: Destructive reset commands must auto-back up and warn loudly
+**Status:** Accepted
+
+**Context:** The pipeline already distinguishes deterministic rebuilds from
+LLM-derived state, but the destructive commands are still too easy to use
+casually. The system should assume that enrichment is valuable and protect it
+by default.
+
+**Decision:** Add guardrails around destructive pipeline operations.
+
+1. `pipeline/run.py --reset-db` and `pipeline/canonicalize.py --reset` must
+   create a timestamped SQLite backup automatically unless the operator
+   explicitly opts out.
+2. If the current DB contains any persisted LLM state, destructive reset
+   commands must require an explicit acknowledgement flag.
+3. `pipeline/build.py` must warn clearly when it is building a deterministic-only
+   graph (`0 enriched`) or a partially enriched graph.
+4. The docs must describe these warnings as intentional product safeguards, not
+   noise.
+
+**Rationale:** The safest path should be the default path. Operators should have
+to work to discard paid-for enrichment, not the other way around.
+
+**Alternatives considered:**
+- Keep warnings in docs only: rejected. Human memory is not a safeguard.
+- Block all resets unconditionally: rejected. Scratch DB rebuilds and CI need a
+  supported destructive path.
+
+**Files to change:** `pipeline/run.py`, `pipeline/canonicalize.py`,
+`pipeline/build.py`, `pipeline/db.py`, `pipeline/db_backup.py`, docs.
+
+---
+
+### ADR-105: Archive raw enrichment responses and create release bundles
+**Status:** Accepted
+
+**Context:** Even with DB backups and JSONL exports, the repo still needs a
+better historical record of what the model saw and returned during important
+enrichment runs. Without raw-response archives, exact reconstruction of a past
+run remains difficult. Without a release bundle, there is no one-command way to
+freeze a successful local state for future restore.
+
+**Decision:** Add two artifact surfaces:
+
+1. Raw enrichment archives:
+   - `pipeline/enrich.py` and `pipeline/batch_ingest.py` must write timestamped
+     run artifacts containing the raw model response, parsed fields, warnings,
+     provider/model metadata, and the entity prompt context.
+   - The system prompt must be archived once per run.
+2. Release bundles:
+   - add `pipeline/release_bundle.py`
+   - each bundle captures a SQLite snapshot, exported enrichment JSONL, current
+     `graph.ttl`, and machine-readable metadata/quality output
+3. A documented playbook must make “backup -> run -> validate -> export ->
+   bundle” the default release path for local full runs.
+
+**Rationale:** Recovery and reproducibility need both machine-restorable data
+and human-auditable historical artifacts.
+
+**Alternatives considered:**
+- Archive only prompts: rejected. Not enough to reconstruct or audit outputs.
+- Rely on provider-side history: rejected. Not guaranteed, not portable, and not
+  under project control.
+
+**Files to change:** `pipeline/enrich.py`, `pipeline/batch_ingest.py`, new
+`pipeline/release_bundle.py`, new playbook docs, onboarding docs.
 - **Power modality:** Olympic lifts and explosive strength movements are currently
   forced into `Plyometrics`. A `feg:Power` named individual would distinguish them.
 - **Cossack squat classification:** Currently Squat in v1. Does lateral plane movement
