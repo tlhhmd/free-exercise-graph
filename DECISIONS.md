@@ -2897,6 +2897,22 @@ Adding isometric variants creates two compounding problems:
 
 ---
 
+### ADR-093: Triage queue CLI tool — pipeline/triage.py
+
+**Decision:** Build `pipeline/triage.py`, an interactive CLI tool for reviewing the `possible_matches` queue produced by `identity.py`.
+
+**Interface:** Shows each open pair side by side — display names, source provenance, equipment, muscles (from `resolved_claims`), movement patterns, laterality, and biomechanical score. Accepts four decisions per pair: `m` (merge), `s` (separate), `v` (variant_of), `?` (skip). Pairs are presented sorted by score descending (highest confidence first).
+
+**Merge semantics:** When the user selects merge, entity_b's `entity_sources` rows are reassigned to entity_a, entity_b's downstream rows (`resolved_claims`, `inferred_claims`, `enrichment_stamps`, `conflicts`) are deleted, and entity_b is removed from `entities`. `reconcile.py` must be re-run after triage to regenerate resolved_claims for the merged entity from both sources' claims. Merge is applied immediately so subsequent pairs in the same session can see the updated state (e.g. a pair where one side was already merged away is auto-resolved).
+
+**Variant_of semantics (status only):** Records the decision as `status = 'variant_of'` in `possible_matches` but takes no further action in v1. The graph builder (`build.py`) does not currently emit a `feg:variantOf` triple — that requires a vocabulary addition and an ADR. The status field preserves the reviewed decision so it is not re-surfaced in future triage sessions and can be acted on when vocabulary is extended.
+
+**Rationale:** The triage queue had 0 entries before ADR-092 and 64 entries after. A CLI tool is appropriate for this volume. A Streamlit UI (already present for annotation) would be over-engineered. `pipeline/reconcile.py --triage` was previously documented but never built — this replaces it.
+
+**No vocabulary changes. No version bumps.**
+
+---
+
 ## Open Questions
 
 - **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for
