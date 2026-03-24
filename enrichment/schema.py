@@ -72,9 +72,11 @@ class ExerciseEnrichment(BaseModel):
 
         joint_action_vocab = _KNOWN_VOCAB.get("joint_actions", frozenset())
         muscle_vocab = _KNOWN_VOCAB.get("muscles", frozenset())
+        movement_pattern_vocab = _KNOWN_VOCAB.get("movement_patterns", frozenset())
 
         placed_joint_actions = set(self.primary_joint_actions) | set(self.supporting_joint_actions)
         placed_muscles = {inv.muscle for inv in self.muscle_involvements}
+        placed_patterns = set(self.movement_patterns)
 
         # Joint action term in muscle_involvements AND correctly in joint actions → strip
         self.muscle_involvements = [
@@ -90,6 +92,16 @@ class ExerciseEnrichment(BaseModel):
         self.supporting_joint_actions = [
             ja for ja in self.supporting_joint_actions
             if not (ja in muscle_vocab and ja in placed_muscles)
+        ]
+
+        # Movement pattern term in joint action fields AND correctly in movement_patterns → strip
+        self.primary_joint_actions = [
+            ja for ja in self.primary_joint_actions
+            if not (ja in movement_pattern_vocab and ja in placed_patterns)
+        ]
+        self.supporting_joint_actions = [
+            ja for ja in self.supporting_joint_actions
+            if not (ja in movement_pattern_vocab and ja in placed_patterns)
         ]
 
         return self
