@@ -20,6 +20,8 @@ sources/free-exercise-db/runs/
 # Pipeline intermediate store and assembled graph
 pipeline/pipeline.db
 pipeline/gemini_cache_id.txt
+pipeline/batch_job_id.txt
+pipeline/batch_manifest.json
 graph.ttl
 
 # Local environment files
