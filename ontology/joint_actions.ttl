@@ -11,7 +11,7 @@ feg:JointActionScheme
     a skos:ConceptScheme ;
     rdfs:label "Joint Action Scheme" ;
     rdfs:comment "A controlled vocabulary of joint actions used to describe the mechanical basis of exercises. Joint grouping nodes organise actions by joint; only leaf-level JointAction individuals should be assigned to exercises via feg:jointAction." ;
-    owl:versionInfo "0.2.0" ;
+    owl:versionInfo "0.3.0" ;
 .
 
 ###################
@@ -346,6 +346,15 @@ feg:HipHorizontalAbduction
     rdfs:label "Hip Horizontal Abduction" ;
     skos:prefLabel "Hip Horizontal Abduction" ;
     rdfs:comment "Moving the thigh away from the midline in the transverse plane when the hip is already flexed to approximately 90°. Distinct from frontal-plane abduction. Primary drivers: gluteus medius, gluteus minimus." ;
+.
+
+feg:HipCircumduction
+    a owl:NamedIndividual, feg:JointAction, skos:Concept ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:broader feg:Hip ;
+    rdfs:label "Hip Circumduction" ;
+    skos:prefLabel "Hip Circumduction" ;
+    rdfs:comment "Circular or conical movement of the femur combining sequential hip flexion, abduction, extension, and adduction. Occurs in leg circles, hip CARs, and certain mobility drills. Engages the full hip musculature through its range." ;
 .
 
 ###################

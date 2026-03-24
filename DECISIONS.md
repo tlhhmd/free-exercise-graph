@@ -2913,6 +2913,22 @@ Adding isometric variants creates two compounding problems:
 
 ---
 
+### ADR-094: Add HipCircumduction to joint_actions vocabulary
+
+**Decision:** Add `feg:HipCircumduction` to `joint_actions.ttl` as a new `feg:JointAction` concept under `feg:Hip`. Bump `joint_actions.ttl` from `0.2.0` to `0.3.0` (MINOR — additive).
+
+**Rationale:** During batch 5 enrichment, the model assigned `HipCircumduction` as a `supporting_joint_action` for Knee Circles. The term was stripped by the vocabulary validator (not yet defined). Knee Circles genuinely involve hip circumduction — circular conical movement of the femur combining sequential flexion, abduction, extension, and adduction. The term is biomechanically correct and distinct from any existing joint action. No existing concept covers multi-planar circular hip movement.
+
+**Recovery:** Knee Circles and any future exercises that had `HipCircumduction` stripped will be re-enriched via `python3 pipeline/enrich.py --restamp HipCircumduction` once the vocab update is live in the next enrichment session.
+
+**Alternatives considered:**
+- *Express as multiple joint actions (HipFlexion + HipAbduction + HipExtension + HipAdduction)*: Technically decomposable, but loses the gestalt of the circular movement. Circumduction is a standard anatomical term with its own identity.
+- *Leave it out*: Knee Circles would have no joint action, which is a gap.
+
+**No other vocabulary changes. joint_actions.ttl bumped to 0.3.0.**
+
+---
+
 ## Open Questions
 
 - **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for
