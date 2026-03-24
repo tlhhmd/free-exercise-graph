@@ -4,19 +4,25 @@ pipeline/identity.py
 Stage 2: Cluster source_records into canonical entities.
 
 Algorithm:
-  1. Exact name match (after normalization): auto-merge, confidence=1.0
+  1. Exact name match (after equipment-aware normalization): auto-merge, confidence=1.0
   2. No match found: emit as standalone entity, confidence=1.0
-  3. Near-name match (Levenshtein ≤ 2 after normalization):
+  3. Near-name match — token Jaccard ≥ 0.5 on normalized name tokens
+     (Levenshtein ≤ 2 retained as additional path for short names ≤ 2 tokens):
        compute biomechanical similarity score
        score ≥ 0.7 → auto-merge
        0.4 ≤ score < 0.7 → defer (possible_matches, status='open')
        score < 0.4 → keep separate
 
-Biomechanical similarity (for near-name pairs):
+Name normalization strips equipment modifier words (ADR-092, ADR-001):
+  Barbell, Dumbbell, Kettlebell, Cable, Machine, etc. — equipment is not identity.
+
+Biomechanical similarity:
   movement_pattern overlap (Jaccard): weight 0.4
   laterality match:                   weight 0.2
   equipment overlap (Jaccard):        weight 0.2
-  coarse muscle group overlap (Jaccard, first token of muscle name): weight 0.2
+  muscle region overlap (Jaccard):    weight 0.2
+    — for free-exercise-db: raw muscle strings mapped inline to feg regions
+    — for functional-fitness-db: feg-mapped values from source_claims
 
 Entity ID conventions:
   - Merged entity (appears in both sources): normalized_name
@@ -46,14 +52,59 @@ _SOURCE_PREFIX = {
 }
 
 
+# ─── Equipment modifier words (ADR-092) ───────────────────────────────────────
+
+# Words that describe equipment context, not exercise identity (ADR-001).
+# Stripped from names before comparison so "Barbell Romanian Deadlift" and
+# "Romanian Deadlift" normalise to the same token set.
+_EQUIPMENT_MODIFIERS = {
+    "barbell", "dumbbell", "dumbbells", "kettlebell", "kettlebells",
+    "cable", "cables", "machine", "ez", "curl", "bar",
+    "resistance", "band", "bands", "bodyweight", "medicine",
+    "ball", "foam", "roller", "exercise", "sandbag", "suspension",
+    "trainer", "weighted",
+}
+
+
+# ─── Inline fed muscle → feg region mapping (ADR-092) ─────────────────────────
+
+# free-exercise-db uses 17 coarse colloquial muscle strings. Map to feg region
+# local names for biomechanical scoring. No crosswalk file needed — these
+# strings are stable (sourced from a static JSON dataset).
+_FED_MUSCLE_MAP: dict[str, str] = {
+    "abdominals":  "Abdominals",
+    "abductors":   "Abductors",
+    "adductors":   "Adductors",
+    "biceps":      "Biceps",
+    "calves":      "Calves",
+    "chest":       "Chest",
+    "forearms":    "Forearms",
+    "glutes":      "Glutes",
+    "hamstrings":  "Hamstrings",
+    "lats":        "LatissimusDorsi",
+    "lower back":  "LowerBack",
+    "middle back": "MiddleBack",
+    "neck":        "Traps",       # closest region; neck as a standalone region not in vocabulary
+    "quadriceps":  "Quadriceps",
+    "shoulders":   "Shoulders",
+    "traps":       "Traps",
+    "triceps":     "Triceps",
+}
+
+
 # ─── Name normalisation ───────────────────────────────────────────────────────
 
 def _normalize(name: str) -> str:
-    """Lowercase, strip punctuation, collapse whitespace."""
+    """Lowercase, strip punctuation, strip equipment modifiers, collapse whitespace."""
     name = name.lower()
     name = re.sub(r"[^a-z0-9\s]", "", name)
-    name = re.sub(r"\s+", " ", name).strip()
-    return name
+    tokens = [t for t in name.split() if t not in _EQUIPMENT_MODIFIERS]
+    return " ".join(tokens).strip()
+
+
+def _tokens(norm: str) -> set[str]:
+    """Return the set of tokens from a normalized name."""
+    return set(norm.split()) if norm else set()
 
 
 # ─── Levenshtein distance ─────────────────────────────────────────────────────
@@ -94,6 +145,29 @@ def _jaccard(a: set, b: set) -> float:
     return len(a & b) / len(union)
 
 
+def _fed_muscles_from_raw(conn, source_id: str) -> set[str]:
+    """Extract feg region names from free-exercise-db raw_data JSON.
+
+    free-exercise-db stores primaryMuscles/secondaryMuscles as coarse colloquial
+    strings. Map them to feg region names inline (ADR-092) — no crosswalk file needed.
+    """
+    row = conn.execute(
+        "SELECT raw_data FROM source_metadata WHERE source='free-exercise-db' AND source_id=?",
+        (source_id,),
+    ).fetchone()
+    if not row or not row["raw_data"]:
+        return set()
+    import json
+    data = json.loads(row["raw_data"])
+    result = set()
+    for field in ("primaryMuscles", "secondaryMuscles"):
+        for m in data.get(field) or []:
+            feg = _FED_MUSCLE_MAP.get(m.strip().lower())
+            if feg:
+                result.add(feg)
+    return result
+
+
 def _biomechanical_score(conn, source_a: str, id_a: str, source_b: str, id_b: str) -> float:
     def claims(source, source_id, predicate):
         rows = conn.execute(
@@ -101,6 +175,22 @@ def _biomechanical_score(conn, source_a: str, id_a: str, source_b: str, id_b: st
             (source, source_id, predicate),
         ).fetchall()
         return {r[0] for r in rows}
+
+    def muscle_regions(source, source_id) -> set[str]:
+        """Return a set of feg region-level muscle names for scoring."""
+        if source == "free-exercise-db":
+            return _fed_muscles_from_raw(conn, source_id)
+        # ffdb: feg-mapped values already in source_claims; coarsen to first camelCase word
+        rows = conn.execute(
+            "SELECT value FROM source_claims WHERE source=? AND source_id=? AND predicate='muscle'",
+            (source, source_id),
+        ).fetchall()
+        result = set()
+        for (val,) in rows:
+            parts = re.sub(r"([A-Z])", r" \1", val).split()
+            if parts:
+                result.add(parts[0])   # e.g. "GluteusMaximus" → "Gluteus"
+        return result
 
     # Movement patterns
     mp_a = claims(source_a, id_a, "movement_pattern")
@@ -120,22 +210,9 @@ def _biomechanical_score(conn, source_a: str, id_a: str, source_b: str, id_b: st
     eq_b = claims(source_b, id_b, "equipment")
     eq_score = _jaccard(eq_a, eq_b)
 
-    # Coarse muscle group (first token of muscle name, e.g. "Quadriceps" from "QuadricepsFemoris")
-    def coarse_muscles(source, source_id):
-        rows = conn.execute(
-            "SELECT value FROM source_claims WHERE source=? AND source_id=? AND predicate='muscle'",
-            (source, source_id),
-        ).fetchall()
-        # Split camelCase on capital letters to get first word
-        result = set()
-        for (val,) in rows:
-            parts = re.sub(r"([A-Z])", r" \1", val).split()
-            if parts:
-                result.add(parts[0].lower())
-        return result
-
-    cma = coarse_muscles(source_a, id_a)
-    cmb = coarse_muscles(source_b, id_b)
+    # Muscle regions
+    cma = muscle_regions(source_a, id_a)
+    cmb = muscle_regions(source_b, id_b)
     muscle_score = _jaccard(cma, cmb)
 
     return (
@@ -203,6 +280,9 @@ def cluster(conn, dry_run: bool = False) -> dict:
         src = e["sources"][0][0]
         by_source.setdefault(src, []).append(e)
 
+    _TOKEN_JACCARD_THRESHOLD = 0.5
+    _TOKEN_JACCARD_MIN_TOKENS = 1  # ignore empty names
+
     sources = list(by_source.keys())
     if len(sources) >= 2:
         for i in range(len(sources)):
@@ -211,29 +291,50 @@ def cluster(conn, dry_run: bool = False) -> dict:
                 list_a = by_source[src_a]
                 list_b = by_source[src_b]
 
-                # Build first-word index for list_b for fast pre-filtering
-                # Two names with different first words can't have Levenshtein ≤ 2
-                # unless the names are very short (≤ 4 chars)
-                first_word_b: dict[str, list] = {}
+                # Build token index for list_b: token → list of (entity, norm, token_set)
+                # Allows fast candidate lookup: any entity sharing a token with ea is a candidate.
+                token_index_b: dict[str, list] = {}
                 for eb in list_b:
                     norm_b = _normalize(eb["display_name"])
-                    fw = norm_b.split()[0] if norm_b else ""
-                    first_word_b.setdefault(fw, []).append((eb, norm_b))
+                    toks_b = _tokens(norm_b)
+                    for tok in toks_b:
+                        token_index_b.setdefault(tok, []).append((eb, norm_b, toks_b))
 
                 for ea in list_a:
                     norm_a = _normalize(ea["display_name"])
+                    toks_a = _tokens(norm_a)
                     src_id_a = ea["sources"][0][1]
-                    fw_a = norm_a.split()[0] if norm_a else ""
 
-                    # Candidate list: same first word, OR short names (≤ 6 chars total)
-                    candidates = first_word_b.get(fw_a, [])
-                    if len(norm_a) <= 6:
-                        # Short names: also check all other buckets
-                        candidates = [(eb, nb) for fw, eblist in first_word_b.items() for eb, nb in eblist]
+                    if len(toks_a) < _TOKEN_JACCARD_MIN_TOKENS:
+                        continue
 
-                    for eb, norm_b in candidates:
-                        if _levenshtein(norm_a, norm_b) > 2:
+                    # Candidate set: any entity in list_b that shares at least one token with ea.
+                    # Deduplicate by entity_id since an entity may appear in multiple token buckets.
+                    seen_b: set[str] = set()
+                    candidates: list[tuple] = []
+                    for tok in toks_a:
+                        for eb, norm_b, toks_b in token_index_b.get(tok, []):
+                            if eb["entity_id"] not in seen_b:
+                                seen_b.add(eb["entity_id"])
+                                candidates.append((eb, norm_b, toks_b))
+
+                    for eb, norm_b, toks_b in candidates:
+                        # Skip entities already absorbed into another merge
+                        if eb.get("_absorbed"):
                             continue
+
+                        # Token Jaccard filter
+                        union = toks_a | toks_b
+                        jaccard = len(toks_a & toks_b) / len(union) if union else 0.0
+
+                        # Also accept Levenshtein ≤ 2 for short names (≤ 2 tokens) where
+                        # Jaccard is unstable (e.g. single-word names like "Squat" vs "Squats")
+                        is_short = len(toks_a) <= 2 and len(toks_b) <= 2
+                        lev_close = is_short and _levenshtein(norm_a, norm_b) <= 2
+
+                        if jaccard < _TOKEN_JACCARD_THRESHOLD and not lev_close:
+                            continue
+
                         src_id_b = eb["sources"][0][1]
                         score = _biomechanical_score(conn, src_a, src_id_a, src_b, src_id_b)
                         if score >= 0.7:
@@ -284,7 +385,11 @@ def cluster(conn, dry_run: bool = False) -> dict:
                     (e["entity_id"], source, source_id, confidence),
                 )
 
+        # Build set of surviving entity_ids (absorbed entities are not written)
+        absorbed_ids = {e["entity_id"] for e in entities if e.get("_absorbed")}
         for p in possible:
+            if p["entity_id_a"] in absorbed_ids or p["entity_id_b"] in absorbed_ids:
+                continue  # entity was later absorbed — triage entry is moot
             conn.execute(
                 "INSERT INTO possible_matches (entity_id_a, entity_id_b, score, status) VALUES (?, ?, ?, 'open')",
                 (p["entity_id_a"], p["entity_id_b"], p["score"]),

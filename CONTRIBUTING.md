@@ -88,7 +88,7 @@ and re-run the full enrichment pass.
 # Default provider (Anthropic)
 python3 pipeline/enrich.py --concurrency 4
 
-# Gemini
+# Gemini (synchronous — subject to 250 RPD limit)
 python3 pipeline/enrich.py --provider gemini
 python3 pipeline/enrich.py --provider gemini --model gemini-3.1-pro-preview
 python3 pipeline/enrich.py --provider gemini --thinking low
@@ -102,6 +102,28 @@ python3 pipeline/enrich.py --limit 10             # enrich a sample
 python3 pipeline/enrich.py --force <entity_id>    # re-enrich a specific entity
 python3 pipeline/enrich.py --dump-prompts ./out   # save prompts without calling API
 ```
+
+### Gemini Batch API (faster, 50% cheaper)
+
+Submits all pending entities as a single async job — no RPD limit, results in ~24h.
+
+```bash
+# Step 1: submit the batch job (saves job name to pipeline/batch_job_id.txt)
+python3 pipeline/batch_export.py
+python3 pipeline/batch_export.py --dry-run     # count pending, no API call
+python3 pipeline/batch_export.py --limit 100   # partial batch for testing
+
+# Step 2: poll and ingest when done
+python3 pipeline/batch_ingest.py --status      # check job state
+python3 pipeline/batch_ingest.py --wait        # block until complete, then ingest
+python3 pipeline/batch_ingest.py               # ingest if already done
+
+# Step 3: build graph
+python3 pipeline/build.py
+```
+
+Batch tracking files (`pipeline/batch_job_id.txt`, `pipeline/batch_manifest.json`) are
+gitignored and removed automatically after a clean ingest.
 
 ---
 
@@ -118,9 +140,9 @@ Import `FEG_NS` from `constants.py` — never hardcode the namespace string in P
 ```
 sources/*/fetch.py
         ↓
-pipeline/identity.py
-        ↓
 pipeline/canonicalize.py
+        ↓
+pipeline/identity.py
         ↓
 pipeline/reconcile.py
         ↓

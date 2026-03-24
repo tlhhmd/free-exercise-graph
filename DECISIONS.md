@@ -2853,6 +2853,50 @@ Timing: deletion occurs at the start of implementation, not before. Existing fil
 
 ---
 
+### ADR-091: HipFlexionIsometric rejected — sustained positions expressed via MovementPattern, not JointAction
+
+**Decision:** Do not add `feg:HipFlexionIsometric` (or any isometric joint action variant) to `joint_actions.ttl`. The two quarantined exercises (`Alternating_Double_Kettlebell_Bent_Over_Row`, `Alternating_Single_Arm_Kettlebell_Ballistic_Row`) will be re-enriched under the new pipeline without a dedicated isometric joint action term. The hip hinge position maintained throughout these exercises is expressed by `feg:movementPattern feg:HipHinge`, not by a joint action.
+
+**Rationale:** Joint actions describe what is *moving* — the concentric or eccentric motion occurring at a joint during the exercise. A sustained static position (isometric hold) is not a joint action; it is the absence of joint motion under load. The old pipeline's LLM reached for a joint action term because movement pattern vocabulary was not included in its output schema at the time — it was trying to express "there is a hip hinge here" through the only available channel.
+
+Adding isometric variants creates two compounding problems:
+
+1. **Vocabulary explosion.** If `HipFlexionIsometric` is valid, so is `KneeFlexionIsometric` (wall sit, goblet squat hold), `ShoulderAbductionIsometric` (waiter's carry), `SpinalExtensionIsometric` (any brace under load), and so on. There is no principled boundary. Every compound exercise involves multiple joints held isometrically — a deadlift has isometric elbow work, a squat has isometric shoulder work holding the bar.
+
+2. **Redundancy.** `movementPattern: HipHinge` already encodes that the hip is in a loaded hinge position throughout the exercise. A `HipFlexionIsometric` joint action would say the same thing through a different property with no additional discriminating information.
+
+**Durable rule:** Isometric holds and sustained positions are expressed via `feg:movementPattern`. The `feg:jointAction` vocabulary is reserved for movements — flexion, extension, abduction, rotation — not for the static positions between or around them.
+
+**No vocabulary changes required.** No version bump.
+
+---
+
+### ADR-092: Identity resolution algorithm overhaul — equipment-aware normalization, token Jaccard pre-filter, inline fed muscle scoring
+
+**Decision:** Overhaul `pipeline/identity.py` with three changes that together fix cross-source entity resolution between free-exercise-db and functional-fitness-db:
+
+1. **Equipment-aware name normalization** — strip a fixed set of equipment modifier words (Barbell, Dumbbell, Kettlebell, Cable, Machine, EZ Curl Bar, Resistance Band, Bodyweight, Medicine Ball, Foam Roller, Exercise Ball, Sandbag, Suspension Trainer) from exercise names before comparison. Applied inside `_normalize()`. Consistent with ADR-001: equipment is a property of how an exercise is performed, not of its identity. "Barbell Romanian Deadlift" and "Romanian Deadlift" are the same movement.
+
+2. **Token Jaccard pre-filter** — replace Levenshtein ≤ 2 with token Jaccard ≥ 0.5 on the normalized name token sets. This catches cross-source naming variation (e.g. "Romanian Deadlift" ↔ "Romanian Deadlift Barbell") that Levenshtein ≤ 2 misses entirely, while remaining fast (set intersection, no character-level comparison). Threshold 0.5 means pairs must share at least half their tokens to be evaluated. Levenshtein is retained as an additional candidate path for very short names (≤ 2 tokens) where Jaccard is unstable.
+
+3. **Inline fed muscle scoring** — `_biomechanical_score()` reads `source_metadata.raw_data` for free-exercise-db records and maps the 17 coarse muscle strings ("abdominals", "lats", "lower back", etc.) to feg region names using a hardcoded lookup table. These are stored in `raw_data` as `primaryMuscles`/`secondaryMuscles` arrays. This fixes the biomechanical scoring gap: previously, free-exercise-db contributed no muscle signal because the adapter stores muscles as hint text only (no feg crosswalk). The lookup table lives in `identity.py` — it does not require a crosswalk CSV or any adapter change.
+
+**Why these three together:** The Levenshtein pre-filter and the biomechanical scorer were independently broken for cross-source matching. Fixing either one alone produces no improvement: a better pre-filter with a broken scorer still makes wrong decisions; a fixed scorer with a broken pre-filter never evaluates the right candidates. All three changes are required for the fix to be effective.
+
+**Merge/defer thresholds unchanged:** ≥ 0.7 auto-merge, 0.4–0.7 defer to `possible_matches`, < 0.4 keep separate. These thresholds were sound; the scoring input was broken, not the thresholds.
+
+**Pipeline impact:** Re-running `identity.py` clears and rewrites `entities`, `entity_sources`, and `possible_matches`. It also cascades to clear `resolved_claims`, `conflicts`, `inferred_claims`, and `enrichment_stamps` (5 entities enriched so far — acceptable loss). After re-run, `pipeline/canonicalize.py` and `pipeline/reconcile.py` must be re-run before enrichment resumes.
+
+**Alternatives considered:**
+- *Add a muscle crosswalk CSV for free-exercise-db*: Correct long-term but requires adapter changes, a new file, and a canonicalize re-run. The inline lookup achieves the same result for identity scoring at zero additional file overhead. If the fed adapter ever grows a proper muscle crosswalk, the inline table in identity.py can be removed.
+- *Instructions text BM25 retrieval*: Rich signal but asymmetric — ffdb has no instructions. Cross-source retrieval would be noisy. Dropped.
+- *Embedding-based similarity*: Would require installing sentence-transformers and an embedding API call per exercise. Overkill for a dataset of this size; token Jaccard is sufficient.
+- *LLM disambiguation*: Reserved as a second pass for whatever the triage queue surfaces post-implementation.
+
+**No vocabulary changes. No version bumps.**
+
+---
+
 ## Open Questions
 
 - **Joint action movement patterns:** `Pull` and `VerticalPush` are poor fits for

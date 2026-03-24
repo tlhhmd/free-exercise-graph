@@ -4,34 +4,36 @@ Items are grouped by theme, roughly priority-ordered within each group.
 
 ---
 
+## Enrichment provider decision (pending — 2026-03-23)
+
+Considering Claude Sonnet 4.6 (~$52, done in hours) vs. Gemini 2.0 Flash paid (~$2, done in hours) vs. Gemini 2.0 Flash free (3 days, $0). Sonnet is the leaning. Key question: is the quality difference worth ~$50 on a constrained-output task?
+
+- [ ] **Decide on provider and kick off full enrichment run**
+
+---
+
 ## Enrichment in progress
 
-Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider. Context cache active (`pipeline/gemini_cache_id.txt`). Rate limit: ~250 RPD → ~16-day run at 4,095 entities. Script is resume-safe via `enrichment_stamps`.
+Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider.
 
-- [ ] **Let enrichment run to completion** — then:
+**Option A — synchronous:** Context cache active (`pipeline/gemini_cache_id.txt`). Rate limit: ~250 RPD → ~16-day run at 4,095 entities. Script is resume-safe via `enrichment_stamps`.
+
+**Option B — batch:** `pipeline/batch_export.py` + `pipeline/batch_ingest.py`. Single async job, ~24h turnaround, 50% cheaper, no RPD limit.
+
+- [ ] **Complete enrichment** (via sync or batch), then:
   ```bash
   python3 pipeline/build.py
   python3 test_shacl.py
   ```
-- [ ] **Verify Gemini context cache** — check that `cached=~9000` appears in enrich.py output on every call. If `cached=0`, the cache creation failed and we're paying full input price per call.
+- [ ] **Verify Gemini context cache** (sync path only) — check that `cached=~9000` appears in enrich.py output on every call. If `cached=0`, the cache creation failed and we're paying full input price per call.
 
 ---
 
-## Quarantine resolution (resolved by re-enrichment)
-
-These 4 exercises will be re-enriched under the new pipeline. Keeping for reference:
-
-- **HipHinge-in-joint-actions** (2 exercises: `Alternating_Double_Kettlebell_Bent_Over_Row`, `Alternating_Single_Arm_Kettlebell_Ballistic_Row`) — model has no joint action term for "maintaining a hip hinge position." Design decision: add `HipFlexionIsometric` or accept `HipFlexion` in supporting actions.
-- **Hallucinated muscle names** (2 exercises: `Resistance_Band_Pull_Apart` → `InfraspinatusHead`, `Single_Arm_Kettlebell_Suitcase_Alternating_Reverse_Lunge` → `LowerGastrocnemius`) — re-enrich under new pipeline.
-
----
 
 ## Pipeline improvements (post-enrichment)
 
 - [ ] **Triage queue tooling** — `identity.py` defers near-duplicate pairs to `possible_matches`. Build a simple CLI review tool: show pairs side by side, accept merge / separate / variant_of decisions.
 - [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end and prints a table. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
-- [ ] **Fed muscle crosswalk** — fed exercises currently have no feg-mapped muscles in resolved_claims (raw strings, no crosswalk). The LLM infers them from scratch. A crosswalk would give the LLM better grounding for 873 fed exercises.
-
 ---
 
 ## MCP server
@@ -55,10 +57,11 @@ These 4 exercises will be re-enriched under the new pipeline. Keeping for refere
 
 ---
 
-## Governance and documentation
+## Validation and quality
 
-- [ ] **Trend tracking for quality scorecard** — append summary stats from `validate.py` runs to `quality_history.csv` to show trend over time.
-- [ ] **Productized quality scorecard** — stakeholder-readable Graph Health report summarizing `validate.py` output.
+- [ ] **Build `pipeline/validate.py`** — 6-dimension quality scorecard (validity, uniqueness, integrity, timeliness, consistency, completeness). Design before building; needs a real graph to validate against. Unblock after enrichment completes.
+- [ ] **Add build smoke test to CI** — `pipeline/build.py` can run against an empty `pipeline.db` to verify RDF assembly doesn't crash. Add as a CI step after seeding a minimal fixture DB.
+- [ ] **Trend tracking** — append summary stats from `validate.py` runs to `quality_history.csv` once validate.py exists.
 
 ---
 

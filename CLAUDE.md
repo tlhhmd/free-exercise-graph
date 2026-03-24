@@ -108,18 +108,18 @@ Downloads upstream source data into `sources/<source>/raw/`. Never modify raw fi
 python3 sources/<source>/fetch.py
 ```
 
-### Stage 2 — identity.py
-Resolves source records across all sources into canonical entities using biomechanical similarity scoring. Writes entity clusters and confidence scores to SQLite. Ambiguous matches are linked via `possible_matches` and proceed independently — pipeline is never blocked.
-
-```bash
-python3 pipeline/identity.py
-```
-
-### Stage 3 — canonicalize.py
+### Stage 2 — canonicalize.py
 Aggregates all asserted facts from source records into the claims table, tagged by source and origin type. Runs conflict detection. Produces the canonical sparse layer per entity.
 
 ```bash
 python3 pipeline/canonicalize.py
+```
+
+### Stage 3 — identity.py
+Resolves source records across all sources into canonical entities using biomechanical similarity scoring. Writes entity clusters and confidence scores to SQLite. Ambiguous matches are linked via `possible_matches` and proceed independently — pipeline is never blocked.
+
+```bash
+python3 pipeline/identity.py
 ```
 
 ### Stage 4 — reconcile.py
