@@ -134,6 +134,12 @@ def _apply_merge(conn, entity_id_a: str, entity_id_b: str) -> None:
         conn.execute("DELETE FROM enrichment_stamps WHERE entity_id = ?", (entity_id_b,))
         conn.execute("DELETE FROM conflicts WHERE entity_id = ?", (entity_id_b,))
 
+        # Remove all possible_matches referencing entity_b — rows must be gone before entity delete
+        conn.execute(
+            "DELETE FROM possible_matches WHERE entity_id_a = ? OR entity_id_b = ?",
+            (entity_id_b, entity_id_b),
+        )
+
         # Delete entity_b
         conn.execute("DELETE FROM entities WHERE entity_id = ?", (entity_id_b,))
 
@@ -230,9 +236,54 @@ def triage(conn) -> None:
         print(f"{merges} merge(s) applied. Re-run pipeline/reconcile.py to regenerate resolved_claims.")
 
 
+def show_next(conn) -> None:
+    """Print the next open pair in a machine-readable way for non-interactive review."""
+    pair = conn.execute(
+        "SELECT id, entity_id_a, entity_id_b, score FROM possible_matches WHERE status = 'open' ORDER BY score DESC, id LIMIT 1"
+    ).fetchone()
+    if not pair:
+        print("NO_PAIRS")
+        return
+
+    total = conn.execute("SELECT COUNT(*) FROM possible_matches WHERE status = 'open'").fetchone()[0]
+    reviewed = conn.execute("SELECT COUNT(*) FROM possible_matches WHERE status != 'open'").fetchone()[0]
+
+    info_a = _entity_info(conn, pair["entity_id_a"])
+    info_b = _entity_info(conn, pair["entity_id_b"])
+
+    print(f"PAIR_ID={pair['id']}")
+    print(f"REMAINING={total}  REVIEWED={reviewed}")
+    _show_pair(reviewed + 1, reviewed + total, pair, info_a, info_b)
+
+
+def decide(conn, pair_id: int, decision: str) -> None:
+    """Apply a single decision to a pair by ID."""
+    pair = conn.execute(
+        "SELECT id, entity_id_a, entity_id_b, score, status FROM possible_matches WHERE id = ?",
+        (pair_id,),
+    ).fetchone()
+    if not pair:
+        print(f"Error: pair {pair_id} not found.")
+        return
+    if pair["status"] != "open":
+        print(f"Pair {pair_id} already has status '{pair['status']}' — skipping.")
+        return
+
+    _apply_decision(conn, pair_id, pair["entity_id_a"], pair["entity_id_b"], decision)
+
+    labels = {"m": "merged", "s": "separate", "v": "variant_of", "?": "skipped"}
+    print(f"→ {labels.get(decision, decision)}: {pair['entity_id_a']} ↔ {pair['entity_id_b']}")
+
+    if decision == "m":
+        print("  (Re-run pipeline/reconcile.py after all merges.)")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Interactive triage queue for near-duplicate exercise pairs.")
     parser.add_argument("--pending", action="store_true", help="Print count of open pairs and exit")
+    parser.add_argument("--next", action="store_true", help="Print the next open pair and exit")
+    parser.add_argument("--decide", nargs=2, metavar=("PAIR_ID", "DECISION"),
+                        help="Apply decision (m/s/v/?) to a pair by ID and exit")
     args = parser.parse_args()
 
     conn = get_connection(DB_PATH)
@@ -240,6 +291,21 @@ def main() -> None:
     if args.pending:
         n = conn.execute("SELECT COUNT(*) FROM possible_matches WHERE status = 'open'").fetchone()[0]
         print(f"{n} open pair(s) in triage queue.")
+        conn.close()
+        return
+
+    if args.next:
+        show_next(conn)
+        conn.close()
+        return
+
+    if args.decide:
+        pair_id_str, decision = args.decide
+        if decision not in ("m", "s", "v", "?"):
+            print("Decision must be one of: m s v ?")
+            conn.close()
+            return
+        decide(conn, int(pair_id_str), decision)
         conn.close()
         return
 
