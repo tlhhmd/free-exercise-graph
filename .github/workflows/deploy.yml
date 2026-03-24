@@ -30,7 +30,7 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -e .
+        run: pip install rdflib pyoxigraph
 
       - name: Generate site data
         run: python3 feg_site.py --from-graph
