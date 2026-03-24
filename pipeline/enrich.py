@@ -142,8 +142,8 @@ def _format_user_message(conn, entity_id: str, display_name: str) -> str:
 
 # ─── Writing inferred claims ──────────────────────────────────────────────────
 
-def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict, model: str | None = None) -> None:
-    """Write LLM output to inferred_claims and enrichment_stamps."""
+def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict, model: str | None = None, warnings: list[tuple[str, str]] | None = None) -> None:
+    """Write LLM output to inferred_claims, enrichment_stamps, and enrichment_warnings."""
     rows = []
 
     for mi in fields.get("muscle_involvements", []):
@@ -182,10 +182,17 @@ def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict, mo
         "INSERT INTO inferred_claims (entity_id, predicate, value, qualifier) VALUES (?, ?, ?, ?)",
         rows,
     )
+    now = datetime.now(timezone.utc).isoformat()
     conn.execute(
         "INSERT OR REPLACE INTO enrichment_stamps (entity_id, versions_json, enriched_at, model) VALUES (?, ?, ?, ?)",
-        (entity_id, json.dumps(vocab_versions), datetime.now(timezone.utc).isoformat(), model),
+        (entity_id, json.dumps(vocab_versions), now, model),
     )
+    if warnings:
+        conn.execute("DELETE FROM enrichment_warnings WHERE entity_id = ?", (entity_id,))
+        conn.executemany(
+            "INSERT INTO enrichment_warnings (entity_id, predicate, stripped_value, enriched_at) VALUES (?, ?, ?, ?)",
+            [(entity_id, pred, val, now) for pred, val in warnings],
+        )
 
 
 # ─── Main enrichment loop ─────────────────────────────────────────────────────
@@ -281,15 +288,15 @@ def run(
         try:
             raw, usage = llm.call(system_prompt, user_msg)
             enrichment = parse_enrichment(raw)
-            return entity_id, display_name, enrichment.model_dump(exclude_none=True), usage, None
+            return entity_id, display_name, enrichment.model_dump(exclude_none=True), enrichment._warnings, usage, None
         except Exception as e:
-            return entity_id, display_name, None, None, e
+            return entity_id, display_name, None, [], None, e
 
     completed = 0
     with ThreadPoolExecutor(max_workers=concurrency) as executor:
         futures = {executor.submit(process, e): e for e in pending}
         for future in as_completed(futures):
-            entity_id, display_name, fields, usage, err = future.result()
+            entity_id, display_name, fields, warns, usage, err = future.result()
             completed += 1
             if err:
                 print(f"  ❌ [{completed}/{total}] {display_name}  {err}", flush=True)
@@ -300,7 +307,7 @@ def run(
                     )
             else:
                 with get_connection(db_path) as write_conn:
-                    _write_inferred(write_conn, entity_id, fields, vocab_vers, model=llm.model)
+                    _write_inferred(write_conn, entity_id, fields, vocab_vers, model=llm.model, warnings=warns)
                 usage_str = f"  {usage}" if usage else ""
                 print(f"  ✅ [{completed}/{total}] {display_name}{usage_str}", flush=True)
 
@@ -322,10 +329,33 @@ def main() -> None:
                         help="Gemini thinking level: minimal | low | medium | high")
     parser.add_argument("--quarantine",   action="store_true",
                         help="Print entities with ≥3 failures and exit")
+    parser.add_argument("--restamp",      metavar="TERM",
+                        help="Force re-enrichment of entities that had TERM stripped (vocab update recovery)")
     args = parser.parse_args()
 
     from dotenv import load_dotenv
     load_dotenv()
+
+    if args.restamp:
+        conn = get_connection(DB_PATH)
+        rows = conn.execute(
+            "SELECT DISTINCT entity_id FROM enrichment_warnings WHERE stripped_value = ?",
+            (args.restamp,),
+        ).fetchall()
+        conn.close()
+        if not rows:
+            print(f"No entities with stripped term {args.restamp!r}.")
+            return
+        eids = [r[0] for r in rows]
+        print(f"Re-enriching {len(eids)} entity(s) that had {args.restamp!r} stripped...")
+        run(
+            force=eids,
+            concurrency=args.concurrency,
+            provider=args.provider,
+            model=args.model,
+            thinking_level=args.thinking,
+        )
+        return
 
     if args.quarantine:
         conn = get_connection(DB_PATH)

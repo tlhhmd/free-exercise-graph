@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ValidationError, model_validator
+from pydantic import BaseModel, PrivateAttr, ValidationError, model_validator
 from rdflib import Graph, Literal as RDFLiteral, Namespace, URIRef
 from rdflib.namespace import RDF, SKOS
 
@@ -56,6 +56,10 @@ class ExerciseEnrichment(BaseModel):
     is_combination: bool | None = None
     plane_of_motion: list[str] = []
     exercise_style: list[str] = []
+
+    # Collects (predicate, stripped_value) pairs during validation — persisted to
+    # enrichment_warnings by _write_inferred so vocab updates can trigger re-enrichment.
+    _warnings: list[tuple[str, str]] = PrivateAttr(default_factory=list)
 
     @model_validator(mode="after")
     def auto_correct_cross_vocab(self) -> "ExerciseEnrichment":
@@ -115,42 +119,56 @@ class ExerciseEnrichment(BaseModel):
         bad_pja = [ja for ja in self.primary_joint_actions if ja not in ja_vocab]
         if bad_pja:
             self.primary_joint_actions = [ja for ja in self.primary_joint_actions if ja in ja_vocab]
-            warns.extend(f"stripped unknown primary_joint_action: {ja!r}" for ja in bad_pja)
+            for ja in bad_pja:
+                self._warnings.append(("primary_joint_action", ja))
+                warns.append(f"stripped unknown primary_joint_action: {ja!r}")
 
         bad_sja = [ja for ja in self.supporting_joint_actions if ja not in ja_vocab]
         if bad_sja:
             self.supporting_joint_actions = [ja for ja in self.supporting_joint_actions if ja in ja_vocab]
-            warns.extend(f"stripped unknown supporting_joint_action: {ja!r}" for ja in bad_sja)
+            for ja in bad_sja:
+                self._warnings.append(("supporting_joint_action", ja))
+                warns.append(f"stripped unknown supporting_joint_action: {ja!r}")
 
         mp_vocab = _KNOWN_VOCAB.get("movement_patterns", set())
         bad_mp = [mp for mp in self.movement_patterns if mp not in mp_vocab]
         if bad_mp:
             self.movement_patterns = [mp for mp in self.movement_patterns if mp in mp_vocab]
-            warns.extend(f"stripped unknown movement_pattern: {mp!r}" for mp in bad_mp)
+            for mp in bad_mp:
+                self._warnings.append(("movement_pattern", mp))
+                warns.append(f"stripped unknown movement_pattern: {mp!r}")
 
         tm_vocab = _KNOWN_VOCAB.get("training_modalities", set())
         bad_tm = [tm for tm in self.training_modalities if tm not in tm_vocab]
         if bad_tm:
             self.training_modalities = [tm for tm in self.training_modalities if tm in tm_vocab]
-            warns.extend(f"stripped unknown training_modality: {tm!r}" for tm in bad_tm)
+            for tm in bad_tm:
+                self._warnings.append(("training_modality", tm))
+                warns.append(f"stripped unknown training_modality: {tm!r}")
 
         mu_vocab = _KNOWN_VOCAB.get("muscles", set())
         bad_mu = [inv.muscle for inv in self.muscle_involvements if inv.muscle not in mu_vocab]
         if bad_mu:
             self.muscle_involvements = [inv for inv in self.muscle_involvements if inv.muscle in mu_vocab]
-            warns.extend(f"stripped unknown muscle: {m!r}" for m in bad_mu)
+            for m in bad_mu:
+                self._warnings.append(("muscle", m))
+                warns.append(f"stripped unknown muscle: {m!r}")
 
         pom_vocab = _KNOWN_VOCAB.get("planes_of_motion", set())
         bad_pom = [pom for pom in self.plane_of_motion if pom not in pom_vocab]
         if bad_pom:
             self.plane_of_motion = [pom for pom in self.plane_of_motion if pom in pom_vocab]
-            warns.extend(f"stripped unknown plane_of_motion: {pom!r}" for pom in bad_pom)
+            for pom in bad_pom:
+                self._warnings.append(("plane_of_motion", pom))
+                warns.append(f"stripped unknown plane_of_motion: {pom!r}")
 
         es_vocab = _KNOWN_VOCAB.get("exercise_styles", set())
         bad_es = [es for es in self.exercise_style if es not in es_vocab]
         if bad_es:
             self.exercise_style = [es for es in self.exercise_style if es in es_vocab]
-            warns.extend(f"stripped unknown exercise_style: {es!r}" for es in bad_es)
+            for es in bad_es:
+                self._warnings.append(("exercise_style", es))
+                warns.append(f"stripped unknown exercise_style: {es!r}")
 
         if warns:
             print(f"  ⚠ vocab: {'; '.join(warns)}", file=sys.stderr)
