@@ -32,7 +32,7 @@ Gemini 3.1 Pro (`gemini-3.1-pro-preview`) selected as provider.
 
 ## Pipeline improvements (pre-enrichment)
 
-- [ ] **Run triage queue** — `pipeline/triage.py` is built; 64 open pairs. Run it, then re-run `pipeline/reconcile.py` to regenerate resolved_claims for merged entities.
+- [ ] **Decide on enrichment provider and kick off run** — see section above.
 
 ## Pipeline improvements (post-enrichment)
 
