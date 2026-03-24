@@ -33,8 +33,11 @@ pipeline/pipeline.db-wal
 *.db-shm
 *.db-wal
 
-# Derived graph output
-graph.ttl
+# graph.ttl is committed — it's the source of truth for the static site deploy
+
+# Site generated data (built by feg_site.py / CI)
+site/data.json
+site/vocab.json
 
 # Local environment files
 .env
