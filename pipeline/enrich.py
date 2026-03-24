@@ -142,7 +142,7 @@ def _format_user_message(conn, entity_id: str, display_name: str) -> str:
 
 # ─── Writing inferred claims ──────────────────────────────────────────────────
 
-def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict) -> None:
+def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict, model: str | None = None) -> None:
     """Write LLM output to inferred_claims and enrichment_stamps."""
     rows = []
 
@@ -183,8 +183,8 @@ def _write_inferred(conn, entity_id: str, fields: dict, vocab_versions: dict) ->
         rows,
     )
     conn.execute(
-        "INSERT OR REPLACE INTO enrichment_stamps (entity_id, versions_json, enriched_at) VALUES (?, ?, ?)",
-        (entity_id, json.dumps(vocab_versions), datetime.now(timezone.utc).isoformat()),
+        "INSERT OR REPLACE INTO enrichment_stamps (entity_id, versions_json, enriched_at, model) VALUES (?, ?, ?, ?)",
+        (entity_id, json.dumps(vocab_versions), datetime.now(timezone.utc).isoformat(), model),
     )
 
 
@@ -280,7 +280,7 @@ def run(
                 print(f"  ❌ [{completed}/{total}] {display_name}  {err}", flush=True)
             else:
                 with get_connection(db_path) as write_conn:
-                    _write_inferred(write_conn, entity_id, fields, vocab_vers)
+                    _write_inferred(write_conn, entity_id, fields, vocab_vers, model=llm.model)
                 usage_str = f"  {usage}" if usage else ""
                 print(f"  ✅ [{completed}/{total}] {display_name}{usage_str}", flush=True)
 
