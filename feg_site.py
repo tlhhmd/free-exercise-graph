@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 from rdflib import Graph, Namespace
@@ -67,23 +68,61 @@ def _label(g: Graph, uri) -> str:
     return _local(uri)
 
 
+def _sorted_ids(ids: list[str], node_map: dict[str, dict], count_key: str = "count") -> list[str]:
+    return sorted(ids, key=lambda node_id: (-node_map[node_id][count_key], node_map[node_id]["label"]))
+
+
 # ─── Vocab extraction ─────────────────────────────────────────────────────────
 
 def _build_vocab(g: Graph, counts: dict) -> dict:
     """Build vocab.json structure from ontology graph."""
 
-    # Movement patterns — hierarchy
-    patterns = []
+    # Movement patterns — hierarchy with descendant rollups
+    pattern_nodes: dict[str, dict] = {}
+    pattern_children: dict[str | None, list[str]] = {}
     for mp in g.subjects(RDF.type, FEG.MovementPattern):
         local = _local(mp)
         broader = g.value(mp, SKOS.broader)
-        patterns.append({
+        parent = _local(broader) if broader else None
+        pattern_nodes[local] = {
             "id": local,
             "label": _label(g, mp),
-            "parent": _local(broader) if broader else None,
-            "count": counts.get(("pattern", local), 0),
+            "parent": parent,
+            "exactCount": counts.get(("pattern", local), 0),
+        }
+        pattern_children.setdefault(parent, []).append(local)
+
+    @lru_cache(maxsize=None)
+    def pattern_total(local: str) -> int:
+        return pattern_nodes[local]["exactCount"] + sum(
+            pattern_total(child_id) for child_id in pattern_children.get(local, [])
+        )
+
+    patterns = []
+
+    def emit_pattern(node_id: str, depth: int = 0) -> None:
+        total = pattern_total(node_id)
+        if total <= 0:
+            return
+        node = pattern_nodes[node_id]
+        patterns.append({
+            "id": node["id"],
+            "label": node["label"],
+            "parent": node["parent"],
+            "depth": depth,
+            "count": total,
         })
-    patterns.sort(key=lambda x: (x["parent"] or "", x["label"]))
+        for child_id in _sorted_ids(pattern_children.get(node_id, []), {
+            cid: {"label": pattern_nodes[cid]["label"], "count": pattern_total(cid)}
+            for cid in pattern_children.get(node_id, [])
+        }):
+            emit_pattern(child_id, depth + 1)
+
+    for root_id in _sorted_ids(pattern_children.get(None, []), {
+        node_id: {"label": pattern_nodes[node_id]["label"], "count": pattern_total(node_id)}
+        for node_id in pattern_children.get(None, [])
+    }):
+        emit_pattern(root_id)
 
     # Joint actions — grouped by joint
     joints_map: dict[str, dict] = {}
@@ -96,10 +135,13 @@ def _build_vocab(g: Graph, counts: dict) -> dict:
         joint_label = _label(g, broader)
         if joint_local not in joints_map:
             joints_map[joint_local] = {"id": joint_local, "label": joint_label, "actions": []}
+        count = counts.get(("ja", local), 0)
+        if count <= 0:
+            continue
         joints_map[joint_local]["actions"].append({
             "id": local,
             "label": _label(g, ja),
-            "count": counts.get(("ja", local), 0),
+            "count": count,
         })
     # Also include joint groups themselves
     for jg in g.subjects(RDF.type, FEG.JointGroup):
@@ -110,41 +152,117 @@ def _build_vocab(g: Graph, counts: dict) -> dict:
         j["actions"].sort(key=lambda a: -a["count"])
     joints = sorted(joints_map.values(), key=lambda j: j["label"])
 
+    # Training modalities
+    modalities = []
+    for tm in g.subjects(RDF.type, FEG.TrainingModality):
+        local = _local(tm)
+        count = counts.get(("modality", local), 0)
+        if count <= 0:
+            continue
+        modalities.append({
+            "id": local,
+            "label": _label(g, tm),
+            "count": count,
+        })
+    modalities.sort(key=lambda item: (-item["count"], item["label"]))
+
     # Equipment
     equipment = []
     for eq in g.subjects(RDF.type, FEG.Equipment):
         local = _local(eq)
+        count = counts.get(("equipment", local), 0)
+        if count <= 0:
+            continue
         equipment.append({
             "id": local,
             "label": _label(g, eq),
-            "count": counts.get(("equipment", local), 0),
+            "count": count,
         })
     equipment.sort(key=lambda e: -e["count"])
 
-    # Muscle hierarchy: regions → groups
+    # Muscle hierarchy: regions → descendants with rolled-up counts
+    muscle_nodes: dict[str, dict] = {}
+    muscle_children: dict[str | None, list[str]] = {}
+    type_labels = {
+        FEG.MuscleRegion: "region",
+        FEG.MuscleGroup: "group",
+        FEG.MuscleHead: "head",
+        FEG.Muscle: "muscle",
+    }
+    node_uris = (
+        set(g.subjects(RDF.type, FEG.MuscleRegion))
+        | set(g.subjects(RDF.type, FEG.MuscleGroup))
+        | set(g.subjects(RDF.type, FEG.MuscleHead))
+        | set(g.subjects(RDF.type, FEG.Muscle))
+    )
+    for node in node_uris:
+        local = _local(node)
+        broader = g.value(node, SKOS.broader)
+        parent = _local(broader) if broader else None
+        node_type = "muscle"
+        for rdf_type, label in type_labels.items():
+            if (node, RDF.type, rdf_type) in g:
+                node_type = label
+                break
+        muscle_nodes[local] = {
+            "id": local,
+            "label": _label(g, node),
+            "type": node_type,
+            "parent": parent,
+            "exactCount": counts.get(("muscle", local), 0),
+        }
+        muscle_children.setdefault(parent, []).append(local)
+
+    @lru_cache(maxsize=None)
+    def muscle_total(local: str) -> int:
+        return muscle_nodes[local]["exactCount"] + sum(
+            muscle_total(child_id) for child_id in muscle_children.get(local, [])
+        )
+
+    def build_muscle_node(local: str) -> dict | None:
+        total = muscle_total(local)
+        if total <= 0:
+            return None
+        children = [
+            build_muscle_node(child_id)
+            for child_id in _sorted_ids(
+                muscle_children.get(local, []),
+                {
+                    cid: {"label": muscle_nodes[cid]["label"], "count": muscle_total(cid)}
+                    for cid in muscle_children.get(local, [])
+                },
+            )
+        ]
+        return {
+            "id": local,
+            "label": muscle_nodes[local]["label"],
+            "type": muscle_nodes[local]["type"],
+            "count": total,
+            "children": [child for child in children if child is not None],
+        }
+
     regions = []
-    for region in g.subjects(RDF.type, FEG.MuscleRegion):
-        r_local = _local(region)
-        groups = []
-        for group in g.subjects(SKOS.broader, region):
-            g_local = _local(group)
-            groups.append({
-                "id": g_local,
-                "label": _label(g, group),
-                "count": counts.get(("muscle", g_local), 0),
-            })
-        groups.sort(key=lambda x: -x["count"])
-        regions.append({
-            "id": r_local,
-            "label": _label(g, region),
-            "groups": groups,
-            "count": sum(gr["count"] for gr in groups),
-        })
+    for region_id in _sorted_ids(
+        [
+            node_id
+            for node_id, node in muscle_nodes.items()
+            if node["type"] == "region" and node["parent"] is None
+        ],
+        {
+            node_id: {"label": muscle_nodes[node_id]["label"], "count": muscle_total(node_id)}
+            for node_id, node in muscle_nodes.items()
+            if node["type"] == "region" and node["parent"] is None
+        },
+    ):
+        node = build_muscle_node(region_id)
+        if node is not None:
+            regions.append(node)
     regions.sort(key=lambda r: -r["count"])
 
     return {
         "patterns": patterns,
         "joints": joints,
+        "modalities": modalities,
         "equipment": equipment,
         "muscles": {"regions": regions},
     }
@@ -281,6 +399,8 @@ def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], d
             counts[("ja", ja)] = counts.get(("ja", ja), 0) + 1
         for eq in equipment:
             counts[("equipment", eq)] = counts.get(("equipment", eq), 0) + 1
+        if modality_list:
+            counts[("modality", modality_list[0])] = counts.get(("modality", modality_list[0]), 0) + 1
 
         exercises.append({
             "id": eid,
@@ -400,6 +520,8 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
             counts[("ja", ja)] = counts.get(("ja", ja), 0) + 1
         for eq in ex["equipment"]:
             counts[("equipment", eq)] = counts.get(("equipment", eq), 0) + 1
+        if ex["modality"]:
+            counts[("modality", ex["modality"])] = counts.get(("modality", ex["modality"]), 0) + 1
 
     return exercises, counts
 
