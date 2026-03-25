@@ -5,19 +5,17 @@
 
 const DEGREE_ORDER = ["PrimeMover", "Synergist", "Stabilizer", "PassiveTarget"];
 const DEGREE_CLASS = {
-  PrimeMover:  "prime",
-  Synergist:   "synergist",
-  Stabilizer:  "stabilizer",
+  PrimeMover: "prime",
+  Synergist: "synergist",
+  Stabilizer: "stabilizer",
   PassiveTarget: "passive",
 };
 const DEGREE_LABEL = {
-  PrimeMover:   "Prime Mover",
-  Synergist:    "Synergist",
-  Stabilizer:   "Stabilizer",
+  PrimeMover: "Prime Mover",
+  Synergist: "Synergist",
+  Stabilizer: "Stabilizer",
   PassiveTarget: "Passive Target",
 };
-
-// ── State ────────────────────────────────────────────────────────────────────
 
 const state = {
   exercises: [],
@@ -25,17 +23,17 @@ const state = {
   activeTab: "exercises",
   search: "",
   filters: {
-    muscles: [],      // muscle IDs
-    patterns: [],     // pattern IDs
-    equipment: [],    // equipment IDs
-    joints: [],       // joint action IDs
-    compound: false,
+    muscles: [],
+    patterns: [],
+    modalities: [],
+    equipment: [],
+    joints: [],
   },
+  patternDescendants: {},
+  muscleDescendants: {},
   bodyView: "front",
   sheetExercise: null,
 };
-
-// ── Data loading ─────────────────────────────────────────────────────────────
 
 async function loadData() {
   try {
@@ -51,14 +49,13 @@ async function loadData() {
     }
     state.exercises = stateExercises;
     state.vocab = stateVocab;
+    buildHierarchyMaps();
     init();
   } catch (err) {
     console.error(err);
     renderFatalError(err);
   }
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function el(id) { return document.getElementById(id); }
 
@@ -83,184 +80,261 @@ function renderFatalError(err) {
 }
 
 function labelFor(id) {
-  // Try vocab lookup first, then split camelCase
-  for (const p of (state.vocab.patterns || [])) {
-    if (p.id === id) return p.label;
-  }
-  for (const j of (state.vocab.joints || [])) {
-    for (const a of j.actions) if (a.id === id) return a.label;
+  for (const p of state.vocab.patterns || []) if (p.id === id) return p.label;
+  for (const j of state.vocab.joints || []) {
     if (j.id === id) return j.label;
+    for (const a of j.actions || []) if (a.id === id) return a.label;
   }
-  for (const e of (state.vocab.equipment || [])) {
-    if (e.id === id) return e.label;
-  }
-  // camelCase split fallback
+  for (const m of state.vocab.modalities || []) if (m.id === id) return m.label;
+  for (const e of state.vocab.equipment || []) if (e.id === id) return e.label;
   return id.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
 }
 
-function muscleLabel(id) {
-  for (const r of (state.vocab.muscles?.regions || [])) {
-    for (const g of r.groups) if (g.id === id) return g.label;
-    if (r.id === id) return r.label;
+function findMuscleNode(id, nodes = state.vocab.muscles?.regions || []) {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    const found = findMuscleNode(id, node.children || []);
+    if (found) return found;
   }
-  return labelFor(id);
+  return null;
 }
 
-// ── Filtering ─────────────────────────────────────────────────────────────────
+function muscleLabel(id) {
+  return findMuscleNode(id)?.label || labelFor(id);
+}
+
+function buildHierarchyMaps() {
+  const patternChildren = {};
+  for (const pattern of state.vocab.patterns || []) {
+    const parent = pattern.parent || null;
+    patternChildren[parent] = patternChildren[parent] || [];
+    patternChildren[parent].push(pattern.id);
+  }
+
+  const patternDescendants = {};
+  function collectPatternDescendants(id) {
+    const descendants = [id];
+    for (const child of patternChildren[id] || []) {
+      descendants.push(...collectPatternDescendants(child));
+    }
+    patternDescendants[id] = descendants;
+    return descendants;
+  }
+  for (const pattern of state.vocab.patterns || []) collectPatternDescendants(pattern.id);
+  state.patternDescendants = patternDescendants;
+
+  const muscleDescendants = {};
+  function collectMuscleDescendants(node) {
+    const descendants = [node.id];
+    for (const child of node.children || []) {
+      descendants.push(...collectMuscleDescendants(child));
+    }
+    muscleDescendants[node.id] = descendants;
+    return descendants;
+  }
+  for (const region of state.vocab.muscles?.regions || []) collectMuscleDescendants(region);
+  state.muscleDescendants = muscleDescendants;
+}
+
+function selectedIds(type) {
+  return state.filters[type];
+}
+
+function toggleFilter(type, id) {
+  const arr = selectedIds(type);
+  const idx = arr.indexOf(id);
+  if (idx === -1) arr.push(id);
+  else arr.splice(idx, 1);
+  rerenderAll();
+}
+
+function clearFilters() {
+  state.filters = {
+    muscles: [],
+    patterns: [],
+    modalities: [],
+    equipment: [],
+    joints: [],
+  };
+  rerenderAll();
+}
+
+function filterMatchesHierarchy(selected, descendantsMap, values) {
+  if (!selected.length) return true;
+  return selected.some(id => {
+    const allowed = descendantsMap[id] || [id];
+    return values.some(value => allowed.includes(value));
+  });
+}
 
 function filteredExercises() {
   const q = state.search.toLowerCase().trim();
-  const { muscles, patterns, equipment, joints, compound } = state.filters;
+  const { muscles, patterns, modalities, equipment, joints } = state.filters;
 
   return state.exercises.filter(ex => {
     if (q && !ex.name.toLowerCase().includes(q)) return false;
-    if (compound && !ex.compound) return false;
-    if (patterns.length && !patterns.some(p => ex.patterns.includes(p))) return false;
-    if (equipment.length && !equipment.some(e => ex.equipment.includes(e))) return false;
+    if (!filterMatchesHierarchy(patterns, state.patternDescendants, ex.patterns)) return false;
+    if (!filterMatchesHierarchy(muscles, state.muscleDescendants, ex.muscles.map(m => m[0]))) return false;
+    if (modalities.length && !modalities.includes(ex.modality)) return false;
+    if (equipment.length && !equipment.some(eq => ex.equipment.includes(eq))) return false;
     if (joints.length && !joints.some(j => ex.primaryJA.includes(j) || ex.supportingJA.includes(j))) return false;
-    if (muscles.length) {
-      const exMuscles = ex.muscles.map(m => m[0]);
-      if (!muscles.some(m => exMuscles.includes(m))) return false;
-    }
     return true;
   });
 }
 
 function hasActiveFilters() {
-  const f = state.filters;
-  return f.muscles.length || f.patterns.length || f.equipment.length || f.joints.length || f.compound;
+  return Object.values(state.filters).some(values => values.length > 0);
 }
-
-// ── Substitution ─────────────────────────────────────────────────────────────
 
 function getSubstitutes(ex, limit = 8) {
   return state.exercises
-    .filter(e => e.id !== ex.id)
-    .map(e => {
-      const sharedPattern = ex.patterns.filter(p => e.patterns.includes(p)).length;
-      const sharedJA = ex.primaryJA.filter(ja => e.primaryJA.includes(ja)).length;
-      const diffEquip = ex.equipment.length > 0 && ex.equipment.some(eq => !e.equipment.includes(eq));
+    .filter(candidate => candidate.id !== ex.id)
+    .map(candidate => {
+      const sharedPattern = ex.patterns.filter(p => candidate.patterns.includes(p)).length;
+      const sharedJA = ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).length;
+      const diffEquip = ex.equipment.length > 0 && ex.equipment.some(eq => !candidate.equipment.includes(eq));
       const score = sharedPattern * 3 + sharedJA * 2 + (diffEquip ? 1 : 0);
       const reasons = [];
-      if (sharedPattern) reasons.push(ex.patterns.filter(p => e.patterns.includes(p)).map(labelFor).join(", "));
-      if (sharedJA && !sharedPattern) reasons.push(ex.primaryJA.filter(ja => e.primaryJA.includes(ja)).map(labelFor).join(", "));
-      return { ex: e, score, reason: reasons[0] || "" };
+      if (sharedPattern) {
+        reasons.push(ex.patterns.filter(p => candidate.patterns.includes(p)).map(labelFor).join(", "));
+      } else if (sharedJA) {
+        reasons.push(ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).map(labelFor).join(", "));
+      }
+      return { ex: candidate, score, reason: reasons[0] || "" };
     })
-    .filter(r => r.score >= 3)
+    .filter(result => result.score >= 3)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
 }
 
-// ── Rendering: exercise list ──────────────────────────────────────────────────
+function renderHero() {
+  const stats = [
+    { label: "Exercises", value: state.exercises.length.toLocaleString() },
+    { label: "Patterns", value: (state.vocab.patterns || []).filter(item => item.depth === 0).length },
+    { label: "Muscle regions", value: (state.vocab.muscles?.regions || []).length },
+    { label: "Joint groups", value: (state.vocab.joints || []).length },
+  ];
+  el("hero-stats").innerHTML = stats.map(stat => `
+    <span class="hero-stat"><strong>${stat.value}</strong> ${stat.label}</span>
+  `).join("");
+}
+
+function renderActiveFilters() {
+  const pills = [];
+  for (const [type, ids] of Object.entries(state.filters)) {
+    for (const id of ids) {
+      pills.push(`
+        <span class="active-filter-pill">
+          ${labelFor(id)}
+          <button type="button" data-remove-type="${type}" data-remove-id="${id}" aria-label="Remove ${labelFor(id)}">✕</button>
+        </span>
+      `);
+    }
+  }
+  const container = el("active-filters");
+  container.innerHTML = pills.join("");
+  container.style.display = pills.length ? "flex" : "none";
+  container.querySelectorAll("[data-remove-type]").forEach(button => {
+    button.addEventListener("click", () => toggleFilter(button.dataset.removeType, button.dataset.removeId));
+  });
+}
 
 function renderExerciseList() {
   const results = filteredExercises();
   el("result-count").textContent = `${results.length.toLocaleString()} exercise${results.length !== 1 ? "s" : ""}`;
+  renderActiveFilters();
 
   const list = el("exercise-list");
   if (!results.length) {
-    list.innerHTML = '<div class="empty">No exercises match your filters.</div>';
+    list.innerHTML = '<div class="empty">No exercises match your current filters.</div>';
     return;
   }
 
-  // Virtualise: render max 200 at a time (prevents long paint on initial load)
   const toRender = results.slice(0, 200);
   list.innerHTML = toRender.map(ex => {
-    const badge = ex.combination
-      ? `<span class="badge badge-combo">Combo</span>`
-      : ex.compound
-        ? `<span class="badge badge-compound">Compound</span>`
-        : `<span class="badge badge-isolation">Isolation</span>`;
+    const badges = [];
+    if (ex.modality) badges.push(`<span class="badge badge-modality">${labelFor(ex.modality)}</span>`);
+    if (ex.combination) badges.push(`<span class="badge badge-combo">Combination</span>`);
+    if (ex.laterality) badges.push(`<span class="badge badge-isolation">${labelFor(ex.laterality)}</span>`);
 
     const topMuscles = ex.muscles
-      .filter(m => m[1] === "PrimeMover" || m[1] === "Synergist")
+      .filter(([_, degree]) => degree === "PrimeMover" || degree === "Synergist")
       .slice(0, 3)
-      .map(([m, d]) => `<span class="muscle-pill pill-${DEGREE_CLASS[d]}">${muscleLabel(m)}</span>`)
+      .map(([muscle, degree]) => `<span class="muscle-pill pill-${DEGREE_CLASS[degree]}">${muscleLabel(muscle)}</span>`)
       .join("");
 
-    const pattern = ex.patterns.slice(0, 2).map(p =>
-      `<span style="color:var(--text-2)">${labelFor(p)}</span>`).join(" · ");
+    const pattern = ex.patterns.slice(0, 2).map(labelFor).join(" · ");
 
-    return `<div class="exercise-card" data-id="${ex.id}">
-      <div class="card-header">
-        <span class="card-name">${ex.name}</span>
-        ${badge}
+    return `
+      <div class="exercise-card" data-id="${ex.id}">
+        <div class="card-header">
+          <span class="card-name">${ex.name}</span>
+          ${badges.join("")}
+        </div>
+        <div class="card-meta">
+          ${topMuscles}
+          ${pattern ? `<span style="font-size:12px;color:var(--text-2)">${pattern}</span>` : ""}
+        </div>
       </div>
-      <div class="card-meta">
-        ${topMuscles}
-        ${pattern ? `<span style="font-size:12px;color:var(--text-2)">${pattern}</span>` : ""}
-      </div>
-    </div>`;
+    `;
   }).join("");
 
   if (results.length > 200) {
     list.innerHTML += `<div class="empty" style="padding:16px">Showing 200 of ${results.length}. Refine your search to see more.</div>`;
   }
 
-  // Bind clicks
   list.querySelectorAll(".exercise-card").forEach(card => {
     card.addEventListener("click", () => openSheet(card.dataset.id));
   });
 }
 
-// ── Rendering: detail sheet ───────────────────────────────────────────────────
-
 function openSheet(exerciseId) {
-  const ex = state.exercises.find(e => e.id === exerciseId);
+  const ex = state.exercises.find(item => item.id === exerciseId);
   if (!ex) return;
   state.sheetExercise = exerciseId;
 
   const badges = [];
+  if (ex.modality) badges.push(`<span class="badge badge-modality">${labelFor(ex.modality)}</span>`);
   if (ex.combination) badges.push(`<span class="badge badge-combo">Combination</span>`);
-  else if (ex.compound) badges.push(`<span class="badge badge-compound">Compound</span>`);
-  else badges.push(`<span class="badge badge-isolation">Isolation</span>`);
-  if (ex.laterality) badges.push(`<span class="badge" style="background:var(--surface-2)">${labelFor(ex.laterality)}</span>`);
-  if (ex.modality) badges.push(`<span class="badge" style="background:var(--accent-soft);color:var(--accent)">${labelFor(ex.modality)}</span>`);
+  if (ex.laterality) badges.push(`<span class="badge badge-isolation">${labelFor(ex.laterality)}</span>`);
 
-  // Muscles
   const musclesByDegree = {};
-  for (const [m, d] of ex.muscles) {
-    (musclesByDegree[d] = musclesByDegree[d] || []).push(m);
+  for (const [muscle, degree] of ex.muscles) {
+    (musclesByDegree[degree] = musclesByDegree[degree] || []).push(muscle);
   }
   const muscleBarsHtml = DEGREE_ORDER
-    .filter(d => musclesByDegree[d]?.length)
-    .map(d => {
-      const cls = DEGREE_CLASS[d];
-      return musclesByDegree[d].map(m => `
+    .filter(degree => musclesByDegree[degree]?.length)
+    .map(degree => {
+      const cls = DEGREE_CLASS[degree];
+      return musclesByDegree[degree].map(muscle => `
         <div class="muscle-bar">
-          <span class="muscle-bar-name">${muscleLabel(m)}</span>
+          <span class="muscle-bar-name">${muscleLabel(muscle)}</span>
           <div class="muscle-bar-track"><div class="muscle-bar-fill bar-${cls}"></div></div>
-          <span class="degree-tag deg-${cls}">${DEGREE_LABEL[d]}</span>
+          <span class="degree-tag deg-${cls}">${DEGREE_LABEL[degree]}</span>
         </div>`).join("");
     }).join("");
 
-  // Patterns
   const patternsHtml = ex.patterns.length
-    ? ex.patterns.map(p => `<span class="tag tag-primary">${labelFor(p)}</span>`).join("")
+    ? ex.patterns.map(pattern => `<span class="tag tag-primary">${labelFor(pattern)}</span>`).join("")
     : `<span class="tag" style="color:var(--text-2)">None</span>`;
 
-  // Joint actions
   const primaryJAHtml = ex.primaryJA.map(ja => `<span class="tag tag-primary">${labelFor(ja)}</span>`).join("");
   const supportingJAHtml = ex.supportingJA.map(ja => `<span class="tag">${labelFor(ja)}</span>`).join("");
-
-  // Equipment
   const equipHtml = ex.equipment.length
-    ? ex.equipment.map(e => `<span class="tag">${labelFor(e)}</span>`).join("")
+    ? ex.equipment.map(eq => `<span class="tag">${labelFor(eq)}</span>`).join("")
     : `<span class="tag">Bodyweight</span>`;
-
-  // Style
   const styleHtml = ex.style.length
-    ? ex.style.map(s => `<span class="tag">${labelFor(s)}</span>`).join("")
+    ? ex.style.map(style => `<span class="tag">${labelFor(style)}</span>`).join("")
     : "";
 
-  // Substitutes
   const subs = getSubstitutes(ex);
   const subsHtml = subs.length
-    ? subs.map(({ ex: s, reason }) => `
-        <div class="sub-card" data-id="${s.id}">
-          <div>${s.name}</div>
+    ? subs.map(({ ex: sub, reason }) => `
+        <div class="sub-card" data-id="${sub.id}">
+          <div>${sub.name}</div>
           ${reason ? `<div class="sub-why">${reason}</div>` : ""}
-        </div>`).join("")
+        </div>
+      `).join("")
     : `<div style="font-size:13px;color:var(--text-2)">No close substitutes found.</div>`;
 
   el("sheet-content").innerHTML = `
@@ -293,10 +367,9 @@ function openSheet(exerciseId) {
   el("sheet-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
 
-  // Sub card navigation
   el("sheet-content").querySelectorAll(".sub-card").forEach(card => {
-    card.addEventListener("click", e => {
-      e.stopPropagation();
+    card.addEventListener("click", event => {
+      event.stopPropagation();
       el("detail-sheet").scrollTop = 0;
       openSheet(card.dataset.id);
     });
@@ -312,147 +385,159 @@ app.closeSheet = function(e) {
   }
 };
 
-// ── Rendering: filter panels ──────────────────────────────────────────────────
+function renderPatternTags() {
+  const patternTags = el("pattern-tags");
+  patternTags.innerHTML = (state.vocab.patterns || []).map(pattern => {
+    const active = state.filters.patterns.includes(pattern.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="patterns" data-id="${pattern.id}" style="padding-left:${10 + pattern.depth * 14}px">
+        ${pattern.label} <span style="opacity:.6;font-size:11px">${pattern.count}</span>
+      </span>
+    `;
+  }).join("");
+}
+
+function renderMuscleFilterTree(nodes, depth = 0) {
+  return nodes.map(node => {
+    const active = state.filters.muscles.includes(node.id);
+    return `
+      <div>
+        <button class="hierarchy-node ${active ? "active" : ""}" data-type="muscles" data-id="${node.id}" style="margin-left:${depth * 16}px">
+          <span class="hierarchy-node-main">
+            <span>${node.label}</span>
+            <span class="hierarchy-node-kind">${node.type}</span>
+          </span>
+          <span class="vocab-item-count">${node.count}</span>
+        </button>
+        ${node.children?.length ? `<div class="hierarchy-children">${renderMuscleFilterTree(node.children, depth + 1)}</div>` : ""}
+      </div>
+    `;
+  }).join("");
+}
 
 function renderFilterPanels() {
-  // Patterns
-  const patternTags = el("pattern-tags");
-  const parents = state.vocab.patterns?.filter(p => !p.parent) || [];
-  patternTags.innerHTML = state.vocab.patterns?.map(p => {
-    const active = state.filters.patterns.includes(p.id);
-    return `<span class="filter-tag ${active ? "active" : ""}" data-type="pattern" data-id="${p.id}"
-      style="${p.parent ? "padding-left:18px;font-size:12px" : "font-weight:500"}"
-    >${p.label} <span style="opacity:.6;font-size:11px">${p.count}</span></span>`;
-  }).join("") || "";
+  renderPatternTags();
 
-  // Muscle groups
-  const muscleTags = el("muscle-filter-tags");
-  const groups = state.vocab.muscles?.regions?.flatMap(r => r.groups) || [];
-  muscleTags.innerHTML = groups.map(g => {
-    const active = state.filters.muscles.includes(g.id);
-    return `<span class="filter-tag ${active ? "active" : ""}" data-type="muscle" data-id="${g.id}"
-    >${g.label} <span style="opacity:.6;font-size:11px">${g.count}</span></span>`;
+  el("muscle-filter-tags").innerHTML = renderMuscleFilterTree(state.vocab.muscles?.regions || []);
+
+  el("modality-tags").innerHTML = (state.vocab.modalities || []).map(modality => {
+    const active = state.filters.modalities.includes(modality.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="modalities" data-id="${modality.id}">
+        ${modality.label} <span style="opacity:.6;font-size:11px">${modality.count}</span>
+      </span>
+    `;
   }).join("");
 
-  // Equipment
-  const equipTags = el("equipment-tags");
-  equipTags.innerHTML = state.vocab.equipment?.map(e => {
-    const active = state.filters.equipment.includes(e.id);
-    return `<span class="filter-tag ${active ? "active" : ""}" data-type="equipment" data-id="${e.id}"
-    >${e.label} <span style="opacity:.6;font-size:11px">${e.count}</span></span>`;
-  }).join("") || "";
+  el("equipment-tags").innerHTML = (state.vocab.equipment || []).map(equipment => {
+    const active = state.filters.equipment.includes(equipment.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="equipment" data-id="${equipment.id}">
+        ${equipment.label} <span style="opacity:.6;font-size:11px">${equipment.count}</span>
+      </span>
+    `;
+  }).join("");
 
-  // Bind filter tag clicks
-  document.querySelectorAll(".filter-tag").forEach(tag => {
-    tag.addEventListener("click", () => {
-      const { type, id } = tag.dataset;
-      const arr = type === "pattern" ? state.filters.patterns
-                : type === "muscle"  ? state.filters.muscles
-                :                      state.filters.equipment;
-      const idx = arr.indexOf(id);
-      if (idx === -1) arr.push(id); else arr.splice(idx, 1);
-      updateClearBtn();
-      renderFilterPanels();
-      renderExerciseList();
-    });
+  document.querySelectorAll(".filter-tag[data-type], .hierarchy-node[data-type]").forEach(node => {
+    node.addEventListener("click", () => toggleFilter(node.dataset.type, node.dataset.id));
   });
 }
 
-// ── Rendering: muscles tab ────────────────────────────────────────────────────
+function renderMuscleSection(nodes, depth = 0) {
+  return nodes.map(node => {
+    const active = state.filters.muscles.includes(node.id);
+    return `
+      <div class="muscle-group-row ${active ? "active" : ""}" data-muscle="${node.id}" style="margin-left:${depth * 16}px">
+        <span>${node.label}</span>
+        <span class="muscle-count">${node.count} exercises</span>
+      </div>
+      ${node.children?.length ? renderMuscleSection(node.children, depth + 1) : ""}
+    `;
+  }).join("");
+}
 
 function renderMuscleList() {
   const regions = state.vocab.muscles?.regions || [];
-  el("muscle-list").innerHTML = regions.flatMap(r =>
-    r.groups.map(g => {
-      const active = state.filters.muscles.includes(g.id);
-      return `<div class="muscle-group-row ${active ? "active" : ""}" data-muscle="${g.id}">
-        <span>${g.label}</span>
-        <span class="muscle-count">${g.count} exercises</span>
-      </div>`;
-    })
-  ).join("");
+  el("muscle-list").innerHTML = regions.map(region => `
+    <div class="vocab-section">
+      <div class="vocab-section-header open" data-muscle-section="${region.id}">
+        ${region.label} <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items open" id="muscle-section-${region.id}">
+        ${renderMuscleSection(region.children || [])}
+      </div>
+    </div>
+  `).join("");
 
   el("muscle-list").querySelectorAll(".muscle-group-row").forEach(row => {
-    row.addEventListener("click", () => {
-      const id = row.dataset.muscle;
-      const idx = state.filters.muscles.indexOf(id);
-      if (idx === -1) state.filters.muscles.push(id); else state.filters.muscles.splice(idx, 1);
-      switchTab("exercises");
-      updateClearBtn();
-      renderFilterPanels();
-      renderExerciseList();
+    row.addEventListener("click", () => toggleFilter("muscles", row.dataset.muscle));
+  });
+
+  document.querySelectorAll("[data-muscle-section]").forEach(header => {
+    header.addEventListener("click", event => {
+      if (event.target.closest(".muscle-group-row")) return;
+      const section = el(`muscle-section-${header.dataset.muscleSection}`);
+      const open = section.classList.toggle("open");
+      header.classList.toggle("open", open);
     });
   });
 }
 
-app.setBodyView = function(view) {
-  state.bodyView = view;
-  el("anatomy-front").style.display = view === "front" ? "" : "none";
-  el("anatomy-back").style.display  = view === "back"  ? "" : "none";
-  el("btn-front").classList.toggle("active", view === "front");
-  el("btn-back").classList.toggle("active", view === "back");
-};
-
-// ── Rendering: vocabulary tab ─────────────────────────────────────────────────
-
 function renderVocab() {
-  // Movement patterns
-  const patternItems = state.vocab.patterns || [];
-  el("vocab-patterns").innerHTML = patternItems.map(p => {
-    const active = state.filters.patterns.includes(p.id);
-    return `<div class="vocab-item ${active ? "active" : ""} ${p.parent ? "child" : ""}"
-      data-type="pattern" data-id="${p.id}">
-      <span>${p.label}</span>
-      <span class="vocab-item-count">${p.count}</span>
-    </div>`;
+  el("vocab-modalities").innerHTML = (state.vocab.modalities || []).map(modality => {
+    const active = state.filters.modalities.includes(modality.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="modalities" data-id="${modality.id}">
+        <span>${modality.label}</span>
+        <span class="vocab-item-count">${modality.count}</span>
+      </div>
+    `;
   }).join("");
 
-  // Joint actions (grouped by joint)
-  el("vocab-joints").innerHTML = (state.vocab.joints || []).flatMap(j =>
-    j.actions.map(a => {
-      const active = state.filters.joints.includes(a.id);
-      return `<div class="vocab-item ${active ? "active" : ""} child"
-        data-type="joint" data-id="${a.id}" data-joint="${j.id}">
-        <span>${a.label} <span style="color:var(--text-2);font-size:12px">${j.label}</span></span>
-        <span class="vocab-item-count">${a.count}</span>
-      </div>`;
+  el("vocab-patterns").innerHTML = (state.vocab.patterns || []).map(pattern => {
+    const active = state.filters.patterns.includes(pattern.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""} indent-${Math.min(pattern.depth, 3)}" data-type="patterns" data-id="${pattern.id}">
+        <span>${pattern.label}</span>
+        <span class="vocab-item-count">${pattern.count}</span>
+      </div>
+    `;
+  }).join("");
+
+  el("vocab-joints").innerHTML = (state.vocab.joints || []).flatMap(joint =>
+    (joint.actions || []).map(action => {
+      const active = state.filters.joints.includes(action.id);
+      return `
+        <div class="vocab-item ${active ? "active" : ""} indent-1" data-type="joints" data-id="${action.id}">
+          <span>${action.label} <span style="color:var(--text-2);font-size:12px">${joint.label}</span></span>
+          <span class="vocab-item-count">${action.count}</span>
+        </div>
+      `;
     })
   ).join("");
 
-  // Equipment
-  el("vocab-equipment").innerHTML = (state.vocab.equipment || []).map(e => {
-    const active = state.filters.equipment.includes(e.id);
-    return `<div class="vocab-item ${active ? "active" : ""}"
-      data-type="equipment" data-id="${e.id}">
-      <span>${e.label}</span>
-      <span class="vocab-item-count">${e.count}</span>
-    </div>`;
+  el("vocab-equipment").innerHTML = (state.vocab.equipment || []).map(equipment => {
+    const active = state.filters.equipment.includes(equipment.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="equipment" data-id="${equipment.id}">
+        <span>${equipment.label}</span>
+        <span class="vocab-item-count">${equipment.count}</span>
+      </div>
+    `;
   }).join("");
 
-  // Vocab item click → filter and navigate to exercises
   document.querySelectorAll(".vocab-item[data-type]").forEach(item => {
-    item.addEventListener("click", () => {
-      const { type, id } = item.dataset;
-      let arr;
-      if (type === "pattern")   arr = state.filters.patterns;
-      else if (type === "joint") arr = state.filters.joints;
-      else                       arr = state.filters.equipment;
-      const idx = arr.indexOf(id);
-      if (idx === -1) arr.push(id); else arr.splice(idx, 1);
-      switchTab("exercises");
-      updateClearBtn();
-      renderFilterPanels();
-      renderExerciseList();
-    });
+    item.addEventListener("click", () => toggleFilter(item.dataset.type, item.dataset.id));
   });
 }
-
-// ── Vocab accordion toggle ────────────────────────────────────────────────────
 
 function initVocabAccordions() {
   document.querySelectorAll(".vocab-section-header").forEach(header => {
+    if (header.dataset.bound === "true") return;
+    header.dataset.bound = "true";
     header.addEventListener("click", () => {
       const section = header.dataset.section;
+      if (!section) return;
       const items = el(`vocab-${section}`);
       const open = items.classList.toggle("open");
       header.classList.toggle("open", open);
@@ -460,20 +545,17 @@ function initVocabAccordions() {
   });
 }
 
-// ── Tab switching ─────────────────────────────────────────────────────────────
-
 function switchTab(tab) {
   state.activeTab = tab;
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.body.dataset.tab = tab;
+  document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(button => button.classList.remove("active"));
   el(`view-${tab}`).classList.add("active");
   document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add("active");
 
   if (tab === "muscles") renderMuscleList();
   if (tab === "vocab") renderVocab();
 }
-
-// ── Filter chip toggles ───────────────────────────────────────────────────────
 
 function initFilterChips() {
   document.querySelectorAll(".filter-chip[data-panel]").forEach(chip => {
@@ -485,80 +567,74 @@ function initFilterChips() {
     });
   });
 
-  el("filter-compound").addEventListener("click", () => {
-    state.filters.compound = !state.filters.compound;
-    el("filter-compound").classList.toggle("active", state.filters.compound);
-    updateClearBtn();
-    renderExerciseList();
-  });
-
-  el("clear-filters").addEventListener("click", () => {
-    state.filters = { muscles: [], patterns: [], equipment: [], joints: [], compound: false };
-    el("filter-compound").classList.remove("active");
-    document.querySelectorAll(".filter-chip[data-panel]").forEach(c => c.classList.remove("active"));
-    document.querySelectorAll(".filter-panel").forEach(p => p.classList.remove("open"));
-    updateClearBtn();
-    renderFilterPanels();
-    renderExerciseList();
-  });
+  el("clear-filters").addEventListener("click", () => clearFilters());
 }
 
 function updateClearBtn() {
   el("clear-filters").style.display = hasActiveFilters() ? "" : "none";
 }
 
-// ── Anatomy map clicks ────────────────────────────────────────────────────────
+function highlightAnatomy() {
+  document.querySelectorAll(".muscle-region").forEach(region => {
+    const regionMuscles = region.dataset.muscles.split(",");
+    region.classList.toggle(
+      "highlighted",
+      regionMuscles.some(muscle => filterMatchesHierarchy(state.filters.muscles, state.muscleDescendants, [muscle]))
+    );
+  });
+}
 
 function initAnatomyMap() {
   document.querySelectorAll(".muscle-region").forEach(region => {
     region.addEventListener("click", () => {
       const muscles = region.dataset.muscles.split(",");
-      // Toggle: if all already active, remove; otherwise add new ones
-      const allActive = muscles.every(m => state.filters.muscles.includes(m));
+      const allActive = muscles.every(muscle => state.filters.muscles.includes(muscle));
       if (allActive) {
-        state.filters.muscles = state.filters.muscles.filter(m => !muscles.includes(m));
+        state.filters.muscles = state.filters.muscles.filter(muscle => !muscles.includes(muscle));
       } else {
-        muscles.forEach(m => { if (!state.filters.muscles.includes(m)) state.filters.muscles.push(m); });
+        muscles.forEach(muscle => {
+          if (!state.filters.muscles.includes(muscle)) state.filters.muscles.push(muscle);
+        });
       }
-      // Highlight
-      document.querySelectorAll(".muscle-region").forEach(r => {
-        const rm = r.dataset.muscles.split(",");
-        r.classList.toggle("highlighted", rm.some(m => state.filters.muscles.includes(m)));
-      });
-      switchTab("exercises");
-      updateClearBtn();
-      renderFilterPanels();
-      renderExerciseList();
+      rerenderAll();
     });
   });
 }
 
-// ── Search ────────────────────────────────────────────────────────────────────
-
 function initSearch() {
-  el("search-input").addEventListener("input", e => {
-    state.search = e.target.value;
+  el("search-input").addEventListener("input", event => {
+    state.search = event.target.value;
     renderExerciseList();
   });
 }
 
-// ── Nav ───────────────────────────────────────────────────────────────────────
-
 function initNav() {
-  document.querySelectorAll(".nav-btn[data-tab]").forEach(btn => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  document.querySelectorAll(".nav-btn[data-tab]").forEach(button => {
+    button.addEventListener("click", () => switchTab(button.dataset.tab));
   });
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+function rerenderAll() {
+  updateClearBtn();
+  renderFilterPanels();
+  renderExerciseList();
+  renderMuscleList();
+  renderVocab();
+  highlightAnatomy();
+}
 
 function init() {
+  renderHero();
   initNav();
   initSearch();
   initFilterChips();
   initAnatomyMap();
-  initVocabAccordions();
+  renderFilterPanels();
   renderExerciseList();
+  renderMuscleList();
+  renderVocab();
+  initVocabAccordions();
+  highlightAnatomy();
 }
 
 loadData();

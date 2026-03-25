@@ -1,270 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A structured knowledge graph of 3,455 exercises with muscle involvement, movement patterns, and joint actions. Find substitutes, explore by muscle, browse the vocabulary." />
+  <meta name="description"
+    content="A structured knowledge graph of 3,455 exercises with muscle involvement, movement patterns, and joint actions. Find substitutes, explore by muscle, browse the vocabulary." />
   <title>free-exercise-graph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=League+Gothic&family=Young+Serif&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-<!-- ── Exercises tab ───────────────────────────────────────────────────── -->
-<div id="view-exercises" class="view active">
-  <div class="search-bar">
-    <input id="search-input" type="search" placeholder="Search exercises…" autocomplete="off" />
-    <div class="filter-row" id="filter-chips">
-      <button class="filter-chip" data-panel="patterns">Patterns</button>
-      <button class="filter-chip" data-panel="muscles">Muscles</button>
-      <button class="filter-chip" data-panel="equipment">Equipment</button>
-      <button class="filter-chip" id="filter-compound" data-filter="compound">Compound</button>
-      <button class="filter-chip" id="clear-filters" style="display:none">✕ Clear</button>
+<body data-tab="exercises">
+
+  <!-- ── Exercises tab ───────────────────────────────────────────────────── -->
+  <div id="view-exercises" class="view active">
+    <header class="hero-card">
+      <div class="tab-kicker">Semantic exercise atlas</div>
+      <h1 class="tab-title">Free Exercise Graph</h1>
+      <p class="tab-copy">Search exercises by muscle, movement, modality, joint action, and equipment.</p>
+      <div id="hero-stats" class="hero-stats"></div>
+    </header>
+    <div class="search-bar">
+      <input id="search-input" type="search" placeholder="Search exercises…" autocomplete="off" />
+      <div class="filter-row" id="filter-chips">
+        <button class="filter-chip" data-panel="patterns">Patterns</button>
+        <button class="filter-chip" data-panel="muscles">Muscles</button>
+        <button class="filter-chip" data-panel="modalities">Modality</button>
+        <button class="filter-chip" data-panel="equipment">Equipment</button>
+        <button class="filter-chip" id="clear-filters" style="display:none">✕ Clear</button>
+      </div>
+      <div id="panel-patterns" class="filter-panel">
+        <div class="filter-panel-title">Movement Patterns</div>
+        <div class="filter-tags" id="pattern-tags"></div>
+      </div>
+      <div id="panel-muscles" class="filter-panel">
+        <div class="filter-panel-title">Muscles</div>
+        <div class="hierarchy-picker" id="muscle-filter-tags"></div>
+      </div>
+      <div id="panel-modalities" class="filter-panel">
+        <div class="filter-panel-title">Training Modality</div>
+        <div class="filter-tags" id="modality-tags"></div>
+      </div>
+      <div id="panel-equipment" class="filter-panel">
+        <div class="filter-panel-title">Equipment</div>
+        <div class="filter-tags" id="equipment-tags"></div>
+      </div>
     </div>
-    <div id="panel-patterns" class="filter-panel">
-      <div class="filter-panel-title">Movement Patterns</div>
-      <div class="filter-tags" id="pattern-tags"></div>
+    <div id="result-count" class="result-count"></div>
+    <div id="active-filters" class="active-filters"></div>
+    <div id="exercise-list" class="exercise-list"></div>
+  </div>
+
+  <!-- ── Muscles tab ─────────────────────────────────────────────────────── -->
+  <div id="view-muscles" class="view">
+    <header class="tab-hero tab-hero-muscles">
+      <div class="tab-kicker">Anatomy view</div>
+      <h2 class="tab-title">Muscles & Regions</h2>
+      <p class="tab-copy">Trace the graph through the body, then refine the exercise list with a visible muscle
+        selection.</p>
+    </header>
+    <div class="view-toggle">
+      <button class="view-toggle-btn active" id="btn-front" onclick="app.setBodyView('front')">Front</button>
+      <button class="view-toggle-btn" id="btn-back" onclick="app.setBodyView('back')">Back</button>
     </div>
-    <div id="panel-muscles" class="filter-panel">
-      <div class="filter-panel-title">Muscle Groups</div>
-      <div class="filter-tags" id="muscle-filter-tags"></div>
+
+    <div class="anatomy-wrap">
+      <!-- Front view -->
+      <svg id="anatomy-front" viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg" aria-label="Front body diagram">
+        <!-- Head -->
+        <circle cx="80" cy="22" r="18" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1" />
+        <!-- Neck -->
+        <rect x="72" y="39" width="16" height="13" rx="3" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1" />
+        <!-- Body outline (torso + pelvis) -->
+        <path
+          d="M46,52 C30,54 16,62 14,80 L12,140 C12,152 14,158 18,162 L20,210 C20,215 24,218 28,218 L132,218 C136,218 140,215 140,210 L142,162 C146,158 148,152 148,140 L146,80 C144,62 130,54 114,52 Z"
+          fill="#f0efed" stroke="#d0d0cd" stroke-width="1" />
+
+        <!-- Shoulders (Anterior + Lateral Deltoid) -->
+        <ellipse cx="26" cy="72" rx="19" ry="13" fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="AnteriorDeltoid,LateralDeltoid" data-label="Shoulders" />
+        <ellipse cx="134" cy="72" rx="19" ry="13" fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="AnteriorDeltoid,LateralDeltoid" data-label="Shoulders" />
+
+        <!-- Chest (Pectorals) -->
+        <rect x="48" y="58" width="64" height="44" rx="6" fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
+          class="muscle-region" data-muscles="PectoralisMajor,PectoralisMinor" data-label="Chest" />
+
+        <!-- Left Biceps -->
+        <rect x="8" y="68" width="20" height="60" rx="7" fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
+          class="muscle-region" data-muscles="BicepsBrachii,Brachialis" data-label="Biceps" />
+        <!-- Right Biceps -->
+        <rect x="132" y="68" width="20" height="60" rx="7" fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
+          class="muscle-region" data-muscles="BicepsBrachii,Brachialis" data-label="Biceps" />
+
+        <!-- Left Forearms -->
+        <rect x="8" y="134" width="20" height="58" rx="7" fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
+          class="muscle-region" data-muscles="WristFlexors,WristExtensors" data-label="Forearms" />
+        <!-- Right Forearms -->
+        <rect x="132" y="134" width="20" height="58" rx="7" fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
+          class="muscle-region" data-muscles="WristFlexors,WristExtensors" data-label="Forearms" />
+
+        <!-- Core / Abs -->
+        <rect x="50" y="104" width="60" height="82" rx="5" fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="Core,RectusAbdominis,Obliques,TransverseAbdominis"
+          data-label="Core / Abs" />
+
+        <!-- Left Quad -->
+        <rect x="48" y="220" width="36" height="82" rx="7" fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
+          class="muscle-region" data-muscles="RectusFemoris,VastusLateralis,VastusMedialis,VastusIntermedius"
+          data-label="Quadriceps" />
+        <!-- Right Quad -->
+        <rect x="88" y="220" width="36" height="82" rx="7" fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
+          class="muscle-region" data-muscles="RectusFemoris,VastusLateralis,VastusMedialis,VastusIntermedius"
+          data-label="Quadriceps" />
+
+        <!-- Left Calf -->
+        <rect x="50" y="312" width="30" height="72" rx="7" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
+          class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves" />
+        <!-- Right Calf -->
+        <rect x="90" y="312" width="30" height="72" rx="7" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
+          class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves" />
+
+        <!-- Labels -->
+        <text x="26" y="108" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Shoulders</text>
+        <text x="80" y="83" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Chest</text>
+        <text x="18" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Biceps</text>
+        <text x="142" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Biceps</text>
+        <text x="18" y="168" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Forearms</text>
+        <text x="142" y="168" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Forearms</text>
+        <text x="80" y="148" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Core</text>
+        <text x="66" y="264" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Quads</text>
+        <text x="106" y="264" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Quads</text>
+        <text x="65" y="352" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
+        <text x="105" y="352" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
+      </svg>
+
+      <!-- Back view -->
+      <svg id="anatomy-back" viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg" aria-label="Back body diagram"
+        style="display:none">
+        <!-- Head -->
+        <circle cx="80" cy="22" r="18" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1" />
+        <!-- Neck -->
+        <rect x="72" y="39" width="16" height="13" rx="3" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1" />
+        <!-- Body outline -->
+        <path
+          d="M46,52 C30,54 16,62 14,80 L12,140 C12,152 14,158 18,162 L20,210 C20,215 24,218 28,218 L132,218 C136,218 140,215 140,210 L142,162 C146,158 148,152 148,140 L146,80 C144,62 130,54 114,52 Z"
+          fill="#f0efed" stroke="#d0d0cd" stroke-width="1" />
+
+        <!-- Upper Traps -->
+        <path d="M50,52 Q80,48 110,52 L100,80 Q80,75 60,80 Z" fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="UpperTrapezius" data-label="Upper Traps" />
+
+        <!-- Rear Delts -->
+        <ellipse cx="26" cy="72" rx="19" ry="13" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.2"
+          class="muscle-region" data-muscles="PosteriorDeltoid" data-label="Rear Delts" />
+        <ellipse cx="134" cy="72" rx="19" ry="13" fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.2"
+          class="muscle-region" data-muscles="PosteriorDeltoid" data-label="Rear Delts" />
+
+        <!-- Lats -->
+        <path d="M18,82 L48,90 L50,148 L26,155 L16,130 Z" fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
+          class="muscle-region" data-muscles="LatissimusDorsi" data-label="Lats" />
+        <path d="M142,82 L112,90 L110,148 L134,155 L144,130 Z" fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
+          class="muscle-region" data-muscles="LatissimusDorsi" data-label="Lats" />
+
+        <!-- Mid Back (Rhomboids + Mid Trap) -->
+        <rect x="52" y="80" width="56" height="60" rx="5" fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
+          class="muscle-region" data-muscles="Rhomboids,MiddleTrapezius,LowerTrapezius" data-label="Mid Back" />
+
+        <!-- Triceps -->
+        <rect x="8" y="68" width="20" height="60" rx="7" fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
+          class="muscle-region" data-muscles="TricepsLongHead,TricepsLateralHead,TricepsMedialHead"
+          data-label="Triceps" />
+        <rect x="132" y="68" width="20" height="60" rx="7" fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
+          class="muscle-region" data-muscles="TricepsLongHead,TricepsLateralHead,TricepsMedialHead"
+          data-label="Triceps" />
+
+        <!-- Lower Back / Erectors -->
+        <rect x="50" y="144" width="60" height="62" rx="5" fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
+          class="muscle-region" data-muscles="ErectorSpinae" data-label="Lower Back" />
+
+        <!-- Glutes -->
+        <rect x="44" y="220" width="40" height="55" rx="7" fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="GluteusMaximus,GluteusMedius,GluteusMinimus" data-label="Glutes" />
+        <rect x="88" y="220" width="40" height="55" rx="7" fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
+          class="muscle-region" data-muscles="GluteusMaximus,GluteusMedius,GluteusMinimus" data-label="Glutes" />
+
+        <!-- Hamstrings -->
+        <rect x="48" y="279" width="36" height="72" rx="7" fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
+          class="muscle-region" data-muscles="BicepsFemoris,Semitendinosus,Semimembranosus" data-label="Hamstrings" />
+        <rect x="88" y="279" width="36" height="72" rx="7" fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
+          class="muscle-region" data-muscles="BicepsFemoris,Semitendinosus,Semimembranosus" data-label="Hamstrings" />
+
+        <!-- Calves -->
+        <rect x="50" y="356" width="30" height="36" rx="7" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
+          class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves" />
+        <rect x="90" y="356" width="30" height="36" rx="7" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
+          class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves" />
+
+        <!-- Labels -->
+        <text x="80" y="60" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Traps</text>
+        <text x="26" y="108" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Rear Delts</text>
+        <text x="134" y="108" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Rear Delts</text>
+        <text x="27" y="122" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lats</text>
+        <text x="133" y="122" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lats</text>
+        <text x="80" y="114" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Mid Back</text>
+        <text x="18" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Triceps</text>
+        <text x="142" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Triceps</text>
+        <text x="80" y="178" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lower Back</text>
+        <text x="64" y="251" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Glutes</text>
+        <text x="108" y="251" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Glutes</text>
+        <text x="66" y="318" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Hamstrings</text>
+        <text x="106" y="318" text-anchor="middle" font-size="7.5" fill="#374151"
+          pointer-events="none">Hamstrings</text>
+        <text x="65" y="378" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
+        <text x="105" y="378" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
+      </svg>
     </div>
-    <div id="panel-equipment" class="filter-panel">
-      <div class="filter-panel-title">Equipment</div>
-      <div class="filter-tags" id="equipment-tags"></div>
+
+    <div id="muscle-list-section">
+      <div class="section-label">Browse by muscle hierarchy</div>
+      <div class="context-note">Selections stay here. Open Exercises to see the filtered list.</div>
+      <div class="muscle-list" id="muscle-list"></div>
     </div>
   </div>
-  <div id="result-count" class="result-count"></div>
-  <div id="exercise-list" class="exercise-list"></div>
-</div>
 
-<!-- ── Muscles tab ─────────────────────────────────────────────────────── -->
-<div id="view-muscles" class="view">
-  <div class="view-toggle">
-    <button class="view-toggle-btn active" id="btn-front" onclick="app.setBodyView('front')">Front</button>
-    <button class="view-toggle-btn" id="btn-back" onclick="app.setBodyView('back')">Back</button>
-  </div>
-
-  <div class="anatomy-wrap">
-    <!-- Front view -->
-    <svg id="anatomy-front" viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg" aria-label="Front body diagram">
-      <!-- Head -->
-      <circle cx="80" cy="22" r="18" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1"/>
-      <!-- Neck -->
-      <rect x="72" y="39" width="16" height="13" rx="3" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1"/>
-      <!-- Body outline (torso + pelvis) -->
-      <path d="M46,52 C30,54 16,62 14,80 L12,140 C12,152 14,158 18,162 L20,210 C20,215 24,218 28,218 L132,218 C136,218 140,215 140,210 L142,162 C146,158 148,152 148,140 L146,80 C144,62 130,54 114,52 Z" fill="#f0efed" stroke="#d0d0cd" stroke-width="1"/>
-
-      <!-- Shoulders (Anterior + Lateral Deltoid) -->
-      <ellipse cx="26" cy="72" rx="19" ry="13"
-        fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="AnteriorDeltoid,LateralDeltoid" data-label="Shoulders"/>
-      <ellipse cx="134" cy="72" rx="19" ry="13"
-        fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="AnteriorDeltoid,LateralDeltoid" data-label="Shoulders"/>
-
-      <!-- Chest (Pectorals) -->
-      <rect x="48" y="58" width="64" height="44" rx="6"
-        fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
-        class="muscle-region" data-muscles="PectoralisMajor,PectoralisMinor" data-label="Chest"/>
-
-      <!-- Left Biceps -->
-      <rect x="8" y="68" width="20" height="60" rx="7"
-        fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
-        class="muscle-region" data-muscles="BicepsBrachii,Brachialis" data-label="Biceps"/>
-      <!-- Right Biceps -->
-      <rect x="132" y="68" width="20" height="60" rx="7"
-        fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
-        class="muscle-region" data-muscles="BicepsBrachii,Brachialis" data-label="Biceps"/>
-
-      <!-- Left Forearms -->
-      <rect x="8" y="134" width="20" height="58" rx="7"
-        fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
-        class="muscle-region" data-muscles="WristFlexors,WristExtensors" data-label="Forearms"/>
-      <!-- Right Forearms -->
-      <rect x="132" y="134" width="20" height="58" rx="7"
-        fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
-        class="muscle-region" data-muscles="WristFlexors,WristExtensors" data-label="Forearms"/>
-
-      <!-- Core / Abs -->
-      <rect x="50" y="104" width="60" height="82" rx="5"
-        fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="Core,RectusAbdominis,Obliques,TransverseAbdominis" data-label="Core / Abs"/>
-
-      <!-- Left Quad -->
-      <rect x="48" y="220" width="36" height="82" rx="7"
-        fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
-        class="muscle-region" data-muscles="RectusFemoris,VastusLateralis,VastusMedialis,VastusIntermedius" data-label="Quadriceps"/>
-      <!-- Right Quad -->
-      <rect x="88" y="220" width="36" height="82" rx="7"
-        fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
-        class="muscle-region" data-muscles="RectusFemoris,VastusLateralis,VastusMedialis,VastusIntermedius" data-label="Quadriceps"/>
-
-      <!-- Left Calf -->
-      <rect x="50" y="312" width="30" height="72" rx="7"
-        fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
-        class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves"/>
-      <!-- Right Calf -->
-      <rect x="90" y="312" width="30" height="72" rx="7"
-        fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
-        class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves"/>
-
-      <!-- Labels -->
-      <text x="26" y="108" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Shoulders</text>
-      <text x="80" y="83" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Chest</text>
-      <text x="18" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Biceps</text>
-      <text x="142" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Biceps</text>
-      <text x="18" y="168" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Forearms</text>
-      <text x="142" y="168" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Forearms</text>
-      <text x="80" y="148" text-anchor="middle" font-size="8" fill="#374151" pointer-events="none">Core</text>
-      <text x="66" y="264" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Quads</text>
-      <text x="106" y="264" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Quads</text>
-      <text x="65" y="352" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
-      <text x="105" y="352" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
-    </svg>
-
-    <!-- Back view -->
-    <svg id="anatomy-back" viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg" aria-label="Back body diagram" style="display:none">
-      <!-- Head -->
-      <circle cx="80" cy="22" r="18" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1"/>
-      <!-- Neck -->
-      <rect x="72" y="39" width="16" height="13" rx="3" fill="#e8e8e6" stroke="#d0d0cd" stroke-width="1"/>
-      <!-- Body outline -->
-      <path d="M46,52 C30,54 16,62 14,80 L12,140 C12,152 14,158 18,162 L20,210 C20,215 24,218 28,218 L132,218 C136,218 140,215 140,210 L142,162 C146,158 148,152 148,140 L146,80 C144,62 130,54 114,52 Z" fill="#f0efed" stroke="#d0d0cd" stroke-width="1"/>
-
-      <!-- Upper Traps -->
-      <path d="M50,52 Q80,48 110,52 L100,80 Q80,75 60,80 Z"
-        fill="#bfdbfe" stroke="#93c5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="UpperTrapezius" data-label="Upper Traps"/>
-
-      <!-- Rear Delts -->
-      <ellipse cx="26" cy="72" rx="19" ry="13"
-        fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.2"
-        class="muscle-region" data-muscles="PosteriorDeltoid" data-label="Rear Delts"/>
-      <ellipse cx="134" cy="72" rx="19" ry="13"
-        fill="#e0e7ff" stroke="#a5b4fc" stroke-width="1.2"
-        class="muscle-region" data-muscles="PosteriorDeltoid" data-label="Rear Delts"/>
-
-      <!-- Lats -->
-      <path d="M18,82 L48,90 L50,148 L26,155 L16,130 Z"
-        fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
-        class="muscle-region" data-muscles="LatissimusDorsi" data-label="Lats"/>
-      <path d="M142,82 L112,90 L110,148 L134,155 L144,130 Z"
-        fill="#bbf7d0" stroke="#86efac" stroke-width="1.2"
-        class="muscle-region" data-muscles="LatissimusDorsi" data-label="Lats"/>
-
-      <!-- Mid Back (Rhomboids + Mid Trap) -->
-      <rect x="52" y="80" width="56" height="60" rx="5"
-        fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
-        class="muscle-region" data-muscles="Rhomboids,MiddleTrapezius,LowerTrapezius" data-label="Mid Back"/>
-
-      <!-- Triceps -->
-      <rect x="8" y="68" width="20" height="60" rx="7"
-        fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
-        class="muscle-region" data-muscles="TricepsLongHead,TricepsLateralHead,TricepsMedialHead" data-label="Triceps"/>
-      <rect x="132" y="68" width="20" height="60" rx="7"
-        fill="#fed7aa" stroke="#fdba74" stroke-width="1.2"
-        class="muscle-region" data-muscles="TricepsLongHead,TricepsLateralHead,TricepsMedialHead" data-label="Triceps"/>
-
-      <!-- Lower Back / Erectors -->
-      <rect x="50" y="144" width="60" height="62" rx="5"
-        fill="#fecaca" stroke="#fca5a5" stroke-width="1.2"
-        class="muscle-region" data-muscles="ErectorSpinae" data-label="Lower Back"/>
-
-      <!-- Glutes -->
-      <rect x="44" y="220" width="40" height="55" rx="7"
-        fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="GluteusMaximus,GluteusMedius,GluteusMinimus" data-label="Glutes"/>
-      <rect x="88" y="220" width="40" height="55" rx="7"
-        fill="#e9d5ff" stroke="#c4b5fd" stroke-width="1.2"
-        class="muscle-region" data-muscles="GluteusMaximus,GluteusMedius,GluteusMinimus" data-label="Glutes"/>
-
-      <!-- Hamstrings -->
-      <rect x="48" y="279" width="36" height="72" rx="7"
-        fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
-        class="muscle-region" data-muscles="BicepsFemoris,Semitendinosus,Semimembranosus" data-label="Hamstrings"/>
-      <rect x="88" y="279" width="36" height="72" rx="7"
-        fill="#fde68a" stroke="#fcd34d" stroke-width="1.2"
-        class="muscle-region" data-muscles="BicepsFemoris,Semitendinosus,Semimembranosus" data-label="Hamstrings"/>
-
-      <!-- Calves -->
-      <rect x="50" y="356" width="30" height="36" rx="7"
-        fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
-        class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves"/>
-      <rect x="90" y="356" width="30" height="36" rx="7"
-        fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.2"
-        class="muscle-region" data-muscles="Gastrocnemius,Soleus" data-label="Calves"/>
-
-      <!-- Labels -->
-      <text x="80" y="60" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Traps</text>
-      <text x="26" y="108" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Rear Delts</text>
-      <text x="134" y="108" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Rear Delts</text>
-      <text x="27" y="122" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lats</text>
-      <text x="133" y="122" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lats</text>
-      <text x="80" y="114" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Mid Back</text>
-      <text x="18" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Triceps</text>
-      <text x="142" y="102" text-anchor="middle" font-size="7" fill="#374151" pointer-events="none">Triceps</text>
-      <text x="80" y="178" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Lower Back</text>
-      <text x="64" y="251" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Glutes</text>
-      <text x="108" y="251" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Glutes</text>
-      <text x="66" y="318" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Hamstrings</text>
-      <text x="106" y="318" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Hamstrings</text>
-      <text x="65" y="378" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
-      <text x="105" y="378" text-anchor="middle" font-size="7.5" fill="#374151" pointer-events="none">Calves</text>
-    </svg>
-  </div>
-
-  <div id="muscle-list-section">
-    <div class="section-label">Browse by muscle</div>
-    <div class="muscle-list" id="muscle-list"></div>
-  </div>
-</div>
-
-<!-- ── Vocabulary tab ─────────────────────────────────────────────────────── -->
-<div id="view-vocab" class="view">
-  <div class="vocab-section">
-    <div class="vocab-section-header" data-section="patterns">
-      Movement Patterns <span class="vocab-chevron">▼</span>
+  <!-- ── Vocabulary tab ─────────────────────────────────────────────────────── -->
+  <div id="view-vocab" class="view">
+    <header class="tab-hero tab-hero-browse">
+      <div class="tab-kicker">Ontology browse</div>
+      <h2 class="tab-title">Training Concepts</h2>
+      <p class="tab-copy">Browse movement patterns, modalities, joint actions, and equipment without losing your place.
+      </p>
+    </header>
+    <div class="context-note">Selections here populate Exercise filters without kicking you out of this tab.</div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="modalities">
+        Training Modalities <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-modalities"></div>
     </div>
-    <div class="vocab-items" id="vocab-patterns"></div>
-  </div>
-  <div class="vocab-section">
-    <div class="vocab-section-header" data-section="joints">
-      Joint Actions <span class="vocab-chevron">▼</span>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="patterns">
+        Movement Patterns <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-patterns"></div>
     </div>
-    <div class="vocab-items" id="vocab-joints"></div>
-  </div>
-  <div class="vocab-section">
-    <div class="vocab-section-header" data-section="equipment">
-      Equipment <span class="vocab-chevron">▼</span>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="joints">
+        Joint Actions <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-joints"></div>
     </div>
-    <div class="vocab-items" id="vocab-equipment"></div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="equipment">
+        Equipment <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-equipment"></div>
+    </div>
   </div>
-</div>
 
-<!-- ── Exercise detail sheet ──────────────────────────────────────────────── -->
-<div id="sheet-overlay" class="sheet-overlay" onclick="app.closeSheet(event)">
-  <div class="sheet" id="detail-sheet">
-    <div class="sheet-handle"></div>
-    <div id="sheet-content"></div>
+  <!-- ── Exercise detail sheet ──────────────────────────────────────────────── -->
+  <div id="sheet-overlay" class="sheet-overlay" onclick="app.closeSheet(event)">
+    <div class="sheet" id="detail-sheet">
+      <div class="sheet-handle"></div>
+      <div id="sheet-content"></div>
+    </div>
   </div>
-</div>
 
-<!-- ── Bottom nav ─────────────────────────────────────────────────────────── -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" data-tab="exercises">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    Exercises
-  </button>
-  <button class="nav-btn" data-tab="muscles">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-    Muscles
-  </button>
-  <button class="nav-btn" data-tab="vocab">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-    Vocabulary
-  </button>
-</nav>
+  <!-- ── Bottom nav ─────────────────────────────────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+      Exercises
+    </button>
+    <button class="nav-btn" data-tab="muscles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+      Muscles
+    </button>
+    <button class="nav-btn" data-tab="vocab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+      </svg>
+      Browse
+    </button>
+  </nav>
 
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>
