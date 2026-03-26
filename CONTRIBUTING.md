@@ -84,6 +84,9 @@ python3 pipeline/enrich.py --restamp HipCircumduction
 | `pipeline/releases/` | Gitignored (derived) | Timestamped release bundles (DB + graph + scorecard) |
 | `pipeline/gemini_cache_id.txt` | Gitignored (runtime) | Gemini context cache ID — persists across sessions |
 | `graph.ttl` | Gitignored (derived) | Assembled by `pipeline/build.py` |
+| `app/data.json` | **Committed, derived** | Static app exercise payload exported by `app/build_site.py` |
+| `app/vocab.json` | **Committed, derived** | Static app vocabulary payload exported by `app/build_site.py` |
+| `app/index.html`, `app/style.css`, `app/app.js` | **Committed** | Static GitHub Pages UI |
 
 Source-of-truth boundaries are described in [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md).
 
@@ -106,6 +109,7 @@ Source-of-truth boundaries are described in [docs/system_contracts.md](/Users/ta
 | `pipeline/export_enrichment.py` | Portable JSONL export of paid-for enrichment state |
 | `pipeline/import_enrichment.py` | Restore exported enrichment into the current deterministic DB |
 | `pipeline/release_bundle.py` | Freeze current DB + graph + scorecard into a timestamped bundle |
+| `app/build_site.py` | Export the static app payload and UI-facing JSON from `pipeline.db` or `graph.ttl` |
 | `test_shacl.py` | Read-only; exits 0/1 — CI gate |
 
 ### Enrichment options
@@ -154,6 +158,20 @@ python3 pipeline/build.py
 
 Batch tracking files (`pipeline/batch_job_id.txt`, `pipeline/batch_manifest.json`) are
 gitignored and removed automatically after a clean ingest.
+
+### Static app workflow
+
+The GitHub Pages app now lives entirely under [app/README.md](/Users/talha/Code/free-exercise-graph/app/README.md).
+
+Typical flow:
+
+```bash
+python3 pipeline/run.py --to build
+python3 app/build_site.py --from-graph
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000/app/`.
 
 ---
 

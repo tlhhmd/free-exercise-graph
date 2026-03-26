@@ -105,6 +105,14 @@ free-exercise-graph/
 
   evals/                           gold standard annotation and eval tooling
   queries/                         example SPARQL discovery queries
+  app/
+    README.md                      app-specific guide: build, preview, deploy, product roadmap
+    build_site.py                  export app/data.json + app/vocab.json from graph.ttl or pipeline.db
+    index.html                     static app shell
+    style.css                      static app visual system
+    app.js                         client-side state, filtering, and interactions
+    data.json                      committed exercise payload for GitHub Pages
+    vocab.json                     committed vocabulary payload for GitHub Pages
   docs/
     system_contracts.md            source-of-truth boundaries, reset/replay semantics
     full_run_playbook.md           step-by-step safe runbook for local full runs
@@ -127,7 +135,8 @@ free-exercise-graph/
 - **New engineer / ontology engineer:** start with [docs/system_contracts.md](docs/system_contracts.md), then [docs/sqlite_data_model.md](docs/sqlite_data_model.md), then [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Operator running the full pipeline:** use [docs/full_run_playbook.md](docs/full_run_playbook.md)
 - **Ontologist / taxonomy reviewer:** read [DECISIONS.md](DECISIONS.md), [ontology/](ontology/), [docs/sqlite_data_model.md](docs/sqlite_data_model.md), and [docs/quality_surfaces.md](docs/quality_surfaces.md)
-- **Product / PM / portfolio reviewer:** read this README, [docs/reconciliation_example.md](docs/reconciliation_example.md), and [codexlog.md](codexlog.md)
+- **Product / PM / portfolio reviewer:** read this README, [app/README.md](app/README.md), [docs/reconciliation_example.md](docs/reconciliation_example.md), and [codexlog.md](codexlog.md)
+- **Frontend / static-app contributor:** start with [app/README.md](app/README.md), then [docs/app_field_provenance.md](docs/app_field_provenance.md)
 
 ---
 
@@ -175,6 +184,16 @@ data product health       ontology/shape regression tests
 mcp_server.py             pyoxigraph in-process SPARQL
 5 MCP tools               search, get, substitute, hierarchy, joint-action
 ```
+
+## Static App
+
+The GitHub Pages app now lives entirely under [app/README.md](/Users/talha/Code/free-exercise-graph/app/README.md).
+
+- Build app payloads from the current graph or pipeline DB with [app/build_site.py](/Users/talha/Code/free-exercise-graph/app/build_site.py)
+- Preview locally by serving the [app](/Users/talha/Code/free-exercise-graph/app) directory with a static file server
+- Deploy by publishing the committed [app](/Users/talha/Code/free-exercise-graph/app) directory through GitHub Pages
+
+This keeps the product/UI surface in one place instead of splitting it between the repo root and `site/`.
 
 See ADR-086–090 in `DECISIONS.md` for the full architecture rationale.
 
