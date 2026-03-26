@@ -1,0 +1,1608 @@
+/**
+ * free-exercise-graph — static product UI
+ * Vanilla JS, no build step, no dependencies.
+ */
+
+const DEGREE_ORDER = ["PrimeMover", "Synergist", "Stabilizer", "PassiveTarget"];
+const DEGREE_CLASS = {
+  PrimeMover: "prime",
+  Synergist: "synergist",
+  Stabilizer: "stabilizer",
+  PassiveTarget: "passive",
+};
+const DEGREE_LABEL = {
+  PrimeMover: "Prime Mover",
+  Synergist: "Synergist",
+  Stabilizer: "Stabilizer",
+  PassiveTarget: "Passive Target",
+};
+
+const BUILD_ROLES = ["squat", "hinge", "push", "pull", "core"];
+
+const MOVEMENT_GLYPHS = {
+  squat: "↓",
+  hinge: "↘",
+  push: "→",
+  pull: "←",
+  core: "◼",
+  carry: "⇄",
+  locomotion: "↔",
+  rotation: "⟳",
+  mobility: "∿",
+  general: "•",
+};
+
+const REGION_DISPLAY = {
+  legs_front: "Quads",
+  hamstrings: "Hamstrings",
+  glutes: "Glutes",
+  calves: "Calves",
+  core: "Core",
+  back: "Back",
+  lower_back: "Lower Back",
+  shoulders: "Shoulders",
+  chest: "Chest",
+  arms: "Arms",
+  hips: "Hips",
+};
+
+const QUERY_ALIASES = {
+  bicep: ["biceps brachii", "brachialis"],
+  biceps: ["biceps brachii", "brachialis"],
+  tricep: ["triceps"],
+  triceps: ["triceps"],
+  delt: ["deltoid", "shoulder"],
+  delts: ["deltoid", "shoulder"],
+  shoulder: ["shoulder", "deltoid"],
+  shoulders: ["shoulder", "deltoid"],
+  quad: ["quadriceps", "vastus", "rectus femoris"],
+  quads: ["quadriceps", "vastus", "rectus femoris"],
+  glute: ["glute"],
+  glutes: ["glute"],
+  hamstring: ["hamstring", "biceps femoris", "semitendinosus", "semimembranosus"],
+  hamstrings: ["hamstring", "biceps femoris", "semitendinosus", "semimembranosus"],
+  abs: ["rectus abdominis", "oblique", "transverse abdominis", "core"],
+  "rear delt": ["posterior deltoid"],
+  "rear delts": ["posterior deltoid"],
+};
+
+const TOKEN_NORMALIZATION = {
+  biceps: "bicep",
+  triceps: "tricep",
+  glutes: "glute",
+  quads: "quad",
+  delts: "delt",
+  shoulders: "shoulder",
+  hamstrings: "hamstring",
+  calves: "calf",
+  obliques: "oblique",
+};
+
+const state = {
+  exercises: [],
+  exerciseMap: new Map(),
+  searchIndex: new Map(),
+  vocab: {},
+  activeTab: "exercises",
+  mode: "explore",
+  search: "",
+  filters: {
+    muscles: [],
+    patterns: [],
+    modalities: [],
+    equipment: [],
+    joints: [],
+  },
+  patternDescendants: {},
+  muscleDescendants: {},
+  bodyView: "front",
+  sheetExercise: null,
+  compareIds: [],
+  buildSlots: {},
+  activeBuildRole: null,
+  muscleOpenSections: {},
+  pendingMuscleScrollTo: null,
+};
+
+let searchDebounceTimer = null;
+
+function el(id) { return document.getElementById(id); }
+
+async function loadJson(path) {
+  const res = await fetch(path);
+  if (!res.ok) {
+    throw new Error(`${path} failed to load (${res.status} ${res.statusText})`);
+  }
+  return res.json();
+}
+
+async function loadText(path) {
+  const res = await fetch(path);
+  if (!res.ok) {
+    throw new Error(`${path} failed to load (${res.status} ${res.statusText})`);
+  }
+  return res.text();
+}
+
+function renderFatalError(err) {
+  const message = err instanceof Error ? err.message : String(err);
+  el("result-count").textContent = "Site data failed to load";
+  el("exercise-list").innerHTML = `
+    <div class="empty">
+      <strong>Static site data failed to load.</strong><br>
+      ${message}<br><br>
+      Make sure the deployed artifact includes <code>data.json</code> and <code>vocab.json</code>
+      in the same directory as <code>index.html</code>.
+    </div>`;
+}
+
+async function loadIllustrations() {
+  const [frontSvg, backSvg] = await Promise.all([
+    loadText("illustrations/anatomy-front.svg"),
+    loadText("illustrations/anatomy-back.svg"),
+  ]);
+  el("anatomy-front-slot").innerHTML = frontSvg;
+  el("anatomy-back-slot").innerHTML = backSvg;
+}
+
+function labelFor(id) {
+  for (const p of state.vocab.patterns || []) if (p.id === id) return p.label;
+  for (const j of state.vocab.joints || []) {
+    if (j.id === id) return j.label;
+    for (const a of j.actions || []) if (a.id === id) return a.label;
+  }
+  for (const m of state.vocab.modalities || []) if (m.id === id) return m.label;
+  for (const e of state.vocab.equipment || []) if (e.id === id) return e.label;
+  return id.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+}
+
+function titleCase(text) {
+  return text.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function pluralizeLabel(singular, plural, count) {
+  return count === 1 ? singular : plural;
+}
+
+function formatCount(value) {
+  return Number(value || 0).toLocaleString("en-US");
+}
+
+function normalizeSearchText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function canonicalizeSearchText(text) {
+  return normalizeSearchText(text)
+    .split(" ")
+    .filter(Boolean)
+    .map(token => TOKEN_NORMALIZATION[token] || token)
+    .join(" ");
+}
+
+function muscleDegreeWeight(degree) {
+  return {
+    PrimeMover: 40,
+    Synergist: 24,
+    Stabilizer: 10,
+    PassiveTarget: 4,
+  }[degree] || 0;
+}
+
+function formatBodyFocus(value) {
+  return titleCase(value || "general").replace("Posterior Chain", "Posterior Chain").replace("Anterior Chain", "Anterior Chain").replace("Full Body", "Full Body");
+}
+
+function movementGlyph(exercise) {
+  const family = exercise.compareAttributes?.movementFamily || exercise.movementFamily || "general";
+  return {
+    symbol: MOVEMENT_GLYPHS[family] || MOVEMENT_GLYPHS.general,
+    label: titleCase(family),
+  };
+}
+
+function copyCurrentUrl(button, idleText) {
+  return async () => {
+    syncUrlState();
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      button.textContent = "Copied";
+    } catch {
+      button.textContent = "Copy failed";
+    }
+    window.setTimeout(() => {
+      button.textContent = idleText;
+    }, 1200);
+  };
+}
+
+function graphGroundingLine(exercise) {
+  const parts = [];
+  if (exercise.primaryJA?.length) parts.push(`Primary joint action: ${exercise.primaryJA.map(labelFor).join(", ")}`);
+  const primeMovers = exercise.muscles
+    .filter(([, degree]) => degree === "PrimeMover")
+    .slice(0, 3)
+    .map(([muscle]) => muscleLabel(muscle));
+  if (primeMovers.length) parts.push(`Prime movers: ${primeMovers.join(", ")}`);
+  else if (exercise.muscles?.length) parts.push(`Muscle emphasis: ${muscleLabel(exercise.muscles[0][0])}`);
+  parts.push(`Equipment: ${(exercise.equipment?.length ? exercise.equipment.map(labelFor).join(", ") : "Bodyweight")}`);
+  return parts.join(" · ");
+}
+
+function searchableText(exercise) {
+  const parts = [
+    exercise.name,
+    ...(exercise.patterns || []).map(labelFor),
+    ...(exercise.primaryJA || []).map(labelFor),
+    ...(exercise.supportingJA || []).map(labelFor),
+    ...(exercise.equipment || []).map(labelFor),
+    ...(exercise.muscles || []).map(([muscle]) => muscleLabel(muscle)),
+  ];
+  if (exercise.modality) parts.push(labelFor(exercise.modality));
+  return parts.join(" ").toLowerCase();
+}
+
+function buildFallbackSearchIndex(exercise) {
+  const patterns = (exercise.patterns || []).map(labelFor).map(canonicalizeSearchText);
+  const primaryJAs = (exercise.primaryJA || []).map(labelFor).map(canonicalizeSearchText);
+  const supportingJAs = (exercise.supportingJA || []).map(labelFor).map(canonicalizeSearchText);
+  const equipment = (exercise.equipment || []).map(labelFor).map(canonicalizeSearchText);
+  const muscles = (exercise.muscles || []).map(([muscle]) => canonicalizeSearchText(muscleLabel(muscle)));
+  const muscleEntries = (exercise.muscles || []).map(([muscle, degree]) => ({
+    label: canonicalizeSearchText(muscleLabel(muscle)),
+    degree,
+  }));
+  const regions = (exercise.visualRegions || []).map(region => canonicalizeSearchText(REGION_DISPLAY[region] || titleCase(region)));
+  const aliases = searchAliases(exercise).map(canonicalizeSearchText);
+  const modality = canonicalizeSearchText(exercise.modality ? labelFor(exercise.modality) : "");
+  const laterality = canonicalizeSearchText(exercise.laterality ? labelFor(exercise.laterality) : "");
+  const name = canonicalizeSearchText(exercise.name);
+  const bodyFocus = canonicalizeSearchText(formatBodyFocus(exercise.bodyFocus));
+  const movementFamily = canonicalizeSearchText(titleCase(exercise.movementFamily || "general"));
+  const aliasTargets = [...new Set(
+    aliases.flatMap(alias => (QUERY_ALIASES[alias] || []).map(canonicalizeSearchText))
+  )];
+  const allTerms = [...new Set([
+    name,
+    modality,
+    laterality,
+    bodyFocus,
+    movementFamily,
+    ...patterns,
+    ...primaryJAs,
+    ...supportingJAs,
+    ...equipment,
+    ...muscles,
+    ...regions,
+    ...aliases,
+  ].filter(Boolean))];
+
+  return {
+    name,
+    modality,
+    laterality,
+    bodyFocus,
+    movementFamily,
+    patterns,
+    primaryJA: primaryJAs,
+    supportingJA: supportingJAs,
+    equipment,
+    muscles,
+    muscleEntries,
+    regions,
+    aliases,
+    aliasTargets,
+    all: allTerms.join(" | "),
+  };
+}
+
+function getSearchIndex(exercise) {
+  return state.searchIndex.get(exercise.id) || buildFallbackSearchIndex(exercise);
+}
+
+function searchAliases(exercise) {
+  const aliases = new Set();
+  const muscles = exercise.muscles || [];
+  const labels = muscles.map(([muscle]) => canonicalizeSearchText(muscleLabel(muscle)));
+
+  if (labels.some(label => label.includes("biceps brachii") || label.includes("brachialis"))) {
+    aliases.add("bicep");
+    aliases.add("biceps");
+  }
+  if (labels.some(label => label.includes("triceps"))) {
+    aliases.add("tricep");
+    aliases.add("triceps");
+  }
+  if (labels.some(label => label.includes("deltoid"))) {
+    aliases.add("delt");
+    aliases.add("delts");
+    aliases.add("rear delt");
+    aliases.add("rear delts");
+    aliases.add("shoulder");
+    aliases.add("shoulders");
+  }
+  if (labels.some(label => label.includes("vastus") || label.includes("rectus femoris"))) {
+    aliases.add("quad");
+    aliases.add("quads");
+  }
+  if (labels.some(label => label.includes("glute"))) {
+    aliases.add("glute");
+    aliases.add("glutes");
+  }
+  if (labels.some(label => label.includes("biceps femoris") || label.includes("semitendinosus") || label.includes("semimembranosus"))) {
+    aliases.add("hamstring");
+    aliases.add("hamstrings");
+  }
+  if (labels.some(label => label.includes("rectus abdominis") || label.includes("oblique") || label.includes("transverse abdominis"))) {
+    aliases.add("abs");
+  }
+  return [...aliases];
+}
+
+function allMuscleNodes(nodes = state.vocab.muscles?.regions || []) {
+  return nodes.flatMap(node => [node, ...allMuscleNodes(node.children || [])]);
+}
+
+function queryMatchedMuscleIds(query) {
+  const q = canonicalizeSearchText(query);
+  if (!q) return [];
+  const candidates = new Set([q, ...(QUERY_ALIASES[q] || []).map(canonicalizeSearchText)]);
+  return allMuscleNodes()
+    .filter(node => {
+      const label = canonicalizeSearchText(node.label);
+      return [...candidates].some(candidate => label === candidate || label.includes(candidate) || candidate.includes(label));
+    })
+    .map(node => node.id);
+}
+
+function muscleMatchScore(exercise, targetMuscleIds = []) {
+  if (!targetMuscleIds.length) return 0;
+  let best = 0;
+  for (const targetId of targetMuscleIds) {
+    const allowed = state.muscleDescendants[targetId] || [targetId];
+    for (const [muscle, degree] of exercise.muscles || []) {
+      if (allowed.includes(muscle)) {
+        best = Math.max(best, muscleDegreeWeight(degree));
+      }
+    }
+  }
+  return best;
+}
+
+function searchScore(exercise, query) {
+  const q = canonicalizeSearchText(query);
+  if (!q) return 0;
+
+  const index = getSearchIndex(exercise);
+  const {
+    name,
+    modality,
+    laterality,
+    patterns,
+    primaryJA,
+    supportingJA,
+    equipment,
+    muscles,
+    muscleEntries,
+    regions,
+    aliases,
+    aliasTargets,
+    all,
+  } = index;
+  const queryAliasTargets = (QUERY_ALIASES[q] || []).map(canonicalizeSearchText);
+  const matchedMuscleIds = queryMatchedMuscleIds(q);
+
+  let score = 0;
+  if (name === q) score = Math.max(score, 120);
+  if (name.includes(q)) score = Math.max(score, 100);
+  if (aliases.includes(q)) score = Math.max(score, 95);
+  if (all.includes(q)) score = Math.max(score, 68);
+  if ([name, modality, laterality, ...patterns, ...primaryJA, ...supportingJA, ...equipment, ...muscles, ...regions, ...aliases].some(field => field === q)) {
+    score = Math.max(score, 90);
+  }
+  if (patterns.some(field => field.includes(q)) || primaryJA.some(field => field.includes(q)) || supportingJA.some(field => field.includes(q))) {
+    score = Math.max(score, 80);
+  }
+  if (equipment.some(field => field.includes(q)) || modality.includes(q) || laterality.includes(q) || regions.some(field => field.includes(q))) {
+    score = Math.max(score, 72);
+  }
+  if (muscles.some(field => field.includes(q))) score = Math.max(score, 60);
+
+  if (matchedMuscleIds.length) {
+    score += muscleMatchScore(exercise, matchedMuscleIds);
+  } else if (queryAliasTargets.length && muscleEntries.some(entry => queryAliasTargets.some(target => entry.label.includes(target)))) {
+    const bestDegree = muscleEntries
+      .filter(entry => queryAliasTargets.some(target => entry.label.includes(target)))
+      .reduce((best, entry) => Math.max(best, muscleDegreeWeight(entry.degree)), 0);
+    score += bestDegree;
+  }
+
+  if (queryAliasTargets.length) {
+    const aliasHit = aliasTargets.some(target => queryAliasTargets.includes(target))
+      || [...muscles, ...regions, ...aliases, ...patterns].some(field => queryAliasTargets.some(target => field.includes(target)));
+    if (aliasHit) score = Math.max(score, 92);
+    else if (!name.includes(q) && !aliases.includes(q)) return 0;
+  }
+
+  return score;
+}
+
+function closeAllFilterPanels() {
+  document.querySelectorAll(".filter-panel").forEach(panel => panel.classList.remove("open"));
+  document.querySelectorAll(".filter-chip[data-panel]").forEach(chip => chip.classList.remove("active"));
+}
+
+function closeFilterPanelForType(type) {
+  const panelForType = {
+    patterns: "patterns",
+    muscles: "muscles",
+    modalities: "modalities",
+    equipment: "equipment",
+  };
+  const panel = panelForType[type];
+  if (!panel) return;
+  el(`panel-${panel}`)?.classList.remove("open");
+  document.querySelector(`.filter-chip[data-panel="${panel}"]`)?.classList.remove("active");
+}
+
+function findMuscleNode(id, nodes = state.vocab.muscles?.regions || []) {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    const found = findMuscleNode(id, node.children || []);
+    if (found) return found;
+  }
+  return null;
+}
+
+function muscleLabel(id) {
+  return findMuscleNode(id)?.label || labelFor(id);
+}
+
+function sortByLabel(items = []) {
+  return [...items].sort((a, b) => a.label.localeCompare(b.label));
+}
+
+function buildHierarchyMaps() {
+  const patternChildren = {};
+  for (const pattern of state.vocab.patterns || []) {
+    const parent = pattern.parent || null;
+    patternChildren[parent] = patternChildren[parent] || [];
+    patternChildren[parent].push(pattern.id);
+  }
+
+  const patternDescendants = {};
+  function collectPatternDescendants(id) {
+    const descendants = [id];
+    for (const child of patternChildren[id] || []) {
+      descendants.push(...collectPatternDescendants(child));
+    }
+    patternDescendants[id] = descendants;
+    return descendants;
+  }
+  for (const pattern of state.vocab.patterns || []) collectPatternDescendants(pattern.id);
+  state.patternDescendants = patternDescendants;
+
+  const muscleDescendants = {};
+  function collectMuscleDescendants(node) {
+    const descendants = [node.id];
+    for (const child of node.children || []) {
+      descendants.push(...collectMuscleDescendants(child));
+    }
+    muscleDescendants[node.id] = descendants;
+    return descendants;
+  }
+  for (const region of state.vocab.muscles?.regions || []) collectMuscleDescendants(region);
+  state.muscleDescendants = muscleDescendants;
+}
+
+function selectedIds(type) {
+  return state.filters[type];
+}
+
+function toggleFilter(type, id) {
+  const arr = selectedIds(type);
+  const idx = arr.indexOf(id);
+  if (idx === -1) arr.push(id);
+  else arr.splice(idx, 1);
+  rerenderAll();
+}
+
+function clearFilters() {
+  state.filters = {
+    muscles: [],
+    patterns: [],
+    modalities: [],
+    equipment: [],
+    joints: [],
+  };
+  rerenderAll();
+}
+
+function clearBrowseFilters() {
+  state.filters.patterns = [];
+  state.filters.modalities = [];
+  state.filters.equipment = [];
+  state.filters.joints = [];
+  rerenderAll();
+}
+
+function filterMatchesHierarchy(selected, descendantsMap, values) {
+  if (!selected.length) return true;
+  return selected.some(id => {
+    const allowed = descendantsMap[id] || [id];
+    return values.some(value => allowed.includes(value));
+  });
+}
+
+function filteredExercises(baseExercises = state.exercises) {
+  const q = state.search.trim().toLowerCase();
+  const { muscles, patterns, modalities, equipment, joints } = state.filters;
+  const matches = [];
+
+  for (const ex of baseExercises) {
+    if (!filterMatchesHierarchy(patterns, state.patternDescendants, ex.patterns)) continue;
+    if (!filterMatchesHierarchy(muscles, state.muscleDescendants, ex.muscles.map(m => m[0]))) continue;
+    if (modalities.length && !modalities.includes(ex.modality)) continue;
+    if (equipment.length && !equipment.some(eq => ex.equipment.includes(eq))) continue;
+    if (joints.length && !joints.some(j => ex.primaryJA.includes(j) || ex.supportingJA.includes(j))) continue;
+
+    const musclePriority = muscleMatchScore(ex, muscles);
+    const score = q ? searchScore(ex, q) : 1;
+    if (q && score <= 0) continue;
+    matches.push({ ex, score, musclePriority });
+  }
+
+  if (!q) {
+    return matches
+      .sort((a, b) => b.musclePriority - a.musclePriority || a.ex.name.localeCompare(b.ex.name))
+      .map(match => match.ex);
+  }
+
+  return matches
+    .sort((a, b) => b.score - a.score || b.musclePriority - a.musclePriority || a.ex.name.localeCompare(b.ex.name))
+    .map(match => match.ex);
+}
+
+function hasActiveFilters() {
+  return Object.values(state.filters).some(values => values.length > 0);
+}
+
+function getExercise(id) {
+  return state.exerciseMap.get(id) || null;
+}
+
+function getSubstitutes(ex, limit = 8) {
+  return state.exercises
+    .filter(candidate => candidate.id !== ex.id)
+    .map(candidate => {
+      const sharedPattern = ex.patterns.filter(p => candidate.patterns.includes(p)).length;
+      const sharedJA = ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).length;
+      const diffEquip = ex.equipment.length > 0 && ex.equipment.some(eq => !candidate.equipment.includes(eq));
+      const score = sharedPattern * 3 + sharedJA * 2 + (diffEquip ? 1 : 0);
+      const reasons = [];
+      if (sharedPattern) {
+        reasons.push(ex.patterns.filter(p => candidate.patterns.includes(p)).map(labelFor).join(", "));
+      } else if (sharedJA) {
+        reasons.push(ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).map(labelFor).join(", "));
+      }
+      return { ex: candidate, score, reason: reasons[0] || "" };
+    })
+    .filter(result => result.score >= 3)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+}
+
+function toggleCompare(exerciseId) {
+  const idx = state.compareIds.indexOf(exerciseId);
+  if (idx === -1) state.compareIds.push(exerciseId);
+  else state.compareIds.splice(idx, 1);
+  if (state.compareIds.length >= 2) state.mode = "compare";
+  if (state.mode === "compare" && state.compareIds.length < 2) state.mode = "explore";
+  rerenderAll();
+}
+
+function roleCandidates(role) {
+  const filtered = filteredExercises();
+  const pool = filtered.some(ex => ex.builderRoles.includes(role))
+    ? filtered
+    : state.exercises;
+
+  return pool
+    .filter(ex => ex.builderRoles.includes(role))
+    .sort((a, b) => {
+      const aScore = (a.skillLevel === "beginner" ? 0 : a.skillLevel === "intermediate" ? 1 : 2)
+        + (a.spinalLoad === "low" ? 0 : a.spinalLoad === "medium" ? 1 : 2);
+      const bScore = (b.skillLevel === "beginner" ? 0 : b.skillLevel === "intermediate" ? 1 : 2)
+        + (b.spinalLoad === "low" ? 0 : b.spinalLoad === "medium" ? 1 : 2);
+      return aScore - bScore || a.name.localeCompare(b.name);
+    });
+}
+
+function ensureBuildSlots() {
+  for (const role of BUILD_ROLES) {
+    const current = state.buildSlots[role];
+    if (current && getExercise(current)) continue;
+    const candidate = roleCandidates(role)[0];
+    state.buildSlots[role] = candidate?.id || null;
+  }
+}
+
+function setBuildRole(role) {
+  state.mode = "build";
+  state.activeBuildRole = role;
+  ensureBuildSlots();
+  rerenderAll();
+}
+
+function setBuildExercise(role, exerciseId) {
+  state.buildSlots[role] = exerciseId;
+  rerenderAll();
+}
+
+function summarizeCompare(compareExercises) {
+  if (compareExercises.length < 2) return [];
+  const insights = [];
+  const loadOrder = { low: 0, medium: 1, high: 2 };
+  const explosiveCount = compareExercises.filter(ex => ex.explosiveness === "high").length;
+  const highestLoad = [...compareExercises].sort((a, b) => loadOrder[b.spinalLoad] - loadOrder[a.spinalLoad])[0];
+  const lowestLoad = [...compareExercises].sort((a, b) => loadOrder[a.spinalLoad] - loadOrder[b.spinalLoad])[0];
+
+  if (highestLoad && lowestLoad && highestLoad.id !== lowestLoad.id) {
+    insights.push(`${highestLoad.name} asks for more spinal demand than ${lowestLoad.name}.`);
+  }
+  if (explosiveCount > 0) {
+    insights.push(`${explosiveCount} of ${compareExercises.length} compared exercises skew explosive.`);
+  }
+  const focuses = new Set(compareExercises.map(ex => ex.bodyFocus));
+  if (focuses.size > 1) {
+    insights.push("The comparison spans different body-focus profiles rather than tiny variants of one movement.");
+  }
+  const familySet = new Set(compareExercises.map(ex => ex.compareAttributes.movementFamily || "general"));
+  if (familySet.size === 1) {
+    insights.push("These exercises solve a similar movement problem, so the tradeoffs are mostly load, skill, and equipment.");
+  }
+  const modalities = new Set(compareExercises.map(ex => ex.compareAttributes.modality || "General"));
+  if (modalities.size > 1) {
+    insights.push("You are comparing exercises from different training intents, not just equipment swaps.");
+  }
+  return insights.slice(0, 3);
+}
+
+function buildInsights(buildExercises) {
+  const insights = [];
+  const hasHinge = !!buildExercises.hinge;
+  const hasPush = !!buildExercises.push;
+  const hasPull = !!buildExercises.pull;
+  const hasCore = !!buildExercises.core;
+  const posteriorCount = Object.values(buildExercises).filter(Boolean)
+    .filter(ex => ["posterior_chain", "full_body", "lower"].includes(ex.bodyFocus)
+      && ex.visualRegions.some(region => ["glutes", "hamstrings", "back", "lower_back"].includes(region))).length;
+  const highLoad = Object.values(buildExercises).filter(Boolean).filter(ex => ex.spinalLoad === "high").length;
+
+  if (!hasHinge) insights.push("You are missing a hinge movement.");
+  if (!hasPush || !hasPull) insights.push("This build is missing either a push or a pull, so upper-body balance is thin.");
+  if (!hasCore) insights.push("There is no dedicated core/trunk slot yet.");
+  if (posteriorCount < 2) insights.push("This build is light on posterior-chain emphasis.");
+  if (highLoad >= 3) insights.push("This build stacks a lot of spinal demand in one session.");
+  if (!insights.length) insights.push("This build hits the major movement slots with a workable balance.");
+  return insights;
+}
+
+function serializeBuildSlots() {
+  return BUILD_ROLES
+    .filter(role => state.buildSlots[role])
+    .map(role => `${role}:${state.buildSlots[role]}`)
+    .join("|");
+}
+
+function restoreBuildSlots(raw) {
+  if (!raw) return;
+  for (const pair of raw.split("|")) {
+    const [role, exerciseId] = pair.split(":");
+    if (BUILD_ROLES.includes(role) && exerciseId) state.buildSlots[role] = exerciseId;
+  }
+}
+
+function syncUrlState() {
+  const params = new URLSearchParams();
+  if (state.activeTab !== "exercises") params.set("tab", state.activeTab);
+  if (state.mode !== "explore") params.set("mode", state.mode);
+  if (state.search) params.set("q", state.search);
+  if (state.compareIds.length) params.set("compare", state.compareIds.join(","));
+  if (state.sheetExercise) params.set("detail", state.sheetExercise);
+  if (state.bodyView !== "front") params.set("body", state.bodyView);
+  if (state.activeBuildRole) params.set("buildRole", state.activeBuildRole);
+  const buildRaw = serializeBuildSlots();
+  if (buildRaw) params.set("build", buildRaw);
+
+  for (const [type, ids] of Object.entries(state.filters)) {
+    if (ids.length) params.set(type, ids.join(","));
+  }
+
+  const query = params.toString();
+  const next = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+  window.history.replaceState({}, "", next);
+}
+
+function restoreUrlState() {
+  const params = new URLSearchParams(window.location.search);
+  state.activeTab = params.get("tab") || "exercises";
+  state.mode = "explore";
+  state.search = params.get("q") || "";
+  state.compareIds = (params.get("compare") || "").split(",").filter(Boolean).filter(id => state.exerciseMap.has(id));
+  state.sheetExercise = params.get("detail") || null;
+  state.bodyView = params.get("body") || "front";
+  state.activeBuildRole = params.get("buildRole") || null;
+  restoreBuildSlots(params.get("build"));
+
+  for (const type of Object.keys(state.filters)) {
+    state.filters[type] = (params.get(type) || "").split(",").filter(Boolean);
+  }
+
+  if (state.mode === "compare" && state.compareIds.length < 2) state.mode = "explore";
+  ensureBuildSlots();
+}
+
+function renderModeBar() {
+  const compareCount = state.compareIds.length;
+  el("compare-count-inline").textContent = formatCount(compareCount);
+  document.querySelectorAll(".mode-chip[data-mode]").forEach(button => {
+    button.classList.toggle("active", button.dataset.mode === state.mode);
+  });
+}
+
+function renderCompareTray() {
+  const tray = el("compare-tray");
+  if (!state.compareIds.length) {
+    tray.innerHTML = "";
+    tray.style.display = "none";
+    return;
+  }
+  tray.style.display = "flex";
+  tray.innerHTML = `
+    <div class="compare-tray-copy">${formatCount(state.compareIds.length)} exercise${state.compareIds.length === 1 ? "" : "s"} selected</div>
+    <div class="compare-tray-pills">
+      ${state.compareIds.map(id => {
+        const ex = getExercise(id);
+        if (!ex) return "";
+        return `
+          <span class="compare-pill">
+            ${ex.name}
+            <button type="button" data-remove-compare="${id}" aria-label="Remove ${ex.name}">✕</button>
+          </span>
+        `;
+      }).join("")}
+    </div>
+  `;
+
+  tray.querySelectorAll("[data-remove-compare]").forEach(button => {
+    button.addEventListener("click", () => toggleCompare(button.dataset.removeCompare));
+  });
+}
+
+function renderActiveFilters() {
+  const pills = [];
+  for (const [type, ids] of Object.entries(state.filters)) {
+    for (const id of ids) {
+      pills.push(`
+        <span class="active-filter-pill">
+          ${type === "muscles" ? muscleLabel(id) : labelFor(id)}
+          <button type="button" data-remove-type="${type}" data-remove-id="${id}" aria-label="Remove ${labelFor(id)}">✕</button>
+        </span>
+      `);
+    }
+  }
+
+  const container = el("active-filters");
+  container.innerHTML = pills.join("");
+  container.style.display = pills.length ? "flex" : "none";
+  container.querySelectorAll("[data-remove-type]").forEach(button => {
+    button.addEventListener("click", () => toggleFilter(button.dataset.removeType, button.dataset.removeId));
+  });
+}
+
+function renderRegionMini(regions) {
+  return regions.map(region => `<span class="mini-region mini-region-${region}">${REGION_DISPLAY[region] || titleCase(region)}</span>`).join("");
+}
+
+function renderExerciseCard(exercise, options = {}) {
+  const { context = "explore", role = null } = options;
+  const detailCta = context === "builder-picker" ? "Use in slot" : "Details";
+  const primaryJACount = exercise.primaryJA?.length || 0;
+  const equipmentCount = exercise.equipment?.length || 0;
+  const primaryJALine = primaryJACount
+    ? `${pluralizeLabel("Primary joint action", "Primary joint actions", primaryJACount)}: ${exercise.primaryJA.map(labelFor).join(", ")}`
+    : "";
+  const equipmentLine = `${pluralizeLabel("Equipment", "Equipment", equipmentCount)}: ${exercise.equipment[0] ? exercise.equipment.map(labelFor).join(", ") : "Bodyweight"}`;
+  const factLines = [primaryJALine, equipmentLine].filter(Boolean);
+
+  return `
+    <article class="exercise-card v2-card" data-id="${exercise.id}">
+      <div class="card-header">
+        <span class="card-name">${exercise.name}</span>
+        <div class="card-badges">
+          ${exercise.modality ? `<span class="badge badge-modality">${labelFor(exercise.modality)}</span>` : ""}
+          ${exercise.laterality ? `<span class="badge badge-isolation">${labelFor(exercise.laterality)}</span>` : ""}
+        </div>
+      </div>
+      <div class="card-visual">
+        ${renderRegionMini(exercise.visualRegions)}
+      </div>
+      <ul class="card-facts">
+        ${factLines.map(line => `<li class="card-fact-line">${line}</li>`).join("")}
+      </ul>
+      <div class="card-actions">
+        ${context === "builder-picker" ? `
+          <button class="card-btn active" type="button" data-build-select="${exercise.id}" data-build-role="${role}">
+            Use in ${titleCase(role)}
+          </button>
+        ` : ""}
+        <button class="card-btn ${context !== "builder-picker" ? "card-btn-primary" : ""}" type="button" data-details="${exercise.id}">${detailCta}</button>
+      </div>
+    </article>
+  `;
+}
+
+function bindExerciseCards(root = document) {
+  root.querySelectorAll("[data-compare]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      toggleCompare(button.dataset.compare);
+    });
+  });
+  root.querySelectorAll("[data-details]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      const exerciseId = button.dataset.details;
+      const buildRole = button.dataset.buildRole || null;
+      if (buildRole) {
+        setBuildExercise(buildRole, exerciseId);
+      } else {
+        openSheet(exerciseId);
+      }
+    });
+  });
+  root.querySelectorAll("[data-build-select]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      setBuildExercise(button.dataset.buildRole, button.dataset.buildSelect);
+    });
+  });
+  root.querySelectorAll(".exercise-card[data-id]").forEach(card => {
+    card.addEventListener("click", () => openSheet(card.dataset.id));
+  });
+}
+
+function renderExploreView() {
+  const results = filteredExercises();
+  el("result-count").textContent = `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""}`;
+
+  const list = el("exercise-list");
+  if (!results.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <strong>No exercises match this mix of constraints.</strong><br>
+        Try broadening the search or clearing a filter.
+      </div>`;
+    return;
+  }
+
+  const toRender = results.slice(0, 120);
+  list.innerHTML = toRender.map(ex => renderExerciseCard(ex)).join("");
+  if (results.length > 120) {
+    list.innerHTML += `<div class="empty" style="padding:16px">Showing 120 of ${formatCount(results.length)}. Refine your search to see more.</div>`;
+  }
+  bindExerciseCards(list);
+}
+
+function compareValueClass(compareExercises, accessor, exercise) {
+  const values = compareExercises.map(accessor);
+  const uniqueCount = new Set(values).size;
+  if (uniqueCount <= 1) return "";
+  const value = accessor(exercise);
+  return values.filter(entry => entry === value).length === 1 ? "contrast" : "shared";
+}
+
+function renderCompareView() {
+  const target = el("compare-view");
+  const compareExercises = state.compareIds.map(getExercise).filter(Boolean);
+  el("result-count").textContent = `${formatCount(compareExercises.length)} selected for comparison`;
+  if (compareExercises.length < 2) {
+    target.innerHTML = `
+      <div class="empty compare-empty">
+        <strong>Compare starts with two exercises.</strong><br>
+        Add a couple of cards from Explore, or try a query like <em>posterior chain</em> and compare the best fits.
+      </div>`;
+    return;
+  }
+
+  const rows = [
+    ["Movement family", ex => titleCase(ex.compareAttributes.movementFamily || "general"), ex => ex.compareAttributes.movementFamily || "general"],
+    ["Body focus", ex => formatBodyFocus(ex.compareAttributes.bodyFocus), ex => ex.compareAttributes.bodyFocus],
+    ["Top muscles", ex => ex.compareAttributes.topMuscles.join(", ") || "—"],
+    ["Movement", ex => ex.compareAttributes.topPatterns.join(", ") || "—"],
+    ["Modality", ex => ex.compareAttributes.modality || "—"],
+    ["Spinal load", ex => titleCase(ex.compareAttributes.spinalLoad)],
+    ["Explosiveness", ex => titleCase(ex.compareAttributes.explosiveness)],
+    ["Skill level", ex => titleCase(ex.compareAttributes.skillLevel)],
+    ["Equipment", ex => ex.equipment.slice(0, 3).map(labelFor).join(", ") || "Bodyweight"],
+  ];
+
+  target.innerHTML = `
+    <section class="compare-summary">
+      <div class="mode-section-header">
+        <h3 class="section-label">Comparison Notes</h3>
+        <button class="ghost-btn share-btn" id="copy-compare-btn" type="button">Copy compare link</button>
+      </div>
+      <div class="insight-list">
+        ${summarizeCompare(compareExercises).map(line => `<div class="insight-pill">${line}</div>`).join("")}
+      </div>
+    </section>
+    <section class="compare-grid">
+      <div class="compare-row compare-head">
+        <div class="compare-cell compare-label">Attribute</div>
+        ${compareExercises.map(ex => `
+          <div class="compare-cell compare-exercise">
+            <div class="compare-exercise-name">${ex.name}</div>
+            <button class="ghost-btn" type="button" data-remove-compare="${ex.id}">Remove</button>
+          </div>
+        `).join("")}
+      </div>
+      ${rows.map(([label, fn, rawFn]) => `
+        <div class="compare-row">
+          <div class="compare-cell compare-label">${label}</div>
+          ${compareExercises.map(ex => `
+            <div class="compare-cell ${rawFn ? compareValueClass(compareExercises, rawFn, ex) : ""}">
+              ${fn(ex)}
+            </div>
+          `).join("")}
+        </div>
+      `).join("")}
+    </section>
+  `;
+
+  const copyBtn = el("copy-compare-btn");
+  if (copyBtn) copyBtn.addEventListener("click", copyCurrentUrl(copyBtn, "Copy compare link"));
+  target.querySelectorAll("[data-remove-compare]").forEach(button => {
+    button.addEventListener("click", () => toggleCompare(button.dataset.removeCompare));
+  });
+}
+
+function renderBuildView() {
+  ensureBuildSlots();
+  const target = el("build-view");
+  el("result-count").textContent = "Build a balanced five-slot workout";
+  const buildExercises = Object.fromEntries(
+    BUILD_ROLES.map(role => [role, getExercise(state.buildSlots[role])])
+  );
+  const candidates = state.activeBuildRole ? roleCandidates(state.activeBuildRole).slice(0, 10) : [];
+
+  const counts = {
+    lower: Object.values(buildExercises).filter(ex => ex && ["lower", "posterior_chain"].includes(ex.bodyFocus)).length,
+    upper: Object.values(buildExercises).filter(ex => ex && ex.bodyFocus === "upper").length,
+    core: Object.values(buildExercises).filter(ex => ex && (ex.bodyFocus === "core" || ex.builderRoles.includes("core"))).length,
+    posterior: Object.values(buildExercises).filter(ex => ex && ex.visualRegions.some(r => ["glutes", "hamstrings", "back", "lower_back"].includes(r))).length,
+  };
+
+  target.innerHTML = `
+    <section class="build-summary">
+      <div class="mode-section-header">
+        <h3 class="section-label">Build a Workout</h3>
+        <button class="ghost-btn share-btn" id="copy-build-btn" type="button">Copy build link</button>
+      </div>
+      <div class="insight-list">
+        ${buildInsights(buildExercises).map(line => `<div class="insight-pill">${line}</div>`).join("")}
+      </div>
+      <div class="balance-grid">
+        ${Object.entries(counts).map(([key, value]) => `
+          <div class="balance-card">
+            <span class="balance-label">${titleCase(key)}</span>
+            <strong>${value}</strong>
+            <div class="balance-bar"><span style="width:${(value / BUILD_ROLES.length) * 100}%"></span></div>
+          </div>
+        `).join("")}
+      </div>
+    </section>
+    <section class="build-slots">
+      ${BUILD_ROLES.map(role => {
+        const ex = buildExercises[role];
+        return `
+          <div class="build-slot ${state.activeBuildRole === role ? "active" : ""}">
+            <div class="build-slot-header">
+              <div>
+                <div class="build-slot-kicker">${titleCase(role)}</div>
+                <div class="build-slot-name">${ex ? ex.name : "No recommendation yet"}</div>
+              </div>
+              <button class="ghost-btn" type="button" data-build-role="${role}">Swap</button>
+            </div>
+            ${ex ? `<div class="build-slot-copy">${ex.whyHints[0]}</div>` : ""}
+          </div>
+        `;
+      }).join("")}
+    </section>
+    <section class="builder-picker ${state.activeBuildRole ? "open" : ""}">
+      <div class="builder-picker-header">
+        <h3 class="section-label">${state.activeBuildRole ? `Candidates for ${titleCase(state.activeBuildRole)}` : "Choose a slot"}</h3>
+      </div>
+      <div class="exercise-list">
+        ${candidates.map(ex => renderExerciseCard(ex, { context: "builder-picker", role: state.activeBuildRole })).join("") || '<div class="empty"><strong>Choose a slot to swap.</strong><br>Each slot opens a scoped list instead of dumping the whole graph on you.</div>'}
+      </div>
+    </section>
+  `;
+
+  const copyBtn = el("copy-build-btn");
+  if (copyBtn) copyBtn.addEventListener("click", copyCurrentUrl(copyBtn, "Copy build link"));
+  target.querySelectorAll("[data-build-role]").forEach(button => {
+    button.addEventListener("click", () => setBuildRole(button.dataset.buildRole));
+  });
+  bindExerciseCards(target);
+}
+
+function renderCurrentMode() {
+  document.querySelectorAll(".mode-view").forEach(view => view.classList.remove("active"));
+  el(`${state.mode}-view`).classList.add("active");
+  if (state.mode === "explore") renderExploreView();
+  if (state.mode === "compare") renderCompareView();
+  if (state.mode === "build") renderBuildView();
+}
+
+function openSheet(exerciseId) {
+  const ex = getExercise(exerciseId);
+  if (!ex) return;
+  state.sheetExercise = exerciseId;
+  syncUrlState();
+
+  const badges = [];
+  if (ex.modality) badges.push(`<span class="badge badge-modality">${labelFor(ex.modality)}</span>`);
+  if (ex.combination) badges.push(`<span class="badge badge-combo">Combination</span>`);
+  if (ex.laterality) badges.push(`<span class="badge badge-isolation">${labelFor(ex.laterality)}</span>`);
+
+  const musclesByDegree = {};
+  for (const [muscle, degree] of ex.muscles) {
+    (musclesByDegree[degree] = musclesByDegree[degree] || []).push(muscle);
+  }
+  const muscleGroupsHtml = DEGREE_ORDER
+    .filter(degree => musclesByDegree[degree]?.length)
+    .map(degree => {
+      const cls = DEGREE_CLASS[degree];
+      return `
+        <div class="muscle-degree-group">
+          <div class="muscle-degree-heading">
+            <span class="legend-dot deg-${cls}"></span>
+            ${DEGREE_LABEL[degree]}
+          </div>
+          <div class="tag-list">
+            ${musclesByDegree[degree].map(muscle => `<span class="tag muscle-tag">${muscleLabel(muscle)}</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  const subs = getSubstitutes(ex);
+  const subsHtml = subs.length
+    ? subs.map(({ ex: sub, reason }) => `
+      <div class="sub-card">
+        <div>
+          <div>${sub.name}</div>
+          ${reason ? `<div class="sub-why">${reason}</div>` : ""}
+        </div>
+        <button class="sub-view-btn" type="button" data-id="${sub.id}">View</button>
+      </div>
+    `).join("")
+    : `<div style="font-size:13px;color:var(--text-2)">No close substitutes found.</div>`;
+
+  el("sheet-content").innerHTML = `
+    <div class="sheet-title">${ex.name}</div>
+    <div class="sheet-subtitle">${graphGroundingLine(ex) || "Structured exercise record."}</div>
+    <div class="sheet-badges">${badges.join("")}</div>
+
+    <div class="section-label">Body Emphasis</div>
+    <div class="mini-region-row">${renderRegionMini(ex.visualRegions)}</div>
+
+    <div class="section-label">Movement Patterns</div>
+    <div class="tag-list">${ex.patterns.map(pattern => `<span class="tag tag-primary">${labelFor(pattern)}</span>`).join("") || '<span class="tag">None</span>'}</div>
+
+    <div class="section-label">Muscles</div>
+    <div class="muscle-degree-groups">${muscleGroupsHtml || '<span style="font-size:13px;color:var(--text-2)">No data</span>'}</div>
+
+    ${ex.primaryJA.length ? `<div class="section-label">Primary Joint Actions</div><div class="tag-list">${ex.primaryJA.map(ja => `<span class="tag tag-primary">${labelFor(ja)}</span>`).join("")}</div>` : ""}
+    ${ex.supportingJA.length ? `<div class="section-label">Supporting Joint Actions</div><div class="tag-list">${ex.supportingJA.map(ja => `<span class="tag">${labelFor(ja)}</span>`).join("")}</div>` : ""}
+
+    <div class="section-label">Equipment</div>
+    <div class="tag-list">${ex.equipment.map(eq => `<span class="tag">${labelFor(eq)}</span>`).join("") || '<span class="tag">Bodyweight</span>'}</div>
+
+    <div class="section-label">Substitutes</div>
+    <div class="sub-list">${subsHtml}</div>
+  `;
+
+  el("sheet-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  el("sheet-content").querySelectorAll(".sub-view-btn").forEach(button => {
+    button.addEventListener("click", event => {
+      event.stopPropagation();
+      el("detail-sheet").scrollTop = 0;
+      openSheet(button.dataset.id);
+    });
+  });
+}
+
+window.app = window.app || {};
+app.closeSheet = function(e) {
+  if (e.target === el("sheet-overlay")) {
+    el("sheet-overlay").classList.remove("open");
+    document.body.style.overflow = "";
+    state.sheetExercise = null;
+    syncUrlState();
+  }
+};
+
+app.setBodyView = function(view) {
+  state.bodyView = view;
+  el("anatomy-front").style.display = view === "front" ? "" : "none";
+  el("anatomy-back").style.display = view === "back" ? "" : "none";
+  el("btn-front").classList.toggle("active", view === "front");
+  el("btn-back").classList.toggle("active", view === "back");
+  syncUrlState();
+};
+
+function renderPatternTags() {
+  el("pattern-tags").innerHTML = (state.vocab.patterns || []).map(pattern => {
+    const active = state.filters.patterns.includes(pattern.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="patterns" data-id="${pattern.id}" style="padding-left:${10 + pattern.depth * 14}px">
+        ${pattern.label} <span style="opacity:.6;font-size:11px">${formatCount(pattern.count)}</span>
+      </span>
+    `;
+  }).join("");
+}
+
+function renderMuscleFilterTree(nodes, depth = 0) {
+  return sortByLabel(nodes).map(node => {
+    const active = state.filters.muscles.includes(node.id);
+    return `
+      <div>
+        <button class="hierarchy-node ${active ? "active" : ""}" data-type="muscles" data-id="${node.id}" style="margin-left:${depth * 16}px">
+          <span class="hierarchy-node-main">
+            <span>${node.label}</span>
+            <span class="hierarchy-node-kind">${node.type}</span>
+          </span>
+          <span class="vocab-item-count">${formatCount(node.count)}</span>
+        </button>
+        ${node.children?.length ? `<div class="hierarchy-children">${renderMuscleFilterTree(node.children, depth + 1)}</div>` : ""}
+      </div>
+    `;
+  }).join("");
+}
+
+function renderFilterPanels() {
+  renderPatternTags();
+  el("muscle-filter-tags").innerHTML = renderMuscleFilterTree(state.vocab.muscles?.regions || []);
+
+  el("modality-tags").innerHTML = (state.vocab.modalities || []).map(modality => {
+    const active = state.filters.modalities.includes(modality.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="modalities" data-id="${modality.id}">
+        ${modality.label} <span style="opacity:.6;font-size:11px">${formatCount(modality.count)}</span>
+      </span>
+    `;
+  }).join("");
+
+  el("equipment-tags").innerHTML = (state.vocab.equipment || []).map(equipment => {
+    const active = state.filters.equipment.includes(equipment.id);
+    return `
+      <span class="filter-tag ${active ? "active" : ""}" data-type="equipment" data-id="${equipment.id}">
+        ${equipment.label} <span style="opacity:.6;font-size:11px">${formatCount(equipment.count)}</span>
+      </span>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".filter-tag[data-type], .hierarchy-node[data-type]").forEach(node => {
+    node.addEventListener("click", () => {
+      toggleFilter(node.dataset.type, node.dataset.id);
+      closeFilterPanelForType(node.dataset.type);
+    });
+  });
+}
+
+function findTopMuscleRegionId(muscleId) {
+  for (const region of state.vocab.muscles?.regions || []) {
+    const descendants = state.muscleDescendants[region.id] || [region.id];
+    if (descendants.includes(muscleId)) return region.id;
+  }
+  return null;
+}
+
+function setMuscleSectionOpen(regionId, open) {
+  state.muscleOpenSections[regionId] = open;
+}
+
+function renderMuscleSection(nodes, depth = 0) {
+  return sortByLabel(nodes).map(node => {
+    const active = state.filters.muscles.includes(node.id);
+    return `
+      <div class="muscle-group-row ${active ? "active" : ""}" data-muscle="${node.id}" style="margin-left:${depth * 16}px">
+        <span>${node.label}</span>
+        <span class="muscle-count">${formatCount(node.count)} exercises</span>
+      </div>
+      ${node.children?.length ? renderMuscleSection(node.children, depth + 1) : ""}
+    `;
+  }).join("");
+}
+
+function renderMuscleList() {
+  const regions = sortByLabel(state.vocab.muscles?.regions || []);
+  el("muscle-list").innerHTML = regions.map(region => {
+    const open = !!state.muscleOpenSections[region.id];
+    return `
+      <div class="vocab-section">
+        <div class="vocab-section-header ${open ? "open" : ""}" data-muscle-section="${region.id}" id="muscle-section-header-${region.id}">
+          <span class="muscle-header-label">${region.label}</span>
+          <span class="vocab-item-count muscle-header-count">${formatCount(region.count)}</span>
+          <span class="vocab-chevron">▼</span>
+        </div>
+        <div class="vocab-items ${open ? "open" : ""}" id="muscle-section-${region.id}">
+          ${renderMuscleSection(region.children || [])}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  el("muscle-list").querySelectorAll(".muscle-group-row").forEach(row => {
+    row.addEventListener("click", () => toggleFilter("muscles", row.dataset.muscle));
+  });
+
+  el("muscle-list").querySelectorAll("[data-muscle-section]").forEach(header => {
+    header.addEventListener("click", event => {
+      if (event.target.closest(".muscle-group-row")) return;
+      const section = el(`muscle-section-${header.dataset.muscleSection}`);
+      const open = !section.classList.contains("open");
+      section.classList.toggle("open", open);
+      header.classList.toggle("open", open);
+      setMuscleSectionOpen(header.dataset.muscleSection, open);
+    });
+  });
+
+  if (state.pendingMuscleScrollTo) {
+    const target = el(`muscle-section-header-${state.pendingMuscleScrollTo}`);
+    state.pendingMuscleScrollTo = null;
+    if (target) {
+      window.requestAnimationFrame(() => {
+        target.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    }
+  }
+}
+
+function renderMuscleResults() {
+  const results = filteredExercises();
+  const countLabel = state.filters.muscles.length
+    ? `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} match the current muscle filters`
+    : `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} available`;
+
+  el("muscle-result-count").textContent = countLabel;
+
+  const list = el("muscle-exercise-list");
+  if (!results.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <strong>No exercises match this muscle selection.</strong><br>
+        Try another region or clear the muscle filters.
+      </div>`;
+    return;
+  }
+
+  const toRender = results.slice(0, 36);
+  list.innerHTML = toRender.map(ex => renderExerciseCard(ex)).join("");
+  if (results.length > 36) {
+    list.innerHTML += `<div class="empty" style="padding:16px">Showing 36 of ${formatCount(results.length)}. Add more filters to narrow the list.</div>`;
+  }
+  bindExerciseCards(list);
+}
+
+function renderBrowseResults() {
+  const results = filteredExercises();
+  const hasBrowseFilters =
+    state.filters.patterns.length > 0 ||
+    state.filters.modalities.length > 0 ||
+    state.filters.joints.length > 0 ||
+    state.filters.equipment.length > 0;
+
+  const countLabel = hasBrowseFilters
+    ? `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} match the current concept filters`
+    : `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} available`;
+
+  el("browse-result-count").textContent = countLabel;
+
+  const list = el("browse-exercise-list");
+  if (!hasBrowseFilters) {
+    const toRender = results.slice(0, 36);
+    list.innerHTML = toRender.map(ex => renderExerciseCard(ex)).join("");
+    if (results.length > 36) {
+      list.innerHTML += `<div class="empty" style="padding:16px">Showing 36 of ${formatCount(results.length)}. Add more filters to narrow the list.</div>`;
+    }
+    bindExerciseCards(list);
+    return;
+  }
+
+  if (!results.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <strong>No exercises match this concept selection.</strong><br>
+        Try another concept or remove one of the active Browse filters.
+      </div>`;
+    return;
+  }
+
+  const toRender = results.slice(0, 36);
+  list.innerHTML = toRender.map(ex => renderExerciseCard(ex)).join("");
+  if (results.length > 36) {
+    list.innerHTML += `<div class="empty" style="padding:16px">Showing 36 of ${formatCount(results.length)}. Add more filters to narrow the list.</div>`;
+  }
+  bindExerciseCards(list);
+}
+
+function renderVocab() {
+  el("vocab-modalities").innerHTML = (state.vocab.modalities || []).map(modality => {
+    const active = state.filters.modalities.includes(modality.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="modalities" data-id="${modality.id}">
+        <span class="vocab-item-main">
+          <strong>${modality.label}</strong>
+          ${modality.description ? `<small>${modality.description}</small>` : ""}
+        </span>
+        <span class="vocab-item-count">${formatCount(modality.count)}</span>
+      </div>
+    `;
+  }).join("");
+
+  el("vocab-patterns").innerHTML = (state.vocab.patterns || []).map(pattern => {
+    const active = state.filters.patterns.includes(pattern.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""} indent-${Math.min(pattern.depth, 3)}" data-type="patterns" data-id="${pattern.id}">
+        <span class="vocab-item-main">
+          <strong>${pattern.label}</strong>
+          ${pattern.description ? `<small>${pattern.description}</small>` : ""}
+        </span>
+        <span class="vocab-item-count">${formatCount(pattern.count)}</span>
+      </div>
+    `;
+  }).join("");
+
+  el("vocab-joints").innerHTML = (state.vocab.joints || []).flatMap(joint =>
+    (joint.actions || []).map(action => {
+      const active = state.filters.joints.includes(action.id);
+      return `
+        <div class="vocab-item ${active ? "active" : ""} indent-1" data-type="joints" data-id="${action.id}">
+          <span>${action.label} <span style="color:var(--text-2);font-size:12px">${joint.label}</span></span>
+          <span class="vocab-item-count">${formatCount(action.count)}</span>
+        </div>
+      `;
+    })
+  ).join("");
+
+  el("vocab-equipment").innerHTML = (state.vocab.equipment || []).map(equipment => {
+    const active = state.filters.equipment.includes(equipment.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="equipment" data-id="${equipment.id}">
+        <span>${equipment.label}</span>
+        <span class="vocab-item-count">${formatCount(equipment.count)}</span>
+      </div>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".vocab-item[data-type]").forEach(item => {
+    item.addEventListener("click", () => toggleFilter(item.dataset.type, item.dataset.id));
+  });
+}
+
+function initVocabAccordions() {
+  document.querySelectorAll(".vocab-section-header").forEach(header => {
+    if (header.dataset.bound === "true") return;
+    header.dataset.bound = "true";
+    header.addEventListener("click", () => {
+      const section = header.dataset.section;
+      if (!section) return;
+      const items = el(`vocab-${section}`);
+      const open = items.classList.toggle("open");
+      header.classList.toggle("open", open);
+    });
+  });
+}
+
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.body.dataset.tab = tab;
+  document.querySelectorAll(".view").forEach(view => view.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(button => button.classList.remove("active"));
+  el(`view-${tab}`).classList.add("active");
+  document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add("active");
+  if (tab === "muscles") renderMuscleList();
+  if (tab === "vocab") renderVocab();
+  syncUrlState();
+}
+
+function setMode(mode) {
+  if (mode === "compare" && state.compareIds.length < 2) return;
+  state.mode = mode;
+  if (mode === "build") ensureBuildSlots();
+  rerenderAll();
+}
+
+function initFilterChips() {
+  document.querySelectorAll(".filter-chip[data-panel]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const panel = el(`panel-${chip.dataset.panel}`);
+      const isOpen = !panel.classList.contains("open");
+      closeAllFilterPanels();
+      panel.classList.toggle("open", isOpen);
+      chip.classList.toggle("active", isOpen);
+      if (isOpen) renderFilterPanels();
+    });
+  });
+
+  el("clear-filters").addEventListener("click", () => clearFilters());
+}
+
+function updateClearBtn() {
+  el("clear-filters").style.display = hasActiveFilters() ? "" : "none";
+}
+
+function updateMuscleClearBtn() {
+  const button = el("clear-muscle-filters");
+  if (!button) return;
+  const hasMuscleFilters = state.filters.muscles.length > 0;
+  button.disabled = !hasMuscleFilters;
+  button.classList.toggle("disabled", !hasMuscleFilters);
+}
+
+function updateBrowseClearBtn() {
+  const button = el("clear-browse-filters");
+  if (!button) return;
+  const hasBrowseFilters =
+    state.filters.patterns.length > 0 ||
+    state.filters.modalities.length > 0 ||
+    state.filters.equipment.length > 0 ||
+    state.filters.joints.length > 0;
+  button.disabled = !hasBrowseFilters;
+  button.classList.toggle("disabled", !hasBrowseFilters);
+}
+
+function highlightAnatomy() {
+  const hasMuscleSelection = state.filters.muscles.length > 0;
+  document.querySelectorAll(".muscle-region").forEach(region => {
+    const regionMuscles = region.dataset.muscles.split(",");
+    const matched = regionMuscles.some(muscle => filterMatchesHierarchy(state.filters.muscles, state.muscleDescendants, [muscle]));
+    region.classList.toggle("highlighted", matched);
+    region.classList.toggle("muted", hasMuscleSelection && !matched);
+  });
+}
+
+function initAnatomyMap() {
+  document.querySelectorAll(".muscle-region").forEach(region => {
+    region.addEventListener("click", () => {
+      const muscles = region.dataset.muscles.split(",");
+      const allActive = muscles.every(muscle => state.filters.muscles.includes(muscle));
+      const targetRegions = [...new Set(muscles.map(findTopMuscleRegionId).filter(Boolean))];
+      targetRegions.forEach(regionId => setMuscleSectionOpen(regionId, true));
+      state.pendingMuscleScrollTo = targetRegions[0] || null;
+      if (allActive) {
+        state.filters.muscles = state.filters.muscles.filter(muscle => !muscles.includes(muscle));
+      } else {
+        muscles.forEach(muscle => {
+          if (!state.filters.muscles.includes(muscle)) state.filters.muscles.push(muscle);
+        });
+      }
+      rerenderAll();
+    });
+  });
+}
+
+function initSearch() {
+  el("search-input").addEventListener("input", event => {
+    state.search = event.target.value;
+    if (searchDebounceTimer) window.clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = window.setTimeout(() => {
+      rerenderAll();
+    }, 120);
+  });
+}
+
+function initNav() {
+  document.querySelectorAll(".nav-btn[data-tab]").forEach(button => {
+    button.addEventListener("click", () => switchTab(button.dataset.tab));
+  });
+}
+
+function initModes() {
+  document.querySelectorAll(".mode-chip[data-mode]").forEach(button => {
+    button.addEventListener("click", () => setMode(button.dataset.mode));
+  });
+}
+
+function initCopyLink() {
+  const button = el("copy-link-btn");
+  if (!button) return;
+  button.addEventListener("click", copyCurrentUrl(button, "Copy current view"));
+}
+
+function rerenderAll() {
+  ensureBuildSlots();
+  updateClearBtn();
+  updateMuscleClearBtn();
+  updateBrowseClearBtn();
+  renderModeBar();
+  renderCompareTray();
+  renderFilterPanels();
+  renderActiveFilters();
+  renderCurrentMode();
+  renderMuscleList();
+  renderMuscleResults();
+  renderVocab();
+  renderBrowseResults();
+  highlightAnatomy();
+  app.setBodyView(state.bodyView);
+  if (state.sheetExercise && getExercise(state.sheetExercise)) {
+    openSheet(state.sheetExercise);
+  }
+  syncUrlState();
+}
+
+function init() {
+  initNav();
+  initModes();
+  initSearch();
+  initFilterChips();
+  initAnatomyMap();
+  initVocabAccordions();
+  initCopyLink();
+  el("clear-muscle-filters")?.addEventListener("click", () => {
+    if (!state.filters.muscles.length) return;
+    state.filters.muscles = [];
+    rerenderAll();
+  });
+  el("clear-browse-filters")?.addEventListener("click", () => {
+    const hasBrowseFilters =
+      state.filters.patterns.length > 0 ||
+      state.filters.modalities.length > 0 ||
+      state.filters.equipment.length > 0 ||
+      state.filters.joints.length > 0;
+    if (!hasBrowseFilters) return;
+    clearBrowseFilters();
+  });
+  el("search-input").value = state.search;
+  switchTab(state.activeTab);
+  rerenderAll();
+}
+
+async function loadData() {
+  try {
+    const [stateExercises, stateVocab] = await Promise.all([
+      loadJson("data.json"),
+      loadJson("vocab.json"),
+    ]);
+    if (!Array.isArray(stateExercises)) {
+      throw new Error("data.json did not return an exercise array");
+    }
+    if (!stateVocab || typeof stateVocab !== "object") {
+      throw new Error("vocab.json did not return an object");
+    }
+    state.exercises = stateExercises;
+    state.exerciseMap = new Map(stateExercises.map(ex => [ex.id, ex]));
+    state.searchIndex = new Map(stateExercises.map(ex => [ex.id, ex.searchIndex || buildFallbackSearchIndex(ex)]));
+    state.vocab = stateVocab;
+    buildHierarchyMaps();
+    restoreUrlState();
+    await loadIllustrations();
+    init();
+  } catch (err) {
+    console.error(err);
+    renderFatalError(err);
+  }
+}
+
+loadData();

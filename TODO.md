@@ -19,6 +19,7 @@ Remaining work is grouped by execution horizon.
 - [ ] **PROV-O in graph** — `enrichment_stamps.model` is stored. Update `build.py` to emit `prov:wasAttributedTo` on inferred claims and `prov:wasGeneratedBy` for the enrichment activity (model, timestamp). Requires ontology additions; write ADR first.
 - [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
 - [ ] **Claude Desktop integration test** — configure `claude_desktop_config.json` and test `find_substitutions` with equipment constraints end-to-end.
+- [ ] **Promote stable app heuristics into graph-governed outputs** — tracked in [docs/app_field_provenance.md](/Users/talha/Code/free-exercise-graph/docs/app_field_provenance.md). Candidates: `visualRegions`, `bodyFocus`, `explosiveness`, `builderRoles`, maybe `movementFamily`. Requires deliberate separation between governed computed exports and purely presentational copy like `whyHints` / `practicalNote`.
 
 ---
 

@@ -34,7 +34,7 @@ jobs:
           import json
           from pathlib import Path
 
-          site_dir = Path("site")
+          site_dir = Path("app")
           data_path = site_dir / "data.json"
           vocab_path = site_dir / "vocab.json"
           index_path = site_dir / "index.html"
@@ -45,17 +45,17 @@ jobs:
           data = json.loads(data_path.read_text())
           vocab = json.loads(vocab_path.read_text())
 
-          assert isinstance(data, list), "site/data.json must be a JSON array"
-          assert len(data) > 0, "site/data.json is empty"
-          assert isinstance(vocab, dict), "site/vocab.json must be a JSON object"
-          print(f"site/data.json exercises: {len(data)}")
-          print(f"site/vocab.json keys: {sorted(vocab.keys())}")
+          assert isinstance(data, list), "app/data.json must be a JSON array"
+          assert len(data) > 0, "app/data.json is empty"
+          assert isinstance(vocab, dict), "app/vocab.json must be a JSON object"
+          print(f"app/data.json exercises: {len(data)}")
+          print(f"app/vocab.json keys: {sorted(vocab.keys())}")
           PY
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/
+          path: app/
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="A structured knowledge graph of 3,455 exercises with muscle involvement, movement patterns, and joint actions. Find substitutes, explore by muscle, browse the vocabulary." />
+  <title>free-exercise-graph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=League+Gothic&family=Young+Serif&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body data-tab="exercises">
+
+  <!-- ── Exercises tab ───────────────────────────────────────────────────── -->
+  <div id="view-exercises" class="view active">
+    <header class="hero-card">
+      <div class="tab-kicker">Semantic exercise atlas</div>
+      <h1 class="tab-title">Free Exercise Graph</h1>
+      <p class="tab-copy">Search exercises by muscle, movement, modality, joint action, and equipment.</p>
+    </header>
+    <div class="search-bar">
+      <input id="search-input" type="search" placeholder="Search exercises, muscles, patterns, or equipment" autocomplete="off" />
+      <div class="mode-bar" id="mode-bar">
+        <button class="mode-chip active" data-mode="explore" type="button">Explore</button>
+        <button class="mode-chip" data-mode="compare" type="button">Compare <span id="compare-count-inline">0</span></button>
+        <button class="mode-chip" data-mode="build" type="button">Build</button>
+      </div>
+      <div id="compare-tray" class="compare-tray"></div>
+      <div class="filter-row" id="filter-chips">
+        <button class="filter-chip" data-panel="patterns">Patterns</button>
+        <button class="filter-chip" data-panel="muscles">Muscles</button>
+        <button class="filter-chip" data-panel="modalities">Modality</button>
+        <button class="filter-chip" data-panel="equipment">Equipment</button>
+        <button class="filter-chip" id="clear-filters" style="display:none">✕ Clear</button>
+      </div>
+      <div id="panel-patterns" class="filter-panel">
+        <div class="filter-panel-title">Movement Patterns</div>
+        <div class="filter-tags" id="pattern-tags"></div>
+      </div>
+      <div id="panel-muscles" class="filter-panel">
+        <div class="filter-panel-title">Muscles</div>
+        <div class="hierarchy-picker" id="muscle-filter-tags"></div>
+      </div>
+      <div id="panel-modalities" class="filter-panel">
+        <div class="filter-panel-title">Training Modality</div>
+        <div class="filter-tags" id="modality-tags"></div>
+      </div>
+      <div id="panel-equipment" class="filter-panel">
+        <div class="filter-panel-title">Equipment</div>
+        <div class="filter-tags" id="equipment-tags"></div>
+      </div>
+    </div>
+    <div id="result-count" class="result-count"></div>
+    <div id="active-filters" class="active-filters"></div>
+    <div id="explore-view" class="mode-view active">
+      <div id="exercise-list" class="exercise-list"></div>
+    </div>
+    <div id="compare-view" class="mode-view"></div>
+    <div id="build-view" class="mode-view"></div>
+  </div>
+
+  <!-- ── Muscles tab ─────────────────────────────────────────────────────── -->
+  <div id="view-muscles" class="view">
+    <header class="tab-hero tab-hero-muscles">
+      <div class="tab-kicker">Anatomy view</div>
+      <h2 class="tab-title">Muscles & Regions</h2>
+      <p class="tab-copy">Trace the graph through the body, then refine the exercise list with a visible muscle
+        selection.</p>
+    </header>
+    <div class="view-toggle">
+      <button class="view-toggle-btn active" id="btn-front" onclick="app.setBodyView('front')">Front</button>
+      <button class="view-toggle-btn" id="btn-back" onclick="app.setBodyView('back')">Back</button>
+    </div>
+
+    <div class="anatomy-wrap">
+      <div id="anatomy-front-slot"></div>
+      <div id="anatomy-back-slot"></div>
+    </div>
+
+    <div id="muscle-list-section">
+      <div class="section-header-row">
+        <div class="section-label">Browse by muscle hierarchy</div>
+        <button class="ghost-btn section-clear-btn" id="clear-muscle-filters" type="button">Clear filters</button>
+      </div>
+      <div class="context-note context-note-muscles">Select a body region or muscle group to filter the graph right here.</div>
+      <div class="muscle-list" id="muscle-list"></div>
+    </div>
+    <div id="muscle-results-section">
+      <div class="section-label">Exercises for current muscle filters</div>
+      <div class="context-note context-note-muscles">You can keep browsing anatomy and still open exercise details from here.</div>
+      <div id="muscle-result-count" class="result-count"></div>
+      <div id="muscle-exercise-list" class="exercise-list"></div>
+    </div>
+  </div>
+
+  <!-- ── Vocabulary tab ─────────────────────────────────────────────────────── -->
+  <div id="view-vocab" class="view">
+    <header class="tab-hero tab-hero-browse">
+      <div class="tab-kicker">Ontology browse</div>
+      <h2 class="tab-title">Training Concepts</h2>
+      <p class="tab-copy">Browse movement patterns, modalities, joint actions, and equipment without losing your place.
+      </p>
+    </header>
+    <div class="section-header-row">
+      <div class="context-note">Selections here populate Exercise filters without kicking you out of this tab.</div>
+      <button class="ghost-btn section-clear-btn" id="clear-browse-filters" type="button">Clear filters</button>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="modalities">
+        Training Modalities <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-modalities"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="patterns">
+        Movement Patterns <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-patterns"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="joints">
+        Joint Actions <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-joints"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="equipment">
+        Equipment <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-equipment"></div>
+    </div>
+    <div id="browse-results-section">
+      <div class="section-label">Exercises for current concept filters</div>
+      <div class="context-note context-note-browse">Stay on Browse and open full exercise details from here.</div>
+      <div id="browse-result-count" class="result-count"></div>
+      <div id="browse-exercise-list" class="exercise-list"></div>
+    </div>
+  </div>
+
+  <!-- ── Exercise detail sheet ──────────────────────────────────────────────── -->
+  <div id="sheet-overlay" class="sheet-overlay" onclick="app.closeSheet(event)">
+    <div class="sheet" id="detail-sheet">
+      <div class="sheet-handle"></div>
+      <div id="sheet-content"></div>
+    </div>
+  </div>
+
+  <!-- ── Bottom nav ─────────────────────────────────────────────────────────── -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+      Exercises
+    </button>
+    <button class="nav-btn" data-tab="muscles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+      Muscles
+    </button>
+    <button class="nav-btn" data-tab="vocab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+      </svg>
+      Browse
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
