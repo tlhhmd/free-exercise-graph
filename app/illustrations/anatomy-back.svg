@@ -7,57 +7,93 @@
   <path class="body-axis" d="M200 120 L200 900" />
   <path class="body-silhouette" d="M 154.975 52.145 L 145.554 69.369 L 142.532 92.456 L 146.774 118.677 L 158.908 142.107 L 157.955 160.487 L 155.181 164.884 L 132.194 177.966 L 74.637 205.682 L 65.306 215.753 L 57.001 233.250 L 53.007 254.790 L 54.149 275.856 L 43.130 309.003 L 36.361 351.657 L 24.244 390.215 L 19.612 446.502 L 6.387 529.234 L 11.671 550.398 L 18.622 563.414 L 29.490 575.276 L 38.903 578.035 L 42.256 572.212 L 39.914 559.944 L 32.993 547.552 L 32.909 532.295 L 36.362 529.185 L 40.217 543.254 L 46.061 546.945 L 50.310 543.971 L 49.692 507.660 L 44.338 488.518 L 74.990 417.003 L 85.949 365.632 L 100.250 326.898 L 112.503 368.247 L 113.520 381.976 L 110.684 430.197 L 96.077 518.887 L 95.795 555.954 L 101.026 596.534 L 115.245 653.109 L 118.757 677.984 L 119.577 706.386 L 113.810 740.683 L 113.779 770.805 L 134.610 870.040 L 131.994 890.985 L 119.295 901.135 L 117.817 906.605 L 121.804 912.275 L 147.015 923.901 L 168.925 921.985 L 174.340 913.275 L 174.297 876.520 L 169.899 858.748 L 170.118 842.009 L 181.628 767.062 L 174.644 719.020 L 182.112 679.314 L 192.750 550.555 L 202.420 636.936 L 203.087 675.164 L 210.541 718.893 L 203.935 767.765 L 215.544 851.998 L 210.153 877.957 L 212.919 892.536 L 211.306 915.022 L 219.915 922.465 L 235.333 923.443 L 260.365 913.424 L 266.000 909.199 L 267.660 903.368 L 251.713 888.272 L 251.010 875.279 L 272.274 770.952 L 266.864 674.832 L 283.027 601.327 L 289.835 549.303 L 289.865 515.030 L 275.110 427.530 L 271.536 382.247 L 274.213 362.941 L 286.069 325.993 L 297.992 359.198 L 306.089 408.005 L 338.760 488.592 L 332.463 505.231 L 330.303 543.439 L 333.521 546.778 L 338.394 546.383 L 346.829 527.317 L 349.094 531.150 L 349.105 549.339 L 340.940 561.307 L 339.884 572.996 L 344.021 578.459 L 354.606 573.036 L 367.933 555.442 L 374.170 535.534 L 374.238 521.317 L 365.431 459.643 L 359.751 388.546 L 348.016 348.918 L 341.802 309.109 L 330.620 275.004 L 331.817 253.297 L 325.934 226.326 L 318.929 213.943 L 308.449 203.334 L 277.550 191.252 L 228.829 162.909 L 226.751 142.601 L 240.484 110.926 L 242.145 90.233 L 239.038 69.029 L 229.008 51.157 L 210.808 38.102 L 191.684 34.775 L 171.202 39.939 L 154.975 52.145 Z" fill-rule="evenodd" />
 
-  <g class="muscle-region" data-muscles="Shoulders" data-label="Shoulders">
-    <title>Shoulders / Rear Delts</title>
-    <path class="region-fill" d="M109 211 L124 201 L144 200 L156 209 L156 224 L145 236 L128 240 L113 235 L105 222 Z" />
-    <path class="region-fill" d="M291 211 L276 201 L256 200 L244 209 L244 224 L255 236 L272 240 L287 235 L295 222 Z" />
-    <path class="region-callout" d="M166 191 L149 202" />
-    <path class="region-callout" d="M234 191 L251 202" />
-    <text class="region-label region-label-outside" x="200" y="192" text-anchor="middle">Rear Delts</text>
+  <!-- TRAPS -->
+  <g class="muscle-region" data-muscles="Traps" data-label="Traps">
+    <title>Traps</title>
+    <path class="region-fill" d="M162 170 L238 170 L238 204 L236 300 L200 308 L164 300 L162 204 Z" />
+    <text class="region-label region-label-small" x="200" y="238" text-anchor="middle">Traps</text>
   </g>
 
-  <g class="muscle-region" data-muscles="Traps,Lats,MiddleBack,LowerBack" data-label="Back">
-    <title>Back: Traps, Lats, Mid Back, Lower Back</title>
-    <path class="region-fill" d="M182 170 L218 170 L225 192 L216 230 L200 244 L184 230 L175 192 Z" />
-    <path class="region-fill" d="M150 206 L177 193 L184 210 L176 274 L162 332 L145 323 L135 278 L136 233 Z" />
-    <path class="region-fill" d="M250 206 L223 193 L216 210 L224 274 L238 332 L255 323 L265 278 L264 233 Z" />
-    <path class="region-fill" d="M183 248 L217 248 L224 270 L220 359 L200 390 L180 359 L176 270 Z" />
-    <path class="region-fill" d="M184 405 L216 405 L221 423 L217 473 L200 488 L183 473 L179 423 Z" />
-    <text class="region-label region-label-small" x="200" y="226" text-anchor="middle">Traps</text>
-    <text class="region-label region-label-small" x="151" y="294" text-anchor="middle">Lats</text>
-    <text class="region-label region-label-small" x="249" y="294" text-anchor="middle">Lats</text>
-    <text class="region-label region-label-small" x="200" y="330" text-anchor="middle">Mid Back</text>
-    <text class="region-label region-label-small" x="200" y="446" text-anchor="middle">Lower Back</text>
+  <!-- LATS -->
+  <g class="muscle-region" data-muscles="Lats" data-label="Lats">
+    <title>Lats</title>
+    <path class="region-fill" d="M108 224 L160 220 L160 302 L158 436 L154 484 L140 488 L114 476 L94 446 L93 366 L95 274 Z" />
+    <path class="region-fill" d="M292 224 L240 220 L240 302 L242 436 L246 484 L260 488 L286 476 L306 446 L307 366 L305 274 Z" />
+    <text class="region-label region-label-small" x="112" y="384" text-anchor="middle">Lats</text>
+    <text class="region-label region-label-small" x="288" y="384" text-anchor="middle">Lats</text>
   </g>
 
-  <g class="muscle-region" data-muscles="Biceps,Triceps,Forearms" data-label="Arms">
-    <title>Arms: Triceps and Forearms</title>
-    <path class="region-fill" d="M62 248 L75 241 L85 248 L88 282 L88 398 L78 430 L65 439 L56 423 L55 290 Z" />
-    <path class="region-fill" d="M66 488 L75 482 L82 489 L84 523 L80 651 L73 672 L62 668 L58 651 L58 514 Z" />
-    <path class="region-fill" d="M338 248 L325 241 L315 248 L312 282 L312 398 L322 430 L335 439 L344 423 L345 290 Z" />
-    <path class="region-fill" d="M334 488 L325 482 L318 489 L316 523 L320 651 L327 672 L338 668 L342 651 L342 514 Z" />
-    <text class="region-label region-label-small" x="72" y="344" text-anchor="middle">Triceps</text>
-    <text class="region-label region-label-small" x="328" y="344" text-anchor="middle">Triceps</text>
+  <!-- MID BACK -->
+  <g class="muscle-region" data-muscles="MiddleBack" data-label="Mid Back">
+    <title>Mid Back</title>
+    <path class="region-fill" d="M163 310 L237 310 L237 348 L237 436 L200 450 L163 436 L163 348 Z" />
+    <text class="region-label region-label-small" x="200" y="378" text-anchor="middle">Mid Back</text>
   </g>
 
+  <!-- LOWER BACK -->
+  <g class="muscle-region" data-muscles="LowerBack" data-label="Lower Back">
+    <title>Lower Back</title>
+    <path class="region-fill" d="M163 452 L237 452 L237 492 L237 552 L200 566 L163 552 L163 492 Z" />
+    <text class="region-label region-label-small" x="200" y="510" text-anchor="middle">Lower Back</text>
+  </g>
+
+  <!-- REAR DELTS — rendered last so always on top; label outside the body at y=134 -->
+  <g class="muscle-region" data-muscles="Shoulders" data-label="Rear Delts">
+    <title>Rear Delts</title>
+    <!-- Left rear deltoid cap, moved up ~15px from previous -->
+    <path class="region-fill" d="M96 236 L112 204 L132 196 L154 206 L164 230 L158 258 L136 266 L110 262 L96 248 Z" />
+    <!-- Right rear deltoid cap -->
+    <path class="region-fill" d="M304 236 L288 204 L268 196 L246 206 L236 230 L242 258 L264 266 L290 262 L304 248 Z" />
+    <path class="region-callout" d="M185 134 L128 222" />
+    <path class="region-callout" d="M215 134 L272 222" />
+    <text class="region-label region-label-outside" x="200" y="134" text-anchor="middle">Rear Delts</text>
+  </g>
+
+  <!-- TRICEPS -->
+  <g class="muscle-region" data-muscles="Triceps" data-label="Triceps">
+    <title>Triceps</title>
+    <path class="region-fill" d="M48 226 L114 236 L112 364 L94 376 L32 364 L16 302 L18 248 Z" />
+    <path class="region-fill" d="M352 226 L286 236 L288 364 L306 376 L368 364 L382 302 L382 248 Z" />
+    <text class="region-label region-label-small" x="64" y="308" text-anchor="middle">Triceps</text>
+    <text class="region-label region-label-small" x="336" y="308" text-anchor="middle">Triceps</text>
+  </g>
+
+  <!-- FOREARMS -->
+  <g class="muscle-region" data-muscles="Forearms" data-label="Forearms">
+    <title>Forearms</title>
+    <path class="region-fill" d="M94 376 L32 364 L16 490 L48 498 L80 498 L110 482 Z" />
+    <path class="region-fill" d="M306 376 L368 364 L384 490 L352 498 L320 498 L290 482 Z" />
+    <text class="region-label region-label-small" x="62" y="436" text-anchor="middle">Forearms</text>
+    <text class="region-label region-label-small" x="338" y="436" text-anchor="middle">Forearms</text>
+  </g>
+
+  <!-- GLUTES — crotch y≈558, ends at y=668 -->
   <g class="muscle-region" data-muscles="Glutes" data-label="Glutes">
     <title>Glutes</title>
-    <path class="region-fill region-fill-emphasis" d="M150 524 L176 517 L190 534 L190 590 L178 616 L158 616 L145 594 L145 544 Z" />
-    <path class="region-fill region-fill-emphasis" d="M250 524 L224 517 L210 534 L210 590 L222 616 L242 616 L255 594 L255 544 Z" />
-    <text class="region-label" x="200" y="569" text-anchor="middle">Glutes</text>
+    <!-- Left glute -->
+    <path class="region-fill" d="M116 562 L188 546 L200 564 L200 664 L174 676 L146 668 L120 652 L110 616 Z" />
+    <!-- Right glute -->
+    <path class="region-fill" d="M284 562 L212 546 L200 564 L200 664 L226 676 L254 668 L280 652 L290 616 Z" />
+    <text class="region-label" x="200" y="616" text-anchor="middle">Glutes</text>
   </g>
 
+  <!-- HAMSTRINGS — y=670 to knee y≈754 -->
   <g class="muscle-region" data-muscles="Hamstrings" data-label="Hamstrings">
     <title>Hamstrings</title>
-    <path class="region-fill" d="M149 629 L172 623 L183 642 L185 723 L176 761 L161 770 L149 753 L146 658 Z" />
-    <path class="region-fill" d="M251 629 L228 623 L217 642 L215 723 L224 761 L239 770 L251 753 L254 658 Z" />
-    <text class="region-label region-label-small" x="200" y="699" text-anchor="middle">Hamstrings</text>
+    <!-- Left hamstring -->
+    <path class="region-fill" d="M98 672 L182 670 L190 688 L186 736 L178 770 L162 776 L138 770 L116 750 L100 706 Z" />
+    <!-- Right hamstring -->
+    <path class="region-fill" d="M302 672 L218 670 L210 688 L214 736 L222 770 L238 776 L262 770 L284 750 L300 706 Z" />
+    <text class="region-label region-label-small" x="200" y="736" text-anchor="middle">Hamstrings</text>
   </g>
 
+  <!-- CALVES — knee y≈754 to ankle y≈923 -->
   <g class="muscle-region" data-muscles="LowerLeg" data-label="Calves">
     <title>Calves</title>
-    <path class="region-fill" d="M161 734 L173 729 L179 742 L178 818 L170 828 L159 820 L156 751 Z" />
-    <path class="region-fill" d="M239 734 L227 729 L221 742 L222 818 L230 828 L241 820 L244 751 Z" />
-    <text class="region-label region-label-small" x="200" y="796" text-anchor="middle">Calves</text>
+    <!-- Left calf -->
+    <path class="region-fill" d="M114 774 L174 768 L182 826 L174 884 L148 912 L122 906 L112 866 Z" />
+    <!-- Right calf -->
+    <path class="region-fill" d="M286 774 L226 768 L218 826 L226 884 L252 912 L278 906 L288 866 Z" />
+    <text class="region-label region-label-small" x="200" y="852" text-anchor="middle">Calves</text>
   </g>
 </svg>

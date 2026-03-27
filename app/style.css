@@ -1063,6 +1063,28 @@ body[data-tab="vocab"] {
 
 /* ── Body map tab ────────────────────────────────────────────────────────── */
 
+/* Desktop two-column layout */
+@media (min-width: 680px) {
+  #view-muscles {
+    max-width: 920px;
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 32px;
+    align-items: start;
+  }
+  #view-muscles > .tab-hero {
+    grid-column: 1 / -1;
+  }
+  .anatomy-col-left {
+    position: sticky;
+    top: 16px;
+  }
+  .anatomy-wrap svg {
+    max-width: 100%;
+  }
+}
+
 .view-toggle {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1131,7 +1153,7 @@ body[data-tab="vocab"] {
 
 .muscle-region .region-fill {
   fill: rgba(255, 248, 241, 0.88);
-  stroke: rgba(23, 54, 134, 0.9);
+  stroke: rgba(255, 255, 255, 0.85);
   stroke-width: 3.5;
   stroke-linejoin: bevel;
   stroke-linecap: butt;
@@ -1189,12 +1211,12 @@ body[data-tab="vocab"] {
 .muscle-region:hover .region-fill,
 .muscle-region:active .region-fill {
   fill: rgba(255, 243, 232, 0.98);
-  stroke: rgba(23, 54, 134, 1);
+  stroke: rgba(255, 255, 255, 1);
 }
 
 .muscle-region.highlighted .region-fill {
   fill: var(--navy);
-  stroke: var(--navy);
+  stroke: rgba(255, 255, 255, 0.6);
 }
 
 .muscle-region.highlighted .region-label {

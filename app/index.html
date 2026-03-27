@@ -73,29 +73,32 @@
       <p class="tab-copy">Trace the graph through the body, then refine the exercise list with a visible muscle
         selection.</p>
     </header>
-    <div class="view-toggle">
-      <button class="view-toggle-btn active" id="btn-front" onclick="app.setBodyView('front')">Front</button>
-      <button class="view-toggle-btn" id="btn-back" onclick="app.setBodyView('back')">Back</button>
-    </div>
-
-    <div class="anatomy-wrap">
-      <div id="anatomy-front-slot"></div>
-      <div id="anatomy-back-slot"></div>
-    </div>
-
-    <div id="muscle-list-section">
-      <div class="section-header-row">
-        <div class="section-label">Browse by muscle hierarchy</div>
-        <button class="ghost-btn section-clear-btn" id="clear-muscle-filters" type="button">Clear filters</button>
+    <div class="anatomy-col-left">
+      <div class="view-toggle">
+        <button class="view-toggle-btn active" id="btn-front" onclick="app.setBodyView('front')">Front</button>
+        <button class="view-toggle-btn" id="btn-back" onclick="app.setBodyView('back')">Back</button>
       </div>
-      <div class="context-note context-note-muscles">Select a body region or muscle group to filter the graph right here.</div>
-      <div class="muscle-list" id="muscle-list"></div>
+      <div class="anatomy-wrap">
+        <div id="anatomy-front-slot"></div>
+        <div id="anatomy-back-slot"></div>
+      </div>
     </div>
-    <div id="muscle-results-section">
-      <div class="section-label">Exercises for current muscle filters</div>
-      <div class="context-note context-note-muscles">You can keep browsing anatomy and still open exercise details from here.</div>
-      <div id="muscle-result-count" class="result-count"></div>
-      <div id="muscle-exercise-list" class="exercise-list"></div>
+
+    <div class="anatomy-col-right">
+      <div id="muscle-list-section">
+        <div class="section-label">Browse by muscle hierarchy</div>
+        <div class="context-note context-note-muscles">Select a body region or muscle group to filter the graph right here.</div>
+        <div class="muscle-list" id="muscle-list"></div>
+      </div>
+      <div id="muscle-results-section">
+        <div class="section-header-row">
+          <div class="section-label">Exercises for current muscle filters</div>
+          <button class="ghost-btn section-clear-btn" id="clear-muscle-filters" type="button">Clear filters</button>
+        </div>
+        <div id="muscle-active-filters" class="active-filters"></div>
+        <div id="muscle-result-count" class="result-count"></div>
+        <div id="muscle-exercise-list" class="exercise-list"></div>
+      </div>
     </div>
   </div>
 
