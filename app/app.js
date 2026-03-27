@@ -1272,13 +1272,38 @@ function renderMuscleList() {
     state.pendingMuscleScrollTo = null;
     if (target) {
       window.requestAnimationFrame(() => {
-        target.scrollIntoView({ block: "start", behavior: "smooth" });
+        target.scrollIntoView({ block: "start", behavior: "instant" });
       });
     }
   }
 }
 
+function renderMuscleActiveFilters() {
+  const container = el("muscle-active-filters");
+  if (!container) return;
+  const muscles = state.filters.muscles;
+  if (!muscles.length) {
+    container.innerHTML = "";
+    container.style.display = "none";
+    return;
+  }
+  container.style.display = "flex";
+  container.innerHTML = muscles.map(id => `
+    <span class="active-filter-pill">
+      ${muscleLabel(id)}
+      <button type="button" data-remove-muscle="${id}" aria-label="Remove ${muscleLabel(id)}">✕</button>
+    </span>
+  `).join("");
+  container.querySelectorAll("[data-remove-muscle]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.filters.muscles = state.filters.muscles.filter(m => m !== button.dataset.removeMuscle);
+      rerenderAll();
+    });
+  });
+}
+
 function renderMuscleResults() {
+  renderMuscleActiveFilters();
   const results = filteredExercises();
   const countLabel = state.filters.muscles.length
     ? `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} match the current muscle filters`
@@ -1421,6 +1446,7 @@ function switchTab(tab) {
   document.querySelectorAll(".nav-btn").forEach(button => button.classList.remove("active"));
   el(`view-${tab}`).classList.add("active");
   document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "instant" });
   if (tab === "muscles") renderMuscleList();
   if (tab === "vocab") renderVocab();
   syncUrlState();
@@ -1482,7 +1508,34 @@ function highlightAnatomy() {
   });
 }
 
+function initAnatomyCoordHelper() {
+  const tooltip = document.createElement("div");
+  tooltip.style.cssText = "position:fixed;background:#111;color:#fff;font:12px monospace;padding:4px 8px;border-radius:4px;pointer-events:none;z-index:9999;display:none;";
+  document.body.appendChild(tooltip);
+  ["anatomy-front", "anatomy-back"].forEach(id => {
+    const svg = document.getElementById(id);
+    if (!svg) return;
+    svg.addEventListener("mousemove", e => {
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      tooltip.textContent = `x:${Math.round(p.x)} y:${Math.round(p.y)}`;
+      tooltip.style.display = "block";
+      tooltip.style.left = (e.clientX + 14) + "px";
+      tooltip.style.top = (e.clientY - 28) + "px";
+    });
+    svg.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
+    svg.addEventListener("click", e => {
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+      console.log(`[coord] ${id} — x:${Math.round(p.x)}, y:${Math.round(p.y)}`);
+    });
+  });
+}
+
 function initAnatomyMap() {
+  initAnatomyCoordHelper();
   document.querySelectorAll(".muscle-region").forEach(region => {
     region.addEventListener("click", () => {
       const muscles = region.dataset.muscles.split(",");
