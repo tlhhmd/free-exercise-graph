@@ -96,6 +96,12 @@ The following muscle groups are the correct granularity — do not use their ind
 
 <<<head_usage_rules>>>
 
+### Colloquial aliases — always use the vocab term
+
+Some colloquial names are not vocab terms. Do not emit them:
+- Use `PosteriorDeltoid`, never `RearDelt` or `RearDeltoid`
+- Use `Infraspinatus` — it has no named head subdivisions; never emit `InfraspinatusHead` or similar
+
 ### Muscle hierarchy
 
 <<<muscle_tree>>>
@@ -113,6 +119,14 @@ The following muscle groups are the correct granularity — do not use their ind
 
 Movement pattern names (HipHinge, Squat, Push, Pull, HorizontalPull, VerticalPush, etc.)
 are NOT joint actions — they belong only in `movement_patterns`, never here.
+
+Wrong:
+  "movement_patterns": ["HipHinge"],
+  "supporting_joint_actions": ["HipHinge", "AntiRotation"]  ← movement patterns, not joint actions
+
+Right:
+  "movement_patterns": ["HipHinge", "AntiRotation"],
+  "supporting_joint_actions": ["SpinalStability"]
 
 ### Joint action vocabulary
 
