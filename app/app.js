@@ -17,7 +17,6 @@ const DEGREE_LABEL = {
   PassiveTarget: "Passive Target",
 };
 
-const BUILD_ROLES = ["squat", "hinge", "push", "pull", "core"];
 
 const MOVEMENT_GLYPHS = {
   squat: "↓",
@@ -97,9 +96,6 @@ const state = {
   muscleDescendants: {},
   bodyView: "front",
   sheetExercise: null,
-  compareIds: [],
-  buildSlots: {},
-  activeBuildRole: null,
   muscleOpenSections: {},
   pendingMuscleScrollTo: null,
 };
@@ -596,128 +592,13 @@ function getSubstitutes(ex, limit = 8) {
     .slice(0, limit);
 }
 
-function toggleCompare(exerciseId) {
-  const idx = state.compareIds.indexOf(exerciseId);
-  if (idx === -1) state.compareIds.push(exerciseId);
-  else state.compareIds.splice(idx, 1);
-  if (state.compareIds.length >= 2) state.mode = "compare";
-  if (state.mode === "compare" && state.compareIds.length < 2) state.mode = "explore";
-  rerenderAll();
-}
-
-function roleCandidates(role) {
-  const filtered = filteredExercises();
-  const pool = filtered.some(ex => ex.builderRoles.includes(role))
-    ? filtered
-    : state.exercises;
-
-  return pool
-    .filter(ex => ex.builderRoles.includes(role))
-    .sort((a, b) => {
-      const aScore = (a.skillLevel === "beginner" ? 0 : a.skillLevel === "intermediate" ? 1 : 2)
-        + (a.spinalLoad === "low" ? 0 : a.spinalLoad === "medium" ? 1 : 2);
-      const bScore = (b.skillLevel === "beginner" ? 0 : b.skillLevel === "intermediate" ? 1 : 2)
-        + (b.spinalLoad === "low" ? 0 : b.spinalLoad === "medium" ? 1 : 2);
-      return aScore - bScore || a.name.localeCompare(b.name);
-    });
-}
-
-function ensureBuildSlots() {
-  for (const role of BUILD_ROLES) {
-    const current = state.buildSlots[role];
-    if (current && getExercise(current)) continue;
-    const candidate = roleCandidates(role)[0];
-    state.buildSlots[role] = candidate?.id || null;
-  }
-}
-
-function setBuildRole(role) {
-  state.mode = "build";
-  state.activeBuildRole = role;
-  ensureBuildSlots();
-  rerenderAll();
-}
-
-function setBuildExercise(role, exerciseId) {
-  state.buildSlots[role] = exerciseId;
-  rerenderAll();
-}
-
-function summarizeCompare(compareExercises) {
-  if (compareExercises.length < 2) return [];
-  const insights = [];
-  const loadOrder = { low: 0, medium: 1, high: 2 };
-  const explosiveCount = compareExercises.filter(ex => ex.explosiveness === "high").length;
-  const highestLoad = [...compareExercises].sort((a, b) => loadOrder[b.spinalLoad] - loadOrder[a.spinalLoad])[0];
-  const lowestLoad = [...compareExercises].sort((a, b) => loadOrder[a.spinalLoad] - loadOrder[b.spinalLoad])[0];
-
-  if (highestLoad && lowestLoad && highestLoad.id !== lowestLoad.id) {
-    insights.push(`${highestLoad.name} asks for more spinal demand than ${lowestLoad.name}.`);
-  }
-  if (explosiveCount > 0) {
-    insights.push(`${explosiveCount} of ${compareExercises.length} compared exercises skew explosive.`);
-  }
-  const focuses = new Set(compareExercises.map(ex => ex.bodyFocus));
-  if (focuses.size > 1) {
-    insights.push("The comparison spans different body-focus profiles rather than tiny variants of one movement.");
-  }
-  const familySet = new Set(compareExercises.map(ex => ex.compareAttributes.movementFamily || "general"));
-  if (familySet.size === 1) {
-    insights.push("These exercises solve a similar movement problem, so the tradeoffs are mostly load, skill, and equipment.");
-  }
-  const modalities = new Set(compareExercises.map(ex => ex.compareAttributes.modality || "General"));
-  if (modalities.size > 1) {
-    insights.push("You are comparing exercises from different training intents, not just equipment swaps.");
-  }
-  return insights.slice(0, 3);
-}
-
-function buildInsights(buildExercises) {
-  const insights = [];
-  const hasHinge = !!buildExercises.hinge;
-  const hasPush = !!buildExercises.push;
-  const hasPull = !!buildExercises.pull;
-  const hasCore = !!buildExercises.core;
-  const posteriorCount = Object.values(buildExercises).filter(Boolean)
-    .filter(ex => ["posterior_chain", "full_body", "lower"].includes(ex.bodyFocus)
-      && ex.visualRegions.some(region => ["glutes", "hamstrings", "back", "lower_back"].includes(region))).length;
-  const highLoad = Object.values(buildExercises).filter(Boolean).filter(ex => ex.spinalLoad === "high").length;
-
-  if (!hasHinge) insights.push("You are missing a hinge movement.");
-  if (!hasPush || !hasPull) insights.push("This build is missing either a push or a pull, so upper-body balance is thin.");
-  if (!hasCore) insights.push("There is no dedicated core/trunk slot yet.");
-  if (posteriorCount < 2) insights.push("This build is light on posterior-chain emphasis.");
-  if (highLoad >= 3) insights.push("This build stacks a lot of spinal demand in one session.");
-  if (!insights.length) insights.push("This build hits the major movement slots with a workable balance.");
-  return insights;
-}
-
-function serializeBuildSlots() {
-  return BUILD_ROLES
-    .filter(role => state.buildSlots[role])
-    .map(role => `${role}:${state.buildSlots[role]}`)
-    .join("|");
-}
-
-function restoreBuildSlots(raw) {
-  if (!raw) return;
-  for (const pair of raw.split("|")) {
-    const [role, exerciseId] = pair.split(":");
-    if (BUILD_ROLES.includes(role) && exerciseId) state.buildSlots[role] = exerciseId;
-  }
-}
 
 function syncUrlState() {
   const params = new URLSearchParams();
   if (state.activeTab !== "exercises") params.set("tab", state.activeTab);
-  if (state.mode !== "explore") params.set("mode", state.mode);
   if (state.search) params.set("q", state.search);
-  if (state.compareIds.length) params.set("compare", state.compareIds.join(","));
   if (state.sheetExercise) params.set("detail", state.sheetExercise);
   if (state.bodyView !== "front") params.set("body", state.bodyView);
-  if (state.activeBuildRole) params.set("buildRole", state.activeBuildRole);
-  const buildRaw = serializeBuildSlots();
-  if (buildRaw) params.set("build", buildRaw);
 
   for (const [type, ids] of Object.entries(state.filters)) {
     if (ids.length) params.set(type, ids.join(","));
@@ -731,58 +612,15 @@ function syncUrlState() {
 function restoreUrlState() {
   const params = new URLSearchParams(window.location.search);
   state.activeTab = params.get("tab") || "exercises";
-  state.mode = "explore";
   state.search = params.get("q") || "";
-  state.compareIds = (params.get("compare") || "").split(",").filter(Boolean).filter(id => state.exerciseMap.has(id));
   state.sheetExercise = params.get("detail") || null;
   state.bodyView = params.get("body") || "front";
-  state.activeBuildRole = params.get("buildRole") || null;
-  restoreBuildSlots(params.get("build"));
 
   for (const type of Object.keys(state.filters)) {
     state.filters[type] = (params.get(type) || "").split(",").filter(Boolean);
   }
-
-  if (state.mode === "compare" && state.compareIds.length < 2) state.mode = "explore";
-  ensureBuildSlots();
 }
 
-function renderModeBar() {
-  const compareCount = state.compareIds.length;
-  el("compare-count-inline").textContent = formatCount(compareCount);
-  document.querySelectorAll(".mode-chip[data-mode]").forEach(button => {
-    button.classList.toggle("active", button.dataset.mode === state.mode);
-  });
-}
-
-function renderCompareTray() {
-  const tray = el("compare-tray");
-  if (!state.compareIds.length) {
-    tray.innerHTML = "";
-    tray.style.display = "none";
-    return;
-  }
-  tray.style.display = "flex";
-  tray.innerHTML = `
-    <div class="compare-tray-copy">${formatCount(state.compareIds.length)} exercise${state.compareIds.length === 1 ? "" : "s"} selected</div>
-    <div class="compare-tray-pills">
-      ${state.compareIds.map(id => {
-        const ex = getExercise(id);
-        if (!ex) return "";
-        return `
-          <span class="compare-pill">
-            ${ex.name}
-            <button type="button" data-remove-compare="${id}" aria-label="Remove ${ex.name}">✕</button>
-          </span>
-        `;
-      }).join("")}
-    </div>
-  `;
-
-  tray.querySelectorAll("[data-remove-compare]").forEach(button => {
-    button.addEventListener("click", () => toggleCompare(button.dataset.removeCompare));
-  });
-}
 
 function renderActiveFilters() {
   const pills = [];
@@ -809,9 +647,7 @@ function renderRegionMini(regions) {
   return regions.map(region => `<span class="mini-region mini-region-${region}">${REGION_DISPLAY[region] || titleCase(region)}</span>`).join("");
 }
 
-function renderExerciseCard(exercise, options = {}) {
-  const { context = "explore", role = null } = options;
-  const detailCta = context === "builder-picker" ? "Use in slot" : "Details";
+function renderExerciseCard(exercise) {
   const primaryJACount = exercise.primaryJA?.length || 0;
   const equipmentCount = exercise.equipment?.length || 0;
   const primaryJALine = primaryJACount
@@ -836,40 +672,17 @@ function renderExerciseCard(exercise, options = {}) {
         ${factLines.map(line => `<li class="card-fact-line">${line}</li>`).join("")}
       </ul>
       <div class="card-actions">
-        ${context === "builder-picker" ? `
-          <button class="card-btn active" type="button" data-build-select="${exercise.id}" data-build-role="${role}">
-            Use in ${titleCase(role)}
-          </button>
-        ` : ""}
-        <button class="card-btn ${context !== "builder-picker" ? "card-btn-primary" : ""}" type="button" data-details="${exercise.id}">${detailCta}</button>
+        <button class="card-btn card-btn-primary" type="button" data-details="${exercise.id}">Details</button>
       </div>
     </article>
   `;
 }
 
 function bindExerciseCards(root = document) {
-  root.querySelectorAll("[data-compare]").forEach(button => {
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      toggleCompare(button.dataset.compare);
-    });
-  });
   root.querySelectorAll("[data-details]").forEach(button => {
     button.addEventListener("click", event => {
       event.stopPropagation();
-      const exerciseId = button.dataset.details;
-      const buildRole = button.dataset.buildRole || null;
-      if (buildRole) {
-        setBuildExercise(buildRole, exerciseId);
-      } else {
-        openSheet(exerciseId);
-      }
-    });
-  });
-  root.querySelectorAll("[data-build-select]").forEach(button => {
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      setBuildExercise(button.dataset.buildRole, button.dataset.buildSelect);
+      openSheet(button.dataset.details);
     });
   });
   root.querySelectorAll(".exercise-card[data-id]").forEach(card => {
@@ -899,156 +712,7 @@ function renderExploreView() {
   bindExerciseCards(list);
 }
 
-function compareValueClass(compareExercises, accessor, exercise) {
-  const values = compareExercises.map(accessor);
-  const uniqueCount = new Set(values).size;
-  if (uniqueCount <= 1) return "";
-  const value = accessor(exercise);
-  return values.filter(entry => entry === value).length === 1 ? "contrast" : "shared";
-}
 
-function renderCompareView() {
-  const target = el("compare-view");
-  const compareExercises = state.compareIds.map(getExercise).filter(Boolean);
-  el("result-count").textContent = `${formatCount(compareExercises.length)} selected for comparison`;
-  if (compareExercises.length < 2) {
-    target.innerHTML = `
-      <div class="empty compare-empty">
-        <strong>Compare starts with two exercises.</strong><br>
-        Add a couple of cards from Explore, or try a query like <em>posterior chain</em> and compare the best fits.
-      </div>`;
-    return;
-  }
-
-  const rows = [
-    ["Movement family", ex => titleCase(ex.compareAttributes.movementFamily || "general"), ex => ex.compareAttributes.movementFamily || "general"],
-    ["Body focus", ex => formatBodyFocus(ex.compareAttributes.bodyFocus), ex => ex.compareAttributes.bodyFocus],
-    ["Top muscles", ex => ex.compareAttributes.topMuscles.join(", ") || "—"],
-    ["Movement", ex => ex.compareAttributes.topPatterns.join(", ") || "—"],
-    ["Modality", ex => ex.compareAttributes.modality || "—"],
-    ["Spinal load", ex => titleCase(ex.compareAttributes.spinalLoad)],
-    ["Explosiveness", ex => titleCase(ex.compareAttributes.explosiveness)],
-    ["Skill level", ex => titleCase(ex.compareAttributes.skillLevel)],
-    ["Equipment", ex => ex.equipment.slice(0, 3).map(labelFor).join(", ") || "Bodyweight"],
-  ];
-
-  target.innerHTML = `
-    <section class="compare-summary">
-      <div class="mode-section-header">
-        <h3 class="section-label">Comparison Notes</h3>
-        <button class="ghost-btn share-btn" id="copy-compare-btn" type="button">Copy compare link</button>
-      </div>
-      <div class="insight-list">
-        ${summarizeCompare(compareExercises).map(line => `<div class="insight-pill">${line}</div>`).join("")}
-      </div>
-    </section>
-    <section class="compare-grid">
-      <div class="compare-row compare-head">
-        <div class="compare-cell compare-label">Attribute</div>
-        ${compareExercises.map(ex => `
-          <div class="compare-cell compare-exercise">
-            <div class="compare-exercise-name">${ex.name}</div>
-            <button class="ghost-btn" type="button" data-remove-compare="${ex.id}">Remove</button>
-          </div>
-        `).join("")}
-      </div>
-      ${rows.map(([label, fn, rawFn]) => `
-        <div class="compare-row">
-          <div class="compare-cell compare-label">${label}</div>
-          ${compareExercises.map(ex => `
-            <div class="compare-cell ${rawFn ? compareValueClass(compareExercises, rawFn, ex) : ""}">
-              ${fn(ex)}
-            </div>
-          `).join("")}
-        </div>
-      `).join("")}
-    </section>
-  `;
-
-  const copyBtn = el("copy-compare-btn");
-  if (copyBtn) copyBtn.addEventListener("click", copyCurrentUrl(copyBtn, "Copy compare link"));
-  target.querySelectorAll("[data-remove-compare]").forEach(button => {
-    button.addEventListener("click", () => toggleCompare(button.dataset.removeCompare));
-  });
-}
-
-function renderBuildView() {
-  ensureBuildSlots();
-  const target = el("build-view");
-  el("result-count").textContent = "Build a balanced five-slot workout";
-  const buildExercises = Object.fromEntries(
-    BUILD_ROLES.map(role => [role, getExercise(state.buildSlots[role])])
-  );
-  const candidates = state.activeBuildRole ? roleCandidates(state.activeBuildRole).slice(0, 10) : [];
-
-  const counts = {
-    lower: Object.values(buildExercises).filter(ex => ex && ["lower", "posterior_chain"].includes(ex.bodyFocus)).length,
-    upper: Object.values(buildExercises).filter(ex => ex && ex.bodyFocus === "upper").length,
-    core: Object.values(buildExercises).filter(ex => ex && (ex.bodyFocus === "core" || ex.builderRoles.includes("core"))).length,
-    posterior: Object.values(buildExercises).filter(ex => ex && ex.visualRegions.some(r => ["glutes", "hamstrings", "back", "lower_back"].includes(r))).length,
-  };
-
-  target.innerHTML = `
-    <section class="build-summary">
-      <div class="mode-section-header">
-        <h3 class="section-label">Build a Workout</h3>
-        <button class="ghost-btn share-btn" id="copy-build-btn" type="button">Copy build link</button>
-      </div>
-      <div class="insight-list">
-        ${buildInsights(buildExercises).map(line => `<div class="insight-pill">${line}</div>`).join("")}
-      </div>
-      <div class="balance-grid">
-        ${Object.entries(counts).map(([key, value]) => `
-          <div class="balance-card">
-            <span class="balance-label">${titleCase(key)}</span>
-            <strong>${value}</strong>
-            <div class="balance-bar"><span style="width:${(value / BUILD_ROLES.length) * 100}%"></span></div>
-          </div>
-        `).join("")}
-      </div>
-    </section>
-    <section class="build-slots">
-      ${BUILD_ROLES.map(role => {
-        const ex = buildExercises[role];
-        return `
-          <div class="build-slot ${state.activeBuildRole === role ? "active" : ""}">
-            <div class="build-slot-header">
-              <div>
-                <div class="build-slot-kicker">${titleCase(role)}</div>
-                <div class="build-slot-name">${ex ? ex.name : "No recommendation yet"}</div>
-              </div>
-              <button class="ghost-btn" type="button" data-build-role="${role}">Swap</button>
-            </div>
-            ${ex ? `<div class="build-slot-copy">${ex.whyHints[0]}</div>` : ""}
-          </div>
-        `;
-      }).join("")}
-    </section>
-    <section class="builder-picker ${state.activeBuildRole ? "open" : ""}">
-      <div class="builder-picker-header">
-        <h3 class="section-label">${state.activeBuildRole ? `Candidates for ${titleCase(state.activeBuildRole)}` : "Choose a slot"}</h3>
-      </div>
-      <div class="exercise-list">
-        ${candidates.map(ex => renderExerciseCard(ex, { context: "builder-picker", role: state.activeBuildRole })).join("") || '<div class="empty"><strong>Choose a slot to swap.</strong><br>Each slot opens a scoped list instead of dumping the whole graph on you.</div>'}
-      </div>
-    </section>
-  `;
-
-  const copyBtn = el("copy-build-btn");
-  if (copyBtn) copyBtn.addEventListener("click", copyCurrentUrl(copyBtn, "Copy build link"));
-  target.querySelectorAll("[data-build-role]").forEach(button => {
-    button.addEventListener("click", () => setBuildRole(button.dataset.buildRole));
-  });
-  bindExerciseCards(target);
-}
-
-function renderCurrentMode() {
-  document.querySelectorAll(".mode-view").forEach(view => view.classList.remove("active"));
-  el(`${state.mode}-view`).classList.add("active");
-  if (state.mode === "explore") renderExploreView();
-  if (state.mode === "compare") renderCompareView();
-  if (state.mode === "build") renderBuildView();
-}
 
 function openSheet(exerciseId) {
   const ex = getExercise(exerciseId);
@@ -1452,12 +1116,6 @@ function switchTab(tab) {
   syncUrlState();
 }
 
-function setMode(mode) {
-  if (mode === "compare" && state.compareIds.length < 2) return;
-  state.mode = mode;
-  if (mode === "build") ensureBuildSlots();
-  rerenderAll();
-}
 
 function initFilterChips() {
   document.querySelectorAll(".filter-chip[data-panel]").forEach(chip => {
@@ -1508,34 +1166,7 @@ function highlightAnatomy() {
   });
 }
 
-function initAnatomyCoordHelper() {
-  const tooltip = document.createElement("div");
-  tooltip.style.cssText = "position:fixed;background:#111;color:#fff;font:12px monospace;padding:4px 8px;border-radius:4px;pointer-events:none;z-index:9999;display:none;";
-  document.body.appendChild(tooltip);
-  ["anatomy-front", "anatomy-back"].forEach(id => {
-    const svg = document.getElementById(id);
-    if (!svg) return;
-    svg.addEventListener("mousemove", e => {
-      const pt = svg.createSVGPoint();
-      pt.x = e.clientX; pt.y = e.clientY;
-      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-      tooltip.textContent = `x:${Math.round(p.x)} y:${Math.round(p.y)}`;
-      tooltip.style.display = "block";
-      tooltip.style.left = (e.clientX + 14) + "px";
-      tooltip.style.top = (e.clientY - 28) + "px";
-    });
-    svg.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
-    svg.addEventListener("click", e => {
-      const pt = svg.createSVGPoint();
-      pt.x = e.clientX; pt.y = e.clientY;
-      const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-      console.log(`[coord] ${id} — x:${Math.round(p.x)}, y:${Math.round(p.y)}`);
-    });
-  });
-}
-
 function initAnatomyMap() {
-  initAnatomyCoordHelper();
   document.querySelectorAll(".muscle-region").forEach(region => {
     region.addEventListener("click", () => {
       const muscles = region.dataset.muscles.split(",");
@@ -1571,11 +1202,6 @@ function initNav() {
   });
 }
 
-function initModes() {
-  document.querySelectorAll(".mode-chip[data-mode]").forEach(button => {
-    button.addEventListener("click", () => setMode(button.dataset.mode));
-  });
-}
 
 function initCopyLink() {
   const button = el("copy-link-btn");
@@ -1584,15 +1210,12 @@ function initCopyLink() {
 }
 
 function rerenderAll() {
-  ensureBuildSlots();
   updateClearBtn();
   updateMuscleClearBtn();
   updateBrowseClearBtn();
-  renderModeBar();
-  renderCompareTray();
   renderFilterPanels();
   renderActiveFilters();
-  renderCurrentMode();
+  renderExploreView();
   renderMuscleList();
   renderMuscleResults();
   renderVocab();
@@ -1607,7 +1230,6 @@ function rerenderAll() {
 
 function init() {
   initNav();
-  initModes();
   initSearch();
   initFilterChips();
   initAnatomyMap();

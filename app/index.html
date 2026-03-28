@@ -26,12 +26,6 @@
     </header>
     <div class="search-bar">
       <input id="search-input" type="search" placeholder="Search exercises, muscles, patterns, or equipment" autocomplete="off" />
-      <div class="mode-bar" id="mode-bar">
-        <button class="mode-chip active" data-mode="explore" type="button">Explore</button>
-        <button class="mode-chip" data-mode="compare" type="button">Compare <span id="compare-count-inline">0</span></button>
-        <button class="mode-chip" data-mode="build" type="button">Build</button>
-      </div>
-      <div id="compare-tray" class="compare-tray"></div>
       <div class="filter-row" id="filter-chips">
         <button class="filter-chip" data-panel="patterns">Patterns</button>
         <button class="filter-chip" data-panel="muscles">Muscles</button>
@@ -58,11 +52,9 @@
     </div>
     <div id="result-count" class="result-count"></div>
     <div id="active-filters" class="active-filters"></div>
-    <div id="explore-view" class="mode-view active">
+    <div id="explore-view">
       <div id="exercise-list" class="exercise-list"></div>
     </div>
-    <div id="compare-view" class="mode-view"></div>
-    <div id="build-view" class="mode-view"></div>
   </div>
 
   <!-- ── Muscles tab ─────────────────────────────────────────────────────── -->
