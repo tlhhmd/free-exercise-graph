@@ -1,24 +1,26 @@
 # free-exercise-graph
 
-A governed semantic product that reconciles messy, multi-source exercise data into a structured knowledge graph — queryable via SPARQL, usable by AI agents via MCP, and browsable through a static app. Built on OWL/SHACL with explicit identity resolution, deterministic conflict reconciliation, and LLM enrichment grounded by the ontology itself.
+A governed knowledge graph of exercises — built on OWL/SHACL, enriched via LLM against a controlled ontology, and served through an MCP interface for AI agents and a static app for humans. It reconciles multiple open datasets into a single structured, queryable source of truth.
 
-## Why This Matters
+## What You Can Do With It
 
-- **Identity resolution** — 4,113 source records from multiple datasets resolve into 3,450 canonical entities. Exercises that describe the same movement are linked, even when named or described differently.
-- **Conflict reconciliation** — when sources disagree, a deterministic algebra resolves what it can (consensus, union, conservative rules) and defers genuine ambiguity to a human triage queue. The pipeline is never blocked. ([See a worked example.](#how-reconciliation-works))
-- **Ontology-grounded enrichment** — a single LLM pass per entity fills gaps the sources don't cover (joint actions, deep muscle involvements, laterality). Prompts are generated from the live ontology, constraining outputs to the controlled vocabulary. Inferred claims are tagged separately and never overwrite source-asserted facts.
-- **Governance** — 105 ADRs, independent vocabulary versioning, SHACL validation, and a 5-dimension data quality scorecard. The graph is a product, not a prototype.
+- **Find true substitutes** for any exercise based on shared movement patterns and prime movers — not just keyword similarity
+- **Audit a training program** for muscle coverage gaps, joint action imbalances, or missing movement patterns
+- **Ground an AI coaching agent** with structured, validated exercise data via MCP — no hallucinated muscle involvements
+- **Query by joint action** to find or exclude exercises around a rehab constraint (e.g. "everything involving shoulder external rotation, nothing involving spinal flexion")
+- **Browse exercises the way a gym-goer thinks** — by push/pull/legs, by equipment, by muscle group — through a static app or natural language via MCP
 
 ---
 
-## Who Uses This
+## By the Numbers
 
-| Persona | Problem | What FEG provides |
-|---|---|---|
-| **Agentic Developer** | LLMs hallucinate muscle involvements and contradict themselves across sessions | A structured, queryable source of truth to ground AI coaching agents via MCP |
-| **Content Architect** | Exercise libraries degrade over time as contributors tag inconsistently | Version-controlled vocabulary with ADR-driven change governance |
-| **Clinical Exercise Specialist** | No app models joint-level mechanics needed for rehabilitation programming | 46 joint actions across 9 joints — query by action, exclude by injury constraint |
-| **Casual Gymgoer** | Wants to find exercises by feel ("something for legs, no equipment") not anatomy | Movement pattern + muscle group + equipment filtering in plain language via MCP |
+**3,450** canonical entities resolved from **4,113** source records across multiple datasets. **238,390** graph triples. **46** joint actions across **9** joints. **11** independently versioned ontology files. **105** architecture decision records. **14/14** SHACL tests passing.
+
+---
+
+## What the Sources Provide vs What This Project Adds
+
+The upstream datasets provide raw exercise records — names, basic muscle lists, equipment tags, and broad categories like "Strength" or "Stretching." This project resolves those records into canonical entities across sources, reconciles conflicts with a deterministic algebra, enriches missing dimensions via ontology-grounded LLM classification, validates the result against SHACL shapes and a 5-dimension data quality scorecard, and serves the graph through an MCP interface and a static app. Every inferred claim is tagged separately from source-asserted facts and never overwrites them.
 
 ---
 
@@ -31,24 +33,9 @@ Source datasets provide exercise names, basic muscle lists, and broad categories
 | Muscles | Flat string list (e.g. "lower back") | 3-level hierarchy (region → group → head) with involvement degrees: Prime Mover, Synergist, Stabilizer, Passive Target | A Bench Press and a Tricep Pushdown both work the triceps, but the Bench Press uses them as a supporting muscle while the Tricep Pushdown targets them directly. The graph captures that difference — triceps are a Synergist in the Bench Press and a Prime Mover in the Pushdown. This classification allows users to identify exercises that emphasize the adaptations they really want. |
 | Movement patterns | Nothing | SKOS hierarchy with parent/child concepts (e.g. HorizontalPush and VerticalPush under Push) | An exerciser running a Push/Pull/Legs split can browse all push exercises at once. When they need to replace a Bench Press specifically, they can narrow to horizontal pushes only — a Dumbbell Floor Press is a valid substitute, but an Overhead Press isn't, even though both are pushes. The hierarchy makes both levels of query possible from the same vocabulary. |
 | Joint actions | Nothing | 46 joint actions across 9 joints (Shoulder, Elbow, Scapula, Forearm, Wrist, Hip, Knee, Ankle, Spine) | Muscles tell you *what* is working. Joint actions tell you *how* it's working. A Lateral Raise and a Cable Y-Raise both target the deltoids, but one involves shoulder abduction and the other involves shoulder flexion with scapular upward rotation. That mechanical detail is what rehab professionals need to program around injuries and what coaches need to balance training stress across joints. |
-| Training modality | Category field (e.g. "Strength") | Assigned only when modality is a defining characteristic of the exercise | A Kettlebell Swing and a Barbell Back Squat both involve hip extension and recruit the glutes and hamstrings. However, the Swing is inherently a Power exercise, defined by explosive hip drive and a ballistic loading profile, while the Squat is modality-agnostic (you can squat for strength, hypertrophy, or endurance depending on how you program it). This is the dimension that separates exercises that look similar on paper but train fundamentally different qualities. |
-| Compound flag | Nothing | Boolean — multi-joint force production vs. isolation | A Barbell Row and a Bicep Curl both work the biceps, but a Barbell Row coordinates force across the shoulder, elbow, and scapula while a Curl isolates the elbow joint. The compound flag makes that distinction queryable — a coach building a strength block can pull compound movements for main lifts and single-joint exercises for accessories. |
-| Laterality | Nothing | Bilateral / Unilateral / Contralateral / Ipsilateral | A runner with a weak left glute needs single-limb hip hinge work, not bilateral deadlifts. Laterality goes beyond just "one leg or two" — it distinguishes exercises where opposite limbs coordinate (contralateral, like a Dead Bug) from those where same-side limbs work together (ipsilateral, like a Side Plank with leg lift). That specificity matters for rehab programming and imbalance correction. |
-
----
-
-## Current Status
-
-| Metric | Value |
-|---|---|
-| Source exercises | 4,113 (873 free-exercise-db + 3,240 functional-fitness-db) |
-| Canonical entities | 3,450 (after identity resolution) |
-| Enriched | 3,450 / 3,450 (100%) |
-| Graph triples | 238,390 |
-| Ontology files | 11 (independently versioned) |
-| ADRs | 105 |
-| SHACL test cases | 14 / 14 passing |
-| Joint action vocabulary | 46 actions, 9 joint groups |
+| Training modality | Category field (e.g. "Strength") | Assigned only when modality is a defining characteristic of the exercise | A Kettlebell Swing and a Barbell Back Squat both involve hip extension and recruit the glutes and hamstrings. However, the Swing is inherently a Power exercise — explosive hip drive, ballistic loading — while the Squat is modality-agnostic. This dimension separates exercises that look similar on paper but train fundamentally different qualities. |
+| Compound flag | Nothing | Boolean — multi-joint force production vs. isolation | A Barbell Row coordinates force across the shoulder, elbow, and scapula; a Bicep Curl isolates the elbow. The compound flag lets a coach separate multi-joint lifts from single-joint accessories. |
+| Laterality | Nothing | Bilateral / Unilateral / Contralateral / Ipsilateral | A runner with a weak left glute needs single-limb hip hinge work, not bilateral deadlifts. Laterality goes further — distinguishing contralateral coordination (Dead Bug) from ipsilateral (Side Plank with leg lift) for precise rehab programming. |
 
 ---
 
@@ -101,7 +88,9 @@ mcp_server.py             pyoxigraph in-process SPARQL
 
 ## How Reconciliation Works
 
-Three source records across two datasets describe variations of the **Dead Bug** exercise. Here's what the pipeline does with them:
+The pipeline's value is clearest when sources disagree. Here's a real case.
+
+Three source records across two datasets describe variations of the **Dead Bug** exercise.
 
 **Identity resolution** clusters all three into one canonical entity (`feg:ex_dead_bug`) based on muscle overlap, movement pattern, and name similarity.
 
@@ -111,13 +100,13 @@ Three source records across two datasets describe variations of the **Dead Bug**
 
 **LLM enrichment** fills the gap — it sees the exercise context and infers *Contralateral* (the anatomically precise framing). It also adds muscles no source mentioned: TransverseAbdominis as PrimeMover, ErectorSpinae and Iliopsoas as Stabilizers. It identifies SpinalStability as the primary joint action.
 
-The final entity carries both asserted and inferred claims, with source assertions always taking precedence. Full walkthrough: [docs/reconciliation_example.md](docs/reconciliation_example.md).
+The design philosophy: resolve what's resolvable, defer what isn't, enrich what's missing, and never let inferred claims overwrite source-asserted facts. Full walkthrough: [docs/reconciliation_example.md](docs/reconciliation_example.md).
 
 ---
 
 ## MCP Server
 
-`mcp_server.py` loads `graph.ttl` into pyoxigraph in-process (no Docker, no external services) and exposes 5 tools via the MCP protocol:
+The graph's primary interface for AI agents. `mcp_server.py` loads `graph.ttl` into pyoxigraph in-process — no Docker, no external services — and exposes 5 tools via the MCP protocol:
 
 | Tool | Description |
 |---|---|
@@ -171,13 +160,9 @@ Movement classification uses three orthogonal axes:
 2. **Compound/Isolation** — boolean first-pass for program design. Two or more distinct joints contributing to force production = compound.
 3. **Joint actions** — mechanical precision layer (HipExtension, KneeExtension, ScapularRetraction, etc.). 46 actions across 9 joints. Useful for substitution and balance analysis.
 
-### Prompt grounding
-
-LLM classification instructions live as `rdfs:comment` on OWL property definitions in `ontology.ttl`. This is the semantically correct home — property documentation belongs on the property. The prompt template in `enrichment/prompt_template.md` uses `<<<placeholder>>>` slots that are rendered at runtime from the live ontology graphs.
-
 ### Vocabulary versioning
 
-All ontology files carry `owl:versionInfo` (semver). Changes are typed:
+All ontology files carry `owl:versionInfo` (semver). LLM classification instructions live as `rdfs:comment` on OWL property definitions — prompts are rendered from the live ontology at runtime, so vocabulary changes automatically propagate to enrichment.
 
 - **MAJOR** — breaking (removing concepts, renaming URIs)
 - **MINOR** — additive (new concepts, new properties)
