@@ -1,6 +1,8 @@
 # free-exercise-graph
 
-A governed knowledge graph of exercises — built on OWL/SHACL, enriched via LLM against a controlled ontology, and served through an MCP interface for AI agents and a static app for humans. It reconciles multiple open datasets into a single structured, queryable source of truth.
+A semantic knowledge graph of **3,450 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
+
+The ontology, multi-source reconciliation pipeline, data quality framework, and 105 architecture decision records are original work. The exercise data comes from freely shared community datasets.
 
 ## What You Can Do With It
 
@@ -14,28 +16,29 @@ A governed knowledge graph of exercises — built on OWL/SHACL, enriched via LLM
 
 ## By the Numbers
 
-**3,450** canonical entities resolved from **4,113** source records across multiple datasets. **238,390** graph triples. **46** joint actions across **9** joints. **11** independently versioned ontology files. **105** architecture decision records. **14/14** SHACL tests passing.
+| | |
+|---|---|
+| **3,450** canonical entities | resolved from **4,113** source records across multiple datasets |
+| **238,390** graph triples | assembled from resolved + inferred claims |
+| **46** joint actions | across **9** joints |
+| **11** ontology files | independently versioned (semver) |
+| **105** ADRs | every non-trivial decision documented |
+| **14/14** SHACL tests | passing |
 
 ---
 
-## What the Sources Provide vs What This Project Adds
-
-The upstream datasets provide raw exercise records — names, basic muscle lists, equipment tags, and broad categories like "Strength" or "Stretching." This project resolves those records into canonical entities across sources, reconciles conflicts with a deterministic algebra, enriches missing dimensions via ontology-grounded LLM classification, validates the result against SHACL shapes and a 5-dimension data quality scorecard, and serves the graph through an MCP interface and a static app. Every inferred claim is tagged separately from source-asserted facts and never overwrites them.
-
----
-
-## What It Adds Over Source Data
+## What This Project Adds
 
 Source datasets provide exercise names, basic muscle lists, and broad categories. The graph adds the structured dimensions that make exercises queryable, comparable, and substitutable.
 
-| Layer | Source data | This project | Why it matters |
+| Layer | Source data | This project | Example |
 |---|---|---|---|
-| Muscles | Flat string list (e.g. "lower back") | 3-level hierarchy (region → group → head) with involvement degrees: Prime Mover, Synergist, Stabilizer, Passive Target | A Bench Press and a Tricep Pushdown both work the triceps, but the Bench Press uses them as a supporting muscle while the Tricep Pushdown targets them directly. The graph captures that difference — triceps are a Synergist in the Bench Press and a Prime Mover in the Pushdown. This classification allows users to identify exercises that emphasize the adaptations they really want. |
-| Movement patterns | Nothing | SKOS hierarchy with parent/child concepts (e.g. HorizontalPush and VerticalPush under Push) | An exerciser running a Push/Pull/Legs split can browse all push exercises at once. When they need to replace a Bench Press specifically, they can narrow to horizontal pushes only — a Dumbbell Floor Press is a valid substitute, but an Overhead Press isn't, even though both are pushes. The hierarchy makes both levels of query possible from the same vocabulary. |
-| Joint actions | Nothing | 46 joint actions across 9 joints (Shoulder, Elbow, Scapula, Forearm, Wrist, Hip, Knee, Ankle, Spine) | Muscles tell you *what* is working. Joint actions tell you *how* it's working. A Lateral Raise and a Cable Y-Raise both target the deltoids, but one involves shoulder abduction and the other involves shoulder flexion with scapular upward rotation. That mechanical detail is what rehab professionals need to program around injuries and what coaches need to balance training stress across joints. |
-| Training modality | Category field (e.g. "Strength") | Assigned only when modality is a defining characteristic of the exercise | A Kettlebell Swing and a Barbell Back Squat both involve hip extension and recruit the glutes and hamstrings. However, the Swing is inherently a Power exercise — explosive hip drive, ballistic loading — while the Squat is modality-agnostic. This dimension separates exercises that look similar on paper but train fundamentally different qualities. |
-| Compound flag | Nothing | Boolean — multi-joint force production vs. isolation | A Barbell Row coordinates force across the shoulder, elbow, and scapula; a Bicep Curl isolates the elbow. The compound flag lets a coach separate multi-joint lifts from single-joint accessories. |
-| Laterality | Nothing | Bilateral / Unilateral / Contralateral / Ipsilateral | A runner with a weak left glute needs single-limb hip hinge work, not bilateral deadlifts. Laterality goes further — distinguishing contralateral coordination (Dead Bug) from ipsilateral (Side Plank with leg lift) for precise rehab programming. |
+| Muscles | Flat string list | 3-level hierarchy (region → group → head) with involvement degrees | Bench Press: triceps as Synergist. Pushdown: triceps as PrimeMover. Same muscle, different intent. |
+| Movement patterns | Nothing | SKOS hierarchy (HorizontalPush, VerticalPush under Push) | Floor Press substitutes for Bench Press; Overhead Press doesn't — hierarchy encodes that. |
+| Joint actions | Nothing | 46 actions across 9 joints | Lateral Raise = shoulder abduction. Cable Y-Raise = shoulder flexion + scapular upward rotation. Same deltoids, different mechanics. |
+| Training modality | Category field | Assigned only when modality is a defining characteristic | Kettlebell Swing is inherently Power; Barbell Squat is modality-agnostic. |
+| Compound flag | Nothing | Boolean — multi-joint vs. isolation | Barbell Row (3 joints) vs. Bicep Curl (1 joint). |
+| Laterality | Nothing | Bilateral / Unilateral / Contralateral / Ipsilateral | Dead Bug (contralateral) vs. Side Plank with leg lift (ipsilateral). |
 
 ---
 
@@ -148,33 +151,21 @@ python3 pipeline/run.py --to build
 
 ## Ontology
 
-### Core classes
+Movement classification uses three orthogonal axes — collapsing any two into one breaks real queries:
 
-`feg:Exercise`, `feg:MuscleInvolvement`, `feg:Muscle` (→ `MuscleRegion` / `MuscleGroup` / `MuscleHead`), `feg:MovementPattern`, `feg:JointAction`, `feg:TrainingModality`, `feg:InvolvementDegree`, `feg:Equipment`
+1. **Movement patterns** — user-facing navigation (Push/Pull, HipHinge, KneeDominant, etc.). These are the labels gym-goers use to browse and filter.
+2. **Compound/Isolation** — boolean split for program design. Multi-joint force production vs. single-joint accessories.
+3. **Joint actions** — mechanical precision layer (46 actions across 9 joints). Two exercises can share a movement pattern and target the same muscles but load completely different joints — this axis catches that.
 
-### Three-layer movement model
+All 11 ontology files carry `owl:versionInfo` (semver). Every version bump requires an ADR in `DECISIONS.md`.
 
-Movement classification uses three orthogonal axes:
-
-1. **Movement patterns** — user-facing navigation (Push/Pull, KneeDominant, HipHinge, Mobility, etc.). These are the labels gym-goers use.
-2. **Compound/Isolation** — boolean first-pass for program design. Two or more distinct joints contributing to force production = compound.
-3. **Joint actions** — mechanical precision layer (HipExtension, KneeExtension, ScapularRetraction, etc.). 46 actions across 9 joints. Useful for substitution and balance analysis.
-
-### Vocabulary versioning
-
-All ontology files carry `owl:versionInfo` (semver). LLM classification instructions live as `rdfs:comment` on OWL property definitions — prompts are rendered from the live ontology at runtime, so vocabulary changes automatically propagate to enrichment.
-
-- **MAJOR** — breaking (removing concepts, renaming URIs)
-- **MINOR** — additive (new concepts, new properties)
-- **PATCH** — non-breaking corrections (comments, labels)
-
-Every version bump requires an ADR in `DECISIONS.md`.
+LLM classification instructions are embedded as `rdfs:comment` on OWL property definitions. Enrichment prompts are rendered from the live ontology at runtime — so adding a vocabulary concept or tightening a classification rule propagates to the next enrichment run automatically, with no prompt engineering required.
 
 ---
 
 ## Governance
 
-Every non-trivial decision — vocabulary additions, pipeline behavior changes, prompt rules — is documented as an Architecture Decision Record in `DECISIONS.md`. ADRs are numbered sequentially. The discipline is intentional: the graph is used for structured querying, and incorrect classifications have real downstream consequences.
+Every non-trivial decision — vocabulary additions, pipeline behavior changes, prompt rules — is documented as an Architecture Decision Record in `DECISIONS.md`. 105 ADRs and counting. The discipline is intentional: the graph is used for structured querying, and incorrect classifications have real downstream consequences.
 
 **Hard rules:**
 - Never add or remove vocabulary concepts without an ADR
@@ -186,94 +177,70 @@ See `CONTRIBUTING.md` for the full operational guide.
 
 ---
 
-## Quick Start
-
-### Prerequisites
+## Setup
 
 ```bash
 pip install -e .
 ```
 
-Requires an API key for the LLM provider used for enrichment:
-- Anthropic (default): `ANTHROPIC_API_KEY`
-- Gemini: `GEMINI_API_KEY`
-
-Set in environment or a `.env` file.
-
-### Run the pipeline
-
-`pipeline/run.py` is the canonical entrypoint. By default it rebuilds the deterministic
-stages (`canonicalize -> identity -> reconcile -> build`) without calling the LLM.
-For the safest full local workflow, follow [docs/full_run_playbook.md](docs/full_run_playbook.md).
+Set `ANTHROPIC_API_KEY` or `GEMINI_API_KEY` in environment or `.env` for LLM enrichment.
 
 ```bash
-# 1. Fetch upstream sources (skip if raw/ files already present)
-python3 sources/free-exercise-db/fetch.py
-python3 sources/functional-fitness-db/fetch.py
-
-# 2. Snapshot current SQLite state if you care about existing enrichment
-python3 pipeline/db_backup.py backup
-
-# 3. Deterministic rebuild from source truth (safe default, no API calls)
+# Deterministic rebuild (no API calls)
 python3 pipeline/run.py --to build
 
-# 4. Full run including enrichment (costs API tokens; auto-exports JSONL afterward)
+# Full run including LLM enrichment
 python3 pipeline/run.py --with-enrich --to build --concurrency 4
-python3 pipeline/run.py --with-enrich --to build --provider gemini --concurrency 4
 
-# 5. Validation surfaces
+# Validate
 python3 pipeline/validate.py --verbose
 python3 test_shacl.py
-
-# 6. Freeze a release/demo bundle
-python3 pipeline/release_bundle.py
-
-# 7. Full rebuild from scratch (explicitly resets SQLite only)
-python3 pipeline/run.py --reset-db --yes-reset-db --to build
 ```
 
-### Manual stage order
+For the full operational playbook (backups, resets, enrichment import/export, release bundles), see [docs/full_run_playbook.md](docs/full_run_playbook.md).
 
-If you need the individual scripts, the order is:
+---
+
+## Static App
+
+A static GitHub Pages app under [app/](app/) — the human-facing surface of the graph. Client-side filtering by muscle, movement pattern, equipment, and modality. Anatomy illustrations. Deterministic search that understands ontology labels. All expensive ontology work happens at build time; the browser only does fast filtering and rendering.
 
 ```bash
-python3 pipeline/canonicalize.py
-python3 pipeline/identity.py
-python3 pipeline/reconcile.py
-python3 pipeline/enrich.py        # optional / costs tokens
-python3 pipeline/build.py
-python3 pipeline/validate.py
-python3 test_shacl.py
+python3 app/build_site.py    # export data.json + vocab.json from the graph
 ```
 
-Important:
-- Re-running upstream stages after changing source truth may require `--reset-db` on the runner.
-- Existing enrichment state is preserved by default. The repo will not drop already-paid-for LLM output unless you explicitly choose a destructive rebuild path.
-- `pipeline/run.py --reset-db` now auto-backs up SQLite by default and requires `--yes-reset-db` when LLM state is present.
-- `pipeline/enrich.py` archives raw responses under `pipeline/artifacts/raw_responses/` and the canonical runner auto-exports enrichment JSONL after a successful enrich stage.
-- If you need to restore enrichment into a deterministic rebuild, use `python3 pipeline/import_enrichment.py <artifact.jsonl>`.
+See ADR-086–090 in `DECISIONS.md` for architecture rationale, and [app/README.md](app/README.md) for the full guide.
 
-### Start the MCP server
+---
 
-```bash
-python3 mcp_server.py
-# rebuild first if needed:
-python3 pipeline/run.py --to build
-```
+## Thank You to Our Sources
+
+This project stands on the shoulders of people who freely shared their work. We are grateful.
+
+- **[yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db)** — 873 exercises with muscle, equipment, and category data. Released into the public domain under the [Unlicense](https://unlicense.org/).
+
+- **[Strength to Overcome — Functional Fitness Exercise Database](https://strengthtoovercome.com/functional-fitness-exercise-database)** — 3,240 functional exercises with 30+ classification fields including difficulty, plane of motion, grip type, and posture. Shared freely by its creator for the fitness community. Used here with gratitude and full credit.
+
+---
+
+## Namespace
+
+All URIs use `https://placeholder.url#` (prefix `feg:`) — a placeholder pending a permanent domain. This will be updated before any public release. See `TODO.md` for the migration plan.
 
 ---
 
 ## Docs by Audience
 
-- **New engineer / ontology engineer:** start with [docs/system_contracts.md](docs/system_contracts.md), then [docs/sqlite_data_model.md](docs/sqlite_data_model.md), then [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Operator running the full pipeline:** use [docs/full_run_playbook.md](docs/full_run_playbook.md)
-- **Ontologist / taxonomy reviewer:** read [DECISIONS.md](DECISIONS.md), [ontology/](ontology/), [docs/sqlite_data_model.md](docs/sqlite_data_model.md), and [docs/quality_surfaces.md](docs/quality_surfaces.md)
-- **Product / PM / portfolio reviewer:** read this README, [app/README.md](app/README.md), [docs/reconciliation_example.md](docs/reconciliation_example.md), and [codexlog.md](codexlog.md)
-- **Frontend / static-app contributor:** start with [app/README.md](app/README.md), then [docs/app_field_provenance.md](docs/app_field_provenance.md)
+- **New engineer / ontology engineer:** [docs/system_contracts.md](docs/system_contracts.md) → [docs/sqlite_data_model.md](docs/sqlite_data_model.md) → [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Pipeline operator:** [docs/full_run_playbook.md](docs/full_run_playbook.md)
+- **Ontologist / taxonomy reviewer:** [DECISIONS.md](DECISIONS.md), [ontology/](ontology/), [docs/sqlite_data_model.md](docs/sqlite_data_model.md), [docs/quality_surfaces.md](docs/quality_surfaces.md)
+- **Product / design context:** this README → [docs/reconciliation_example.md](docs/reconciliation_example.md) → [app/README.md](app/README.md) → [codexlog.md](codexlog.md)
+- **Frontend / static-app:** [app/README.md](app/README.md) → [docs/app_field_provenance.md](docs/app_field_provenance.md)
 
 ---
 
-## Repo Map
+<details>
+<summary><strong>Repo Map</strong></summary>
 
 ```
 free-exercise-graph/
@@ -360,30 +327,4 @@ free-exercise-graph/
   TODO.md                          open items
 ```
 
----
-
-## Static App
-
-The GitHub Pages app lives under [app/](app/).
-
-- Build app payloads from the current graph or pipeline DB with [app/build_site.py](app/build_site.py)
-- Preview locally by serving the [app](app) directory with a static file server
-- Deploy by publishing the committed [app](app) directory through GitHub Pages
-
-See ADR-086–090 in `DECISIONS.md` for the full architecture rationale.
-
----
-
-## Thank You to Our Sources
-
-This project stands on the shoulders of people who freely shared their work. We are grateful.
-
-- **[yuhonas/free-exercise-db](https://github.com/yuhonas/free-exercise-db)** — 873 exercises with muscle, equipment, and category data. Released into the public domain under the [Unlicense](https://unlicense.org/).
-
-- **[Strength to Overcome — Functional Fitness Exercise Database](https://strengthtoovercome.com/functional-fitness-exercise-database)** — 3,240 functional exercises with 30+ classification fields including difficulty, plane of motion, grip type, and posture. Shared freely by its creator for the fitness community. Used here with gratitude and full credit.
-
----
-
-## Namespace
-
-All URIs use `https://placeholder.url#` (prefix `feg:`) — a placeholder pending a permanent domain. This will be updated before any public release. See `TODO.md` for the migration plan.
+</details>
