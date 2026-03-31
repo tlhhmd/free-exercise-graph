@@ -155,8 +155,9 @@ radius scale value, it is a geometry choice.
 ## Component Vocabulary
 
 ### hero-card
-Main page hero on the Exercises tab. Large Young Serif title, League Gothic
-eyebrow in accent color, body copy in `--text-2`.
+Main page hero on the Exercises tab. Caveat Brush kicker (`tab-kicker`),
+Young Serif title (`.hero-title`, `var(--text-hero)`), body copy in `--text-2`
+(`.hero-copy`, `var(--text-base)`).
 
 ### tab-hero
 Compressed hero at the top of Muscles and Vocab tabs. Contains the Caveat
