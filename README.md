@@ -1,8 +1,10 @@
 # free-exercise-graph
 
-A semantic knowledge graph of **3,450 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
+**[→ Live app](https://www.talha.foo/free-exercise-graph/)**
 
-The ontology, multi-source reconciliation pipeline, data quality framework, and 105 architecture decision records are original work. The exercise data comes from freely shared community datasets.
+A semantic knowledge graph of **3,455 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
+
+The ontology, multi-source reconciliation pipeline, data quality framework, and 109 architecture decision records are original work. The exercise data comes from freely shared community datasets.
 
 ## What You Can Do With It
 
@@ -18,11 +20,11 @@ The ontology, multi-source reconciliation pipeline, data quality framework, and 
 
 | | |
 |---|---|
-| **3,450** canonical entities | resolved from **4,113** source records across multiple datasets |
-| **238,390** graph triples | assembled from resolved + inferred claims |
+| **3,455** canonical entities | resolved from **4,113** source records across multiple datasets |
+| **239,054** graph triples | assembled from resolved + inferred claims |
 | **46** joint actions | across **9** joints |
 | **11** ontology files | independently versioned (semver) |
-| **105** ADRs | every non-trivial decision documented |
+| **109** ADRs | every non-trivial decision documented |
 | **14/14** SHACL tests | passing |
 
 ---
