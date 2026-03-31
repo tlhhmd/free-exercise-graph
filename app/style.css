@@ -1113,7 +1113,7 @@ body[data-tab="vocab"] .nav-btn {
 
 /* Desktop two-column layout */
 @media (min-width: 680px) {
-  #view-muscles {
+  #view-muscles.active {
     max-width: 920px;
     display: grid;
     grid-template-columns: 310px 1fr;
