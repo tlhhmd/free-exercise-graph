@@ -67,6 +67,7 @@ Use this when `graph.ttl` is the source you want to publish:
 
 ```bash
 python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
 python3 app/build_site.py --from-graph
 ```
 
@@ -91,6 +92,7 @@ python3 app/build_site.py --from-graph --out app
 ```bash
 python3 pipeline/run.py --to build
 python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
 python3 app/build_site.py --from-graph
 python3 -m http.server 8000
 ```
@@ -110,3 +112,11 @@ GitHub Pages deploys this directory directly via [.github/workflows/deploy.yml](
 ## Product Direction
 
 For field-level provenance and promotion targets, see [docs/app_field_provenance.md](/Users/talha/Code/free-exercise-graph/docs/app_field_provenance.md).
+
+The substitute UX now reads from [exercise_substitute_ui.json](/Users/talha/Code/free-exercise-graph/app/exercise_substitute_ui.json), a build-time presentation artifact derived from the Phase 1 similarity graph outputs. It intentionally separates:
+
+- closest direct replacements
+- different-equipment alternatives
+- broader family exploration
+
+The browser does not compute substitute buckets or dedupe variants at runtime.

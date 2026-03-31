@@ -211,6 +211,7 @@ A static GitHub Pages app under [app/](app/) — the human-facing surface of the
 
 ```bash
 python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
 python3 app/build_site.py    # export data.json + vocab.json from the graph
 ```
 

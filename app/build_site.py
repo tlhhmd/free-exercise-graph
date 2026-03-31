@@ -928,6 +928,14 @@ def _attach_similarity_data(exercises: list[dict], similarity_artifacts: dict | 
     return exercises
 
 
+def _copy_json_artifact(src_path: Path, dest_path: Path) -> bool:
+    if not src_path.exists():
+        return False
+    payload = json.loads(src_path.read_text(encoding="utf-8"))
+    dest_path.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+    return True
+
+
 def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], dict]:
     entities = conn.execute(
         "SELECT entity_id, display_name FROM entities ORDER BY entity_id"
@@ -1136,17 +1144,20 @@ def generate(
         conn.close()
 
     exercises = _decorate_exercises(exercises, ancestor_map)
-    similarity_artifacts = _load_similarity_artifacts(similarity_dir)
-    exercises = _attach_similarity_data(exercises, similarity_artifacts)
 
     print("Building vocabulary...")
     vocab = _build_vocab(g, counts, exercises)
 
     data_path = out_dir / "data.json"
     vocab_path = out_dir / "vocab.json"
+    substitute_ui_path = out_dir / "exercise_substitute_ui.json"
 
     data_path.write_text(json.dumps(exercises, separators=(",", ":")), encoding="utf-8")
     vocab_path.write_text(json.dumps(vocab, separators=(",", ":")), encoding="utf-8")
+    copied_substitute_ui = _copy_json_artifact(
+        similarity_dir / "exercise_substitute_ui.json",
+        substitute_ui_path,
+    )
 
     import gzip
     data_gz = len(gzip.compress(data_path.read_bytes()))
@@ -1154,10 +1165,10 @@ def generate(
 
     print(f"Wrote {data_path} ({len(exercises)} exercises, {data_gz//1024} KB gzipped)")
     print(f"Wrote {vocab_path} ({vocab_gz//1024} KB gzipped)")
-    if similarity_artifacts:
-        print(f"Attached similarity artifacts from {similarity_dir}")
+    if copied_substitute_ui:
+        print(f"Wrote {substitute_ui_path} from {similarity_dir / 'exercise_substitute_ui.json'}")
     else:
-        print(f"No similarity artifacts found at {similarity_dir}; emitting empty similarity payloads")
+        print(f"No substitute UI artifact found at {similarity_dir}; skipping exercise_substitute_ui.json")
 
 
 def main() -> None:
