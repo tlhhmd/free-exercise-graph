@@ -14,7 +14,6 @@ Remaining work is grouped by execution horizon.
 ## Next
 
 - [ ] **Deploy and verify Builder View** — push to GitHub Pages. Open the live site, search for "Dead Bug", open the detail sheet, confirm the User/Builder toggle appears and all 5 stages render. Five curated exercises: Dead Bug, Romanian Deadlift, Cable Crunch, Double KB Gorilla Row, Bent Over Barbell Row.
-- [ ] **observatory.json validation in ci.yml** — Extend the existing "Verify committed site artifacts" step to check observatory.json: valid JSON array, each exercise has expected stage keys.
 - [ ] **PROV-O in graph** — `enrichment_stamps.model` is stored. Update `build.py` to emit `prov:wasAttributedTo` on inferred claims and `prov:wasGeneratedBy` for the enrichment activity (model, timestamp). Requires ontology additions; write ADR first.
 - [ ] **DESIGN.md for the app** — Write a short design reference capturing the implicit system in style.css: color tokens per tab, typography roles (League Gothic for headings, Young Serif for body, Caveat Brush for decorative), component vocabulary (hero-card, badges, view-toggle, detail sheet), and the warm-paper-on-colored-background pattern. Makes calibration explicit for future contributors.
 - [ ] **Performance benchmarking script** — `pipeline/bench.py` that times each stage end-to-end. Currently measured manually: canonicalize 0.2s, identity 0.18s, reconcile 0.24s, build 1.87s.
