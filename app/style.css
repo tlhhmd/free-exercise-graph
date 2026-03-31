@@ -53,7 +53,7 @@ body {
     linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 100%);
   color: var(--text);
   min-height: 100dvh;
-  padding-bottom: var(--nav-h);
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
   overscroll-behavior: none;
   transition: background 0.25s ease, color 0.2s ease;
 }
@@ -211,11 +211,12 @@ body[data-tab="vocab"] {
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: var(--nav-h);
+  min-height: var(--nav-h);
   background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(20px);
   display: flex;
+  align-items: stretch;
   z-index: 100;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   gap: 8px;
@@ -635,11 +636,14 @@ body[data-tab="vocab"] .nav-btn {
 .sheet-overlay.open { display: flex; }
 
 .sheet {
-  width: min(calc(100% - 16px), 680px); margin: 0 auto;
+  width: min(calc(100vw - 12px), 680px);
+  max-width: calc(100vw - 12px);
+  margin: 0 auto;
   background: rgba(255,250,241,0.98);
   border-radius: var(--r-xl) 22px 0 0;
   max-height: 92dvh;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   padding: 0 var(--gap) calc(var(--gap) + env(safe-area-inset-bottom));
   animation: slideUp 0.25s ease;
@@ -653,18 +657,33 @@ body[data-tab="vocab"] .nav-btn {
 }
 
 .sheet-handle {
-  width: 36px; height: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  width: calc(100% + (var(--gap) * 2));
+  height: 24px;
+  margin: 0 calc(var(--gap) * -1) 12px;
+  background: linear-gradient(180deg, rgba(255,250,241,0.98) 72%, rgba(255,250,241,0));
+}
+
+.sheet-handle::after {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 4px;
+  margin: 10px auto 0;
   background: var(--border);
   border-radius: var(--r-xs);
-  margin: 10px auto 16px;
 }
 
 .sheet-title {
   font-size: var(--text-lg); font-weight: 600; line-height: 1.3;
   margin-bottom: 4px;
+  overflow-wrap: anywhere;
 }
 .sheet-subtitle {
   font-size: var(--text-sm); color: var(--text-2); margin-bottom: 16px;
+  overflow-wrap: anywhere;
 }
 .sheet-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 
@@ -820,6 +839,9 @@ body[data-tab="vocab"] .nav-btn {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+.sub-card > div {
+  min-width: 0;
 }
 .sub-why { font-size: var(--text-xs); color: var(--text-2); margin-top: 2px; }
 
@@ -1491,6 +1513,49 @@ body[data-tab="vocab"] .nav-btn {
     width: min(760px, calc(100% - 24px));
     border: 1px solid rgba(19, 32, 54, 0.08);
     border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sheet {
+    width: calc(100vw - 8px);
+    max-width: calc(100vw - 8px);
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .sheet-hero-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet-glyph {
+    min-width: 0;
+  }
+
+  .detail-summary-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sub-card {
+    flex-wrap: wrap;
+  }
+
+  .sub-view-btn {
+    width: 100%;
+  }
+
+  .obs-source-header,
+  .obs-claim-row {
+    flex-wrap: wrap;
+  }
+
+  .obs-claim-pred {
+    min-width: 0;
+  }
+
+  .obs-source-name,
+  .obs-claim-val {
+    overflow-wrap: anywhere;
   }
 }
 
