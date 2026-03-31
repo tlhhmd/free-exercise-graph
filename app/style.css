@@ -301,6 +301,26 @@ body[data-tab="vocab"] .nav-btn {
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
+/* ── Focus-visible rings (keyboard navigation) ──────────────────────────── */
+/* Suppress default outline globally; restore it via focus-visible only      */
+:focus { outline: none; }
+
+.nav-btn:focus-visible,
+.filter-chip:focus-visible,
+.filter-tag:focus-visible,
+.ghost-btn:focus-visible,
+.view-toggle-btn:focus-visible,
+.sheet-close:focus-visible,
+.obs-nav-btn:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+/* On colored backgrounds (nav bar) use white ring */
+.nav-btn:focus-visible {
+  outline-color: rgba(255, 255, 255, 0.9);
+}
+
 .filter-row {
   display: flex;
   gap: 6px;
