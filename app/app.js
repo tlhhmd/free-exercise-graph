@@ -877,7 +877,13 @@ function renderSheetUser(ex) {
     ` : ""}
 
     <details class="sub-family-details">
-      <summary>Explore This Family</summary>
+      <summary>
+        <span class="sub-family-summary-copy">
+          <span>Explore This Family</span>
+          <span class="sub-family-summary-hint">Tap to expand</span>
+        </span>
+        <span class="sub-family-summary-icon" aria-hidden="true">▾</span>
+      </summary>
       <div class="sub-family-content">${renderFamilyHighlights(familyHighlights)}</div>
     </details>
   `;
