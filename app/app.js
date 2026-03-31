@@ -96,8 +96,12 @@ const state = {
   muscleDescendants: {},
   bodyView: "front",
   sheetExercise: null,
+  sheetMode: "user",
+  sheetBuilderStep: 0,
   muscleOpenSections: {},
   pendingMuscleScrollTo: null,
+  observatoryData: null,
+  observatoryLoadPromise: null,
 };
 
 let searchDebounceTimer = null;
@@ -150,6 +154,15 @@ function labelFor(id) {
   for (const m of state.vocab.modalities || []) if (m.id === id) return m.label;
   for (const e of state.vocab.equipment || []) if (e.id === id) return e.label;
   return id.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+}
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function titleCase(text) {
@@ -599,6 +612,7 @@ function syncUrlState() {
   if (state.search) params.set("q", state.search);
   if (state.sheetExercise) params.set("detail", state.sheetExercise);
   if (state.bodyView !== "front") params.set("body", state.bodyView);
+  if (state.sheetMode === "builder") params.set("builderView", "1");
 
   for (const [type, ids] of Object.entries(state.filters)) {
     if (ids.length) params.set(type, ids.join(","));
@@ -615,6 +629,7 @@ function restoreUrlState() {
   state.search = params.get("q") || "";
   state.sheetExercise = params.get("detail") || null;
   state.bodyView = params.get("body") || "front";
+  state.sheetMode = params.get("builderView") === "1" ? "builder" : "user";
 
   for (const type of Object.keys(state.filters)) {
     state.filters[type] = (params.get(type) || "").split(",").filter(Boolean);
@@ -714,12 +729,26 @@ function renderExploreView() {
 
 
 
-function openSheet(exerciseId) {
-  const ex = getExercise(exerciseId);
-  if (!ex) return;
-  state.sheetExercise = exerciseId;
-  syncUrlState();
+// ── Observatory (lazy load) ────────────────────────────────────────────────────
 
+async function ensureObservatory() {
+  if (state.observatoryData) return state.observatoryData;
+  if (!state.observatoryLoadPromise) {
+    state.observatoryLoadPromise = loadJson("observatory.json")
+      .then(data => { state.observatoryData = data; return data; })
+      .catch(() => { state.observatoryData = []; return []; });
+  }
+  return state.observatoryLoadPromise;
+}
+
+function getObservatoryEntry(exerciseId) {
+  if (!state.observatoryData) return null;
+  return state.observatoryData.find(e => e.entity_id === exerciseId) || null;
+}
+
+// ── Sheet rendering ────────────────────────────────────────────────────────────
+
+function renderSheetUser(ex) {
   const badges = [];
   if (ex.modality) badges.push(`<span class="badge badge-modality">${labelFor(ex.modality)}</span>`);
   if (ex.combination) badges.push(`<span class="badge badge-combo">Combination</span>`);
@@ -759,10 +788,8 @@ function openSheet(exerciseId) {
     `).join("")
     : `<div style="font-size:13px;color:var(--text-2)">No close substitutes found.</div>`;
 
-  el("sheet-content").innerHTML = `
-    <div class="sheet-title">${ex.name}</div>
-    <div class="sheet-subtitle">${graphGroundingLine(ex) || "Structured exercise record."}</div>
-    <div class="sheet-badges">${badges.join("")}</div>
+  return `
+    ${badges.length ? `<div class="sheet-badges">${badges.join("")}</div>` : ""}
 
     <div class="section-label">Body Emphasis</div>
     <div class="mini-region-row">${renderRegionMini(ex.visualRegions)}</div>
@@ -782,17 +809,301 @@ function openSheet(exerciseId) {
     <div class="section-label">Substitutes</div>
     <div class="sub-list">${subsHtml}</div>
   `;
+}
+
+const _STAGE_NAMES = ["Sources", "Identity", "Reconcile", "Enrich", "Graph"];
+
+function renderBuilderStage(entry, stepIndex) {
+  const stages = entry.stages;
+
+  if (stepIndex === 0) {
+    // Sources
+    const records = stages.sources;
+    const rows = records.map(rec => {
+      const claimRows = rec.claims.map(c =>
+        `<div class="obs-claim-row"><span class="obs-claim-pred">${escapeHtml(c.predicate)}</span><span class="obs-claim-val">${escapeHtml(c.value)}</span></div>`
+      ).join("");
+      return `
+        <div class="obs-source-record">
+          <div class="obs-source-header">
+            <span class="obs-source-name">${escapeHtml(rec.display_name)}</span>
+            <span class="obs-source-tag">${escapeHtml(rec.source)}</span>
+          </div>
+          ${claimRows || '<div class="obs-empty">No structured claims</div>'}
+        </div>
+      `;
+    }).join("");
+    return `
+      <div class="obs-stage-intro">${records.length} source record${records.length !== 1 ? "s" : ""} contributed to this entity.</div>
+      ${rows}
+    `;
+  }
+
+  if (stepIndex === 1) {
+    // Identity
+    const id = stages.identity;
+    const crossLabel = id.cross_source
+      ? `<span class="obs-badge obs-badge-cross">Cross-source merge</span>`
+      : `<span class="obs-badge obs-badge-single">Single source</span>`;
+    const sourceTags = id.sources.map(s => `<span class="obs-source-tag">${escapeHtml(s)}</span>`).join(" ");
+    const matchRows = id.possible_matches.length
+      ? id.possible_matches.map(m => `
+          <div class="obs-claim-row">
+            <span class="obs-claim-pred">${escapeHtml(m.display_name)}</span>
+            <span class="obs-claim-val">score ${escapeHtml(String(m.score))} · ${escapeHtml(m.status)}</span>
+          </div>`).join("")
+      : `<div class="obs-empty">No ambiguous candidates</div>`;
+    return `
+      <div class="obs-stage-intro">${id.record_count} record${id.record_count !== 1 ? "s" : ""} resolved into one canonical entity. ${crossLabel}</div>
+      <div class="obs-row-group"><div class="obs-group-label">Sources</div><div>${sourceTags}</div></div>
+      <div class="obs-row-group"><div class="obs-group-label">Possible matches considered</div>${matchRows}</div>
+    `;
+  }
+
+  if (stepIndex === 2) {
+    // Reconcile
+    const rec = stages.reconcile;
+    const methodRows = Object.entries(rec.by_method).map(([method, claims]) => {
+      const claimRows = claims.map(c =>
+        `<div class="obs-claim-row"><span class="obs-claim-pred">${escapeHtml(c.predicate)}</span><span class="obs-claim-val">${escapeHtml(c.value)}</span></div>`
+      ).join("");
+      const methodClass = method === "Human override" ? "obs-badge-override"
+        : method === "Coverage gap" ? "obs-badge-gap"
+        : method === "Consensus" ? "obs-badge-consensus" : "obs-badge-union";
+      return `
+        <div class="obs-row-group">
+          <div class="obs-group-label"><span class="obs-badge ${methodClass}">${escapeHtml(method)}</span> · ${claims.length} claim${claims.length !== 1 ? "s" : ""}</div>
+          ${claimRows}
+        </div>
+      `;
+    }).join("");
+
+    const conflictRows = rec.conflicts.length
+      ? rec.conflicts.map(c => `
+          <div class="obs-conflict">
+            <span class="obs-conflict-pred">${escapeHtml(c.predicate)}</span>
+            <span class="obs-conflict-desc">${escapeHtml(c.description)}</span>
+            <span class="obs-badge obs-badge-deferred">${escapeHtml(c.status)}</span>
+          </div>`).join("")
+      : `<div class="obs-empty">No conflicts</div>`;
+
+    return `
+      <div class="obs-stage-intro">Deterministic resolution algebra — no LLM. ${Object.values(rec.method_counts).reduce((a, b) => a + b, 0)} total claims resolved.</div>
+      ${methodRows}
+      <div class="obs-row-group"><div class="obs-group-label">Conflicts</div>${conflictRows}</div>
+    `;
+  }
+
+  if (stepIndex === 3) {
+    // Enrich
+    const enr = stages.enrich;
+    const notableRows = enr.notable.map(c =>
+      `<div class="obs-claim-row"><span class="obs-claim-pred">${escapeHtml(c.predicate)}</span><span class="obs-claim-val">${escapeHtml(c.value)}</span></div>`
+    ).join("");
+    const warnRows = enr.warnings.length
+      ? enr.warnings.map(w =>
+          `<div class="obs-claim-row obs-warn-row"><span class="obs-claim-pred">${escapeHtml(w.predicate)}</span><span class="obs-claim-val">${escapeHtml(w.stripped_value)} (stripped)</span></div>`
+        ).join("")
+      : `<div class="obs-empty">No warnings</div>`;
+    return `
+      <div class="obs-stage-intro">Single LLM pass. ${enr.inferred_count} claims inferred. Inferred claims never overwrite source-asserted facts.</div>
+      <div class="obs-row-group">
+        <div class="obs-group-label">Model · date</div>
+        <div class="obs-claim-row"><span class="obs-claim-pred">Model</span><span class="obs-claim-val">${escapeHtml(enr.model || "—")}</span></div>
+        <div class="obs-claim-row"><span class="obs-claim-pred">Enriched</span><span class="obs-claim-val">${escapeHtml(enr.enriched_at || "—")}</span></div>
+      </div>
+      <div class="obs-row-group"><div class="obs-group-label">Notable additions (not in resolved claims)</div>${notableRows || '<div class="obs-empty">All inferences duplicated resolved claims</div>'}</div>
+      <div class="obs-row-group"><div class="obs-group-label">Stripped (unknown vocab at enrichment time)</div>${warnRows}</div>
+    `;
+  }
+
+  if (stepIndex === 4) {
+    // Graph — show final resolved state from user view summary
+    return `
+      <div class="obs-stage-intro">RDF assembled from resolved + inferred claims. Asserted always takes precedence.</div>
+      <div class="obs-empty obs-graph-note">Switch back to User View to see the final assembled record.</div>
+    `;
+  }
+
+  return "";
+}
+
+function renderSheetBuilder(ex, entry) {
+  const step = state.sheetBuilderStep;
+  const stageName = _STAGE_NAMES[step];
+  const stageContent = renderBuilderStage(entry, step);
+
+  const stepIndicators = _STAGE_NAMES.map((name, i) => `
+    <button class="obs-step-dot ${i === step ? "active" : ""}" data-step="${i}" title="${escapeHtml(name)}"></button>
+  `).join("");
+
+  return `
+    <div class="obs-narrative">${escapeHtml(entry.narrative)}</div>
+
+    <div class="obs-stepper">
+      <div class="obs-stepper-header">
+        <button class="obs-nav-btn" id="obs-prev" ${step === 0 ? "disabled" : ""}>←</button>
+        <div class="obs-stepper-center">
+          <div class="obs-stage-label">Stage ${step + 1} of ${_STAGE_NAMES.length} · ${escapeHtml(stageName)}</div>
+          <div class="obs-step-dots">${stepIndicators}</div>
+        </div>
+        <button class="obs-nav-btn" id="obs-next" ${step === _STAGE_NAMES.length - 1 ? "disabled" : ""}>→</button>
+      </div>
+      <div class="obs-stage-content" id="obs-stage-content">
+        ${stageContent}
+      </div>
+    </div>
+  `;
+}
+
+function bindBuilderNav() {
+  const prev = el("obs-prev");
+  const next = el("obs-next");
+  if (prev) prev.addEventListener("click", e => { e.stopPropagation(); navigateBuilderStep(-1); });
+  if (next) next.addEventListener("click", e => { e.stopPropagation(); navigateBuilderStep(1); });
+  el("sheet-content").querySelectorAll(".obs-step-dot[data-step]").forEach(dot => {
+    dot.addEventListener("click", e => {
+      e.stopPropagation();
+      state.sheetBuilderStep = parseInt(dot.dataset.step, 10);
+      rerenderSheetBuilderOnly();
+    });
+  });
+}
+
+function navigateBuilderStep(delta) {
+  const next = state.sheetBuilderStep + delta;
+  if (next < 0 || next >= _STAGE_NAMES.length) return;
+  state.sheetBuilderStep = next;
+  rerenderSheetBuilderOnly();
+}
+
+function rerenderSheetBuilderOnly() {
+  const entry = getObservatoryEntry(state.sheetExercise);
+  if (!entry) return;
+  const ex = getExercise(state.sheetExercise);
+  if (!ex) return;
+  const content = el("sheet-content");
+  // Only replace the stepper area (after the toggle and title)
+  const stepper = content.querySelector(".obs-stepper");
+  const narrative = content.querySelector(".obs-narrative");
+  const step = state.sheetBuilderStep;
+  const stageName = _STAGE_NAMES[step];
+  const stageContent = renderBuilderStage(entry, step);
+  const stepIndicators = _STAGE_NAMES.map((name, i) => `
+    <button class="obs-step-dot ${i === step ? "active" : ""}" data-step="${i}" title="${escapeHtml(name)}"></button>
+  `).join("");
+
+  if (stepper) {
+    stepper.innerHTML = `
+      <div class="obs-stepper-header">
+        <button class="obs-nav-btn" id="obs-prev" ${step === 0 ? "disabled" : ""}>←</button>
+        <div class="obs-stepper-center">
+          <div class="obs-stage-label">Stage ${step + 1} of ${_STAGE_NAMES.length} · ${escapeHtml(stageName)}</div>
+          <div class="obs-step-dots">${stepIndicators}</div>
+        </div>
+        <button class="obs-nav-btn" id="obs-next" ${step === _STAGE_NAMES.length - 1 ? "disabled" : ""}>→</button>
+      </div>
+      <div class="obs-stage-content" id="obs-stage-content">
+        ${stageContent}
+      </div>
+    `;
+  }
+  bindBuilderNav();
+}
+
+function renderSheetToggle(hasObservatory) {
+  if (!hasObservatory) return "";
+  const isBuilder = state.sheetMode === "builder";
+  return `
+    <div class="sheet-mode-toggle">
+      <button class="sheet-mode-btn ${!isBuilder ? "active" : ""}" id="sheet-mode-user">User View</button>
+      <button class="sheet-mode-btn ${isBuilder ? "active" : ""}" id="sheet-mode-builder">Builder View</button>
+    </div>
+  `;
+}
+
+function bindSheetToggle(ex) {
+  const userBtn = el("sheet-mode-user");
+  const builderBtn = el("sheet-mode-builder");
+  if (!userBtn || !builderBtn) return;
+
+  userBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    if (state.sheetMode === "user") return;
+    state.sheetMode = "user";
+    syncUrlState();
+    openSheet(state.sheetExercise);
+  });
+
+  builderBtn.addEventListener("click", async e => {
+    e.stopPropagation();
+    if (state.sheetMode === "builder") return;
+    builderBtn.textContent = "Loading…";
+    builderBtn.disabled = true;
+    await ensureObservatory();
+    state.sheetMode = "builder";
+    state.sheetBuilderStep = 0;
+    syncUrlState();
+    openSheet(state.sheetExercise);
+  });
+}
+
+function openSheet(exerciseId) {
+  const ex = getExercise(exerciseId);
+  if (!ex) return;
+  state.sheetExercise = exerciseId;
+  syncUrlState();
+
+  const entry = getObservatoryEntry(exerciseId);
+  const hasObservatory = !!entry;
+  const isBuilder = state.sheetMode === "builder" && hasObservatory;
+
+  const bodyHtml = isBuilder
+    ? renderSheetBuilder(ex, entry)
+    : renderSheetUser(ex);
+
+  el("sheet-content").innerHTML = `
+    <div class="sheet-title">${ex.name}</div>
+    <div class="sheet-subtitle">${graphGroundingLine(ex) || "Structured exercise record."}</div>
+    ${renderSheetToggle(hasObservatory)}
+    ${bodyHtml}
+  `;
 
   el("sheet-overlay").classList.add("open");
   document.body.style.overflow = "hidden";
 
-  el("sheet-content").querySelectorAll(".sub-view-btn").forEach(button => {
-    button.addEventListener("click", event => {
-      event.stopPropagation();
-      el("detail-sheet").scrollTop = 0;
-      openSheet(button.dataset.id);
+  bindSheetToggle(ex);
+
+  if (isBuilder) {
+    bindBuilderNav();
+  } else {
+    el("sheet-content").querySelectorAll(".sub-view-btn").forEach(button => {
+      button.addEventListener("click", event => {
+        event.stopPropagation();
+        el("detail-sheet").scrollTop = 0;
+        openSheet(button.dataset.id);
+      });
     });
-  });
+  }
+
+  // Pre-warm observatory fetch; once loaded inject toggle if not already visible
+  if (!state.observatoryData) {
+    ensureObservatory().then(() => {
+      const stillOpen = state.sheetExercise === exerciseId && el("sheet-overlay").classList.contains("open");
+      if (stillOpen && !hasObservatory && getObservatoryEntry(exerciseId)) {
+        const toggleSlot = el("sheet-content").querySelector(".sheet-mode-toggle");
+        if (!toggleSlot) {
+          const subtitle = el("sheet-content").querySelector(".sheet-subtitle");
+          if (subtitle) {
+            const div = document.createElement("div");
+            div.innerHTML = renderSheetToggle(true);
+            subtitle.insertAdjacentElement("afterend", div.firstElementChild);
+            bindSheetToggle(ex);
+          }
+        }
+      }
+    });
+  }
 }
 
 window.app = window.app || {};
@@ -801,6 +1112,7 @@ app.closeSheet = function(e) {
     el("sheet-overlay").classList.remove("open");
     document.body.style.overflow = "";
     state.sheetExercise = null;
+    state.sheetMode = "user";
     syncUrlState();
   }
 };
@@ -1228,6 +1540,14 @@ function rerenderAll() {
   syncUrlState();
 }
 
+function initBuilderKeyboard() {
+  document.addEventListener("keydown", e => {
+    if (state.sheetMode !== "builder" || !state.sheetExercise) return;
+    if (e.key === "ArrowLeft") navigateBuilderStep(-1);
+    if (e.key === "ArrowRight") navigateBuilderStep(1);
+  });
+}
+
 function init() {
   initNav();
   initSearch();
@@ -1235,6 +1555,7 @@ function init() {
   initAnatomyMap();
   initVocabAccordions();
   initCopyLink();
+  initBuilderKeyboard();
   el("clear-muscle-filters")?.addEventListener("click", () => {
     if (!state.filters.muscles.length) return;
     state.filters.muscles = [];

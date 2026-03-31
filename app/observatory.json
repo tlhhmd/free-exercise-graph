@@ -1,0 +1,1078 @@
+[
+  {
+    "entity_id": "dead_bug",
+    "display_name": "Dead Bug",
+    "narrative": "Three source records across two datasets disagreed on laterality \u2014 one said Contralateral (right arm + left leg move together), another said Unilateral. Both are defensible. The reconciler deferred rather than guess. The LLM enrichment pass resolved it to Contralateral and added TransverseAbdominis and ErectorSpinae \u2014 muscles no source had mentioned.",
+    "stages": {
+      "sources": [
+        {
+          "source": "free-exercise-db",
+          "display_name": "Dead Bug",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Bodyweight"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Bodyweight Dead Bug",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Bodyweight"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Postural"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Contralateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Anti Extension"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Obliques (secondary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Abdominis (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Femoris (tertiary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Kettlebell Dead Bug",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Postural"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Unilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Anti Extension"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Obliques (secondary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Abdominis (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Femoris (tertiary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        }
+      ],
+      "identity": {
+        "record_count": 3,
+        "sources": [
+          "free-exercise-db",
+          "functional-fitness-db"
+        ],
+        "cross_source": true,
+        "possible_matches": []
+      },
+      "reconcile": {
+        "by_method": {
+          "Consensus": [
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Obliques (Synergist)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Abdominis (Prime Mover)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Femoris (Stabilizer)"
+            }
+          ],
+          "Union": [
+            {
+              "predicate": "Equipment",
+              "value": "Bodyweight"
+            },
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Postural"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Anti Extension"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        "method_counts": {
+          "Consensus": 5,
+          "Union": 5
+        },
+        "conflicts": [
+          {
+            "predicate": "Laterality",
+            "description": "Sources disagree on laterality: Contralateral, Unilateral",
+            "status": "deferred"
+          }
+        ]
+      },
+      "enrich": {
+        "model": "claude-sonnet-4-6",
+        "enriched_at": "2026-03-24",
+        "inferred_count": 16,
+        "notable": [
+          {
+            "predicate": "Exercise Style",
+            "value": "Postural"
+          },
+          {
+            "predicate": "Combination",
+            "value": "false"
+          },
+          {
+            "predicate": "Compound",
+            "value": "true"
+          },
+          {
+            "predicate": "Laterality",
+            "value": "Contralateral"
+          },
+          {
+            "predicate": "Movement Pattern",
+            "value": "Anti Extension"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Erector Spinae (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gluteus Maximus (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Iliopsoas (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Obliques (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Rectus Abdominis (Prime Mover)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Rectus Femoris (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Transverse Abdominis (Prime Mover)"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  },
+  {
+    "entity_id": "romanian_deadlift",
+    "display_name": "Romanian Deadlift",
+    "narrative": "Three source records (two from different datasets) agreed on the core facts: HipHinge pattern, posterior-chain muscles, bilateral. Consensus resolution handled most fields. Equipment was unioned (Barbell + Kettlebell both preserved). A clean multi-source merge.",
+    "stages": {
+      "sources": [
+        {
+          "source": "free-exercise-db",
+          "display_name": "Romanian Deadlift",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Barbell Romanian Deadlift",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Hip Hinge"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Biceps Femoris (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Erector Spinae (tertiary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Gluteus Maximus (secondary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Kettlebell Romanian Deadlift",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Hip Hinge"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Biceps Femoris (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Erector Spinae (tertiary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Gluteus Maximus (secondary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        }
+      ],
+      "identity": {
+        "record_count": 3,
+        "sources": [
+          "free-exercise-db",
+          "functional-fitness-db"
+        ],
+        "cross_source": true,
+        "possible_matches": []
+      },
+      "reconcile": {
+        "by_method": {
+          "Consensus": [
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Biceps Femoris (Prime Mover)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Erector Spinae (Stabilizer)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Gluteus Maximus (Synergist)"
+            }
+          ],
+          "Union": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            },
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Hip Hinge"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        "method_counts": {
+          "Consensus": 6,
+          "Union": 5
+        },
+        "conflicts": []
+      },
+      "enrich": {
+        "model": "claude-sonnet-4-6",
+        "enriched_at": "2026-03-24",
+        "inferred_count": 20,
+        "notable": [
+          {
+            "predicate": "Exercise Style",
+            "value": "Bodybuilding"
+          },
+          {
+            "predicate": "Exercise Style",
+            "value": "Powerlifting"
+          },
+          {
+            "predicate": "Combination",
+            "value": "false"
+          },
+          {
+            "predicate": "Compound",
+            "value": "true"
+          },
+          {
+            "predicate": "Laterality",
+            "value": "Bilateral"
+          },
+          {
+            "predicate": "Movement Pattern",
+            "value": "Hip Hinge"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Adductor Magnus (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Biceps Femoris (Prime Mover)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Core (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Erector Spinae (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gastrocnemius (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gluteus Maximus (Synergist)"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  },
+  {
+    "entity_id": "crunch",
+    "display_name": "Cable Crunch",
+    "narrative": "Three records \u2014 Cable Crunch, Exercise Ball Crunch, and Bodyweight Crunch \u2014 clustered into one canonical entity. The pipeline added CoreFlexion as the movement pattern (a concept added specifically for spinal-flexion isolation exercises, distinct from the joint action SpinalFlexion). Equipment was unioned across all variants.",
+    "stages": {
+      "sources": [
+        {
+          "source": "free-exercise-db",
+          "display_name": "Cable Crunch",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Cable"
+            }
+          ]
+        },
+        {
+          "source": "free-exercise-db",
+          "display_name": "Exercise Ball Crunch",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Exercise Ball"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Bodyweight Crunch",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Bodyweight"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "joint action hint",
+              "value": "Spinal Flexion"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Iliopsoas (secondary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Obliques (tertiary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Abdominis (prime)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        }
+      ],
+      "identity": {
+        "record_count": 3,
+        "sources": [
+          "free-exercise-db",
+          "functional-fitness-db"
+        ],
+        "cross_source": true,
+        "possible_matches": []
+      },
+      "reconcile": {
+        "by_method": {
+          "Consensus": [
+            {
+              "predicate": "Muscle",
+              "value": "Iliopsoas (Synergist)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Obliques (Stabilizer)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rectus Abdominis (Prime Mover)"
+            }
+          ],
+          "Coverage gap": [
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            }
+          ],
+          "Union": [
+            {
+              "predicate": "Equipment",
+              "value": "Bodyweight"
+            },
+            {
+              "predicate": "Equipment",
+              "value": "Cable"
+            },
+            {
+              "predicate": "Equipment",
+              "value": "Exercise Ball"
+            },
+            {
+              "predicate": "joint action hint",
+              "value": "Spinal Flexion"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        "method_counts": {
+          "Consensus": 3,
+          "Coverage gap": 3,
+          "Union": 5
+        },
+        "conflicts": []
+      },
+      "enrich": {
+        "model": "claude-sonnet-4-6",
+        "enriched_at": "2026-03-30",
+        "inferred_count": 13,
+        "notable": [
+          {
+            "predicate": "Exercise Style",
+            "value": "Bodybuilding"
+          },
+          {
+            "predicate": "Combination",
+            "value": "false"
+          },
+          {
+            "predicate": "Compound",
+            "value": "false"
+          },
+          {
+            "predicate": "Laterality",
+            "value": "Bilateral"
+          },
+          {
+            "predicate": "Movement Pattern",
+            "value": "Core Flexion"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Core (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Iliopsoas (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Obliques (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Rectus Abdominis (Prime Mover)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Transverse Abdominis (Synergist)"
+          },
+          {
+            "predicate": "Plane of Motion",
+            "value": "Sagittal Plane"
+          },
+          {
+            "predicate": "Primary Joint Action",
+            "value": "Spinal Flexion"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  },
+  {
+    "entity_id": "ffdb_Double_Kettlebell_Gorilla_Row",
+    "display_name": "Double Kettlebell Gorilla Row",
+    "narrative": "Single source record. The LLM consistently placed HipHinge in the wrong field (supporting_joint_action instead of movement_pattern). The exercise genuinely IS both HorizontalPull and HipHinge. Resolution: a human override claim was inserted directly into resolved_claims to correct the field assignment.",
+    "stages": {
+      "sources": [
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Double Kettlebell Gorilla Row",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Unilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Horizontal Pull"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Latissimus Dorsi (prime)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        }
+      ],
+      "identity": {
+        "record_count": 1,
+        "sources": [
+          "functional-fitness-db"
+        ],
+        "cross_source": false,
+        "possible_matches": []
+      },
+      "reconcile": {
+        "by_method": {
+          "Consensus": [
+            {
+              "predicate": "Muscle",
+              "value": "Latissimus Dorsi (Prime Mover)"
+            }
+          ],
+          "Coverage gap": [
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Unilateral"
+            }
+          ],
+          "Human override": [
+            {
+              "predicate": "Movement Pattern",
+              "value": "Hip Hinge"
+            }
+          ],
+          "Union": [
+            {
+              "predicate": "Equipment",
+              "value": "Kettlebell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Horizontal Pull"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        "method_counts": {
+          "Consensus": 1,
+          "Coverage gap": 3,
+          "Human override": 1,
+          "Union": 4
+        },
+        "conflicts": []
+      },
+      "enrich": {
+        "model": "claude-sonnet-4-6",
+        "enriched_at": "2026-03-30",
+        "inferred_count": 22,
+        "notable": [
+          {
+            "predicate": "Exercise Style",
+            "value": "Grinds"
+          },
+          {
+            "predicate": "Combination",
+            "value": "false"
+          },
+          {
+            "predicate": "Compound",
+            "value": "true"
+          },
+          {
+            "predicate": "Laterality",
+            "value": "Unilateral"
+          },
+          {
+            "predicate": "Movement Pattern",
+            "value": "Horizontal Pull"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Biceps Brachii (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Brachialis (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Brachioradialis (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Core (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Erector Spinae (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gluteus Maximus (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gluteus Medius (Stabilizer)"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  },
+  {
+    "entity_id": "bent_over_row",
+    "display_name": "Bent Over Barbell Row",
+    "narrative": "Three records across two datasets: Bent Over Barbell Row, Barbell Bent Over Row, and Sandbag Bent Over Row. Equipment was unioned (Barbell + Sandbag). Muscles reached consensus across sources. A typical clean multi-source merge for a well-documented exercise.",
+    "stages": {
+      "sources": [
+        {
+          "source": "free-exercise-db",
+          "display_name": "Bent Over Barbell Row",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Barbell Bent Over Row",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Horizontal Pull"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Latissimus Dorsi (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Posterior Deltoid (tertiary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rhomboids (secondary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        {
+          "source": "functional-fitness-db",
+          "display_name": "Sandbag Bent Over Row",
+          "confidence": 1.0,
+          "claims": [
+            {
+              "predicate": "Equipment",
+              "value": "Sandbag"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Horizontal Pull"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Latissimus Dorsi (prime)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Posterior Deltoid (tertiary)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rhomboids (secondary)"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        }
+      ],
+      "identity": {
+        "record_count": 3,
+        "sources": [
+          "free-exercise-db",
+          "functional-fitness-db"
+        ],
+        "cross_source": true,
+        "possible_matches": []
+      },
+      "reconcile": {
+        "by_method": {
+          "Consensus": [
+            {
+              "predicate": "Combination",
+              "value": "false"
+            },
+            {
+              "predicate": "Compound",
+              "value": "true"
+            },
+            {
+              "predicate": "Laterality",
+              "value": "Bilateral"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Latissimus Dorsi (Prime Mover)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Posterior Deltoid (Stabilizer)"
+            },
+            {
+              "predicate": "Muscle",
+              "value": "Rhomboids (Synergist)"
+            }
+          ],
+          "Union": [
+            {
+              "predicate": "Equipment",
+              "value": "Barbell"
+            },
+            {
+              "predicate": "Equipment",
+              "value": "Sandbag"
+            },
+            {
+              "predicate": "Exercise Style",
+              "value": "Bodybuilding"
+            },
+            {
+              "predicate": "Movement Pattern",
+              "value": "Horizontal Pull"
+            },
+            {
+              "predicate": "Plane of Motion",
+              "value": "Sagittal Plane"
+            }
+          ]
+        },
+        "method_counts": {
+          "Consensus": 6,
+          "Union": 5
+        },
+        "conflicts": []
+      },
+      "enrich": {
+        "model": "claude-sonnet-4-6",
+        "enriched_at": "2026-03-24",
+        "inferred_count": 27,
+        "notable": [
+          {
+            "predicate": "Exercise Style",
+            "value": "Bodybuilding"
+          },
+          {
+            "predicate": "Combination",
+            "value": "false"
+          },
+          {
+            "predicate": "Compound",
+            "value": "true"
+          },
+          {
+            "predicate": "Laterality",
+            "value": "Bilateral"
+          },
+          {
+            "predicate": "Movement Pattern",
+            "value": "Horizontal Pull"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Biceps Brachii (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Biceps Femoris (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Brachialis (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Brachioradialis (Synergist)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Core (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Erector Spinae (Stabilizer)"
+          },
+          {
+            "predicate": "Muscle",
+            "value": "Gluteus Maximus (Stabilizer)"
+          }
+        ],
+        "warnings": []
+      }
+    }
+  }
+]
