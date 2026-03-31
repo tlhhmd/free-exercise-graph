@@ -120,6 +120,7 @@ const state = {
   pendingMuscleScrollTo: null,
   observatoryData: null,
   observatoryLoadPromise: null,
+  substituteUi: {},
 };
 
 let searchDebounceTimer = null;
@@ -616,21 +617,31 @@ function getExercise(id) {
   return state.exerciseMap.get(id) || null;
 }
 
-function getSimilarityNeighbors(ex, limit = 8) {
-  return (ex.similarity?.neighbors || [])
+function getSubstituteUi(ex) {
+  return state.substituteUi[ex.id] || {
+    closestAlternatives: [],
+    equipmentAlternatives: [],
+    familyHighlights: [],
+  };
+}
+
+function getSubstituteItems(items = [], limit = 8) {
+  return items
     .map(item => ({ ...item, ex: getExercise(item.id) }))
     .filter(item => item.ex)
     .slice(0, limit);
 }
 
-function getSameFamilyExercises(ex, limit = 6) {
-  return (ex.similarity?.sameFamily || [])
-    .map(item => ({ ...item, ex: getExercise(item.id) }))
-    .filter(item => item.ex)
-    .slice(0, limit);
+function getSubstituteGroups(groups = []) {
+  return groups
+    .map(group => ({
+      label: group.label,
+      items: getSubstituteItems(group.items || [], 8),
+    }))
+    .filter(group => group.items.length);
 }
 
-function renderSimilarityList(items, emptyMessage) {
+function renderSubstituteList(items, emptyMessage) {
   if (!items.length) {
     return `<div style="font-size:13px;color:var(--text-2)">${emptyMessage}</div>`;
   }
@@ -649,6 +660,18 @@ function renderSimilarityList(items, emptyMessage) {
       </div>
     `;
   }).join("");
+}
+
+function renderFamilyHighlights(groups) {
+  if (!groups.length) {
+    return `<div style="font-size:13px;color:var(--text-2)">No broader family options available yet.</div>`;
+  }
+  return groups.map(group => `
+    <div class="sub-family-group">
+      <div class="sub-family-group-label">${group.label}</div>
+      <div class="sub-list">${renderSubstituteList(group.items, "")}</div>
+    </div>
+  `).join("");
 }
 
 
@@ -821,9 +844,10 @@ function renderSheetUser(ex) {
       `;
     }).join("");
 
-  const similarExercises = getSimilarityNeighbors(ex);
-  const sameFamilyExercises = getSameFamilyExercises(ex);
-  const communitySize = ex.similarity?.communitySize || 0;
+  const substituteUi = getSubstituteUi(ex);
+  const closestAlternatives = getSubstituteItems(substituteUi.closestAlternatives || [], 6);
+  const equipmentAlternatives = getSubstituteItems(substituteUi.equipmentAlternatives || [], 4);
+  const familyHighlights = getSubstituteGroups(substituteUi.familyHighlights || []);
 
   return `
     ${badges.length ? `<div class="sheet-badges">${badges.join("")}</div>` : ""}
@@ -843,12 +867,19 @@ function renderSheetUser(ex) {
     <div class="section-label">Equipment</div>
     <div class="tag-list">${ex.equipment.map(eq => `<span class="tag">${labelFor(eq)}</span>`).join("") || '<span class="tag">Bodyweight</span>'}</div>
 
-    <div class="section-label">Similar Exercises</div>
-    <div class="sub-list">${renderSimilarityList(similarExercises, "No similar exercises available yet.")}</div>
+    <div class="section-label">Substitutes</div>
+    <div class="sub-section-label">Closest Alternatives</div>
+    <div class="sub-list">${renderSubstituteList(closestAlternatives, "No strong direct replacements available yet.")}</div>
 
-    <div class="section-label">Same-Family Exercises</div>
-    ${communitySize > 1 ? `<div class="context-note" style="margin-bottom:10px">This exercise sits in a similarity family of ${formatCount(communitySize)} exercises.</div>` : ""}
-    <div class="sub-list">${renderSimilarityList(sameFamilyExercises, "No broader similarity family available yet.")}</div>
+    ${equipmentAlternatives.length ? `
+      <div class="sub-section-label">Different Equipment</div>
+      <div class="sub-list">${renderSubstituteList(equipmentAlternatives, "")}</div>
+    ` : ""}
+
+    <details class="sub-family-details">
+      <summary>Explore This Family</summary>
+      <div class="sub-family-content">${renderFamilyHighlights(familyHighlights)}</div>
+    </details>
   `;
 }
 
@@ -1648,9 +1679,10 @@ function init() {
 
 async function loadData() {
   try {
-    const [stateExercises, stateVocab] = await Promise.all([
+    const [stateExercises, stateVocab, substituteUi] = await Promise.all([
       loadJson("data.json"),
       loadJson("vocab.json"),
+      loadJson("exercise_substitute_ui.json").catch(() => ({})),
     ]);
     if (!Array.isArray(stateExercises)) {
       throw new Error("data.json did not return an exercise array");
@@ -1662,6 +1694,7 @@ async function loadData() {
     state.exerciseMap = new Map(stateExercises.map(ex => [ex.id, ex]));
     state.searchIndex = new Map(stateExercises.map(ex => [ex.id, ex.searchIndex || buildFallbackSearchIndex(ex)]));
     state.vocab = stateVocab;
+    state.substituteUi = substituteUi && typeof substituteUi === "object" ? substituteUi : {};
     buildHierarchyMaps();
     restoreUrlState();
     await loadIllustrations();

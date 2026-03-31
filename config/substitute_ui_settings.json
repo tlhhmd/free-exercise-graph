@@ -1,0 +1,8 @@
+{
+  "closestAlternativesMax": 5,
+  "equipmentAlternativesMax": 4,
+  "emitDebug": true,
+  "familyGroupsMax": 3,
+  "familyHighlightsMax": 6,
+  "familyPerGroupMax": 2
+}
