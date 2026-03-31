@@ -13,8 +13,7 @@ Remaining work is grouped by execution horizon.
 
 ## Next
 
-- [ ] **Run `build_observatory.py` and commit observatory.json** — `python3 app/build_observatory.py` then commit the generated `app/observatory.json` alongside `app/app.js` and `app/style.css`. Deploy to verify Builder View works on the live site. Five curated exercises: Dead Bug, Romanian Deadlift, Cable Crunch, Double KB Gorilla Row, Bent Over Barbell Row.
-- [ ] **escapeHtml() helper in app.js** — Observatory content (conflict descriptions, source display names) includes free-text strings rendered via innerHTML. Add a minimal escapeHtml() before the app goes public and is linked from LinkedIn. Existing ontology label rendering has the same pattern; harden the new Builder View code while touching it.
+- [ ] **Deploy and verify Builder View** — push to GitHub Pages. Open the live site, search for "Dead Bug", open the detail sheet, confirm the User/Builder toggle appears and all 5 stages render. Five curated exercises: Dead Bug, Romanian Deadlift, Cable Crunch, Double KB Gorilla Row, Bent Over Barbell Row.
 - [ ] **observatory.json validation in ci.yml** — Extend the existing "Verify committed site artifacts" step to check observatory.json: valid JSON array, each exercise has expected stage keys.
 - [ ] **PROV-O in graph** — `enrichment_stamps.model` is stored. Update `build.py` to emit `prov:wasAttributedTo` on inferred claims and `prov:wasGeneratedBy` for the enrichment activity (model, timestamp). Requires ontology additions; write ADR first.
 - [ ] **DESIGN.md for the app** — Write a short design reference capturing the implicit system in style.css: color tokens per tab, typography roles (League Gothic for headings, Young Serif for body, Caveat Brush for decorative), component vocabulary (hero-card, badges, view-toggle, detail sheet), and the warm-paper-on-colored-background pattern. Makes calibration explicit for future contributors.
