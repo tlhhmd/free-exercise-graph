@@ -1,0 +1,5 @@
+{
+  "emitDebugBreakdowns": true,
+  "minScore": 6,
+  "topNeighborsPerExercise": 12
+}

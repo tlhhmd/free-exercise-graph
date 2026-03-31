@@ -210,6 +210,7 @@ For the full operational playbook (backups, resets, enrichment import/export, re
 A static GitHub Pages app under [app/](app/) — the human-facing surface of the graph. Client-side filtering by muscle, movement pattern, equipment, and modality. Anatomy illustrations. Deterministic search that understands ontology labels. All expensive ontology work happens at build time; the browser only does fast filtering and rendering.
 
 ```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
 python3 app/build_site.py    # export data.json + vocab.json from the graph
 ```
 

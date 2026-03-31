@@ -66,6 +66,7 @@ Use a hard refresh after CSS or JSON changes:
 Use this when `graph.ttl` is the source you want to publish:
 
 ```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
 python3 app/build_site.py --from-graph
 ```
 
@@ -89,6 +90,7 @@ python3 app/build_site.py --from-graph --out app
 
 ```bash
 python3 pipeline/run.py --to build
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
 python3 app/build_site.py --from-graph
 python3 -m http.server 8000
 ```

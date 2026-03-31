@@ -616,25 +616,39 @@ function getExercise(id) {
   return state.exerciseMap.get(id) || null;
 }
 
-function getSubstitutes(ex, limit = 8) {
-  return state.exercises
-    .filter(candidate => candidate.id !== ex.id)
-    .map(candidate => {
-      const sharedPattern = ex.patterns.filter(p => candidate.patterns.includes(p)).length;
-      const sharedJA = ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).length;
-      const diffEquip = ex.equipment.length > 0 && ex.equipment.some(eq => !candidate.equipment.includes(eq));
-      const score = sharedPattern * 3 + sharedJA * 2 + (diffEquip ? 1 : 0);
-      const reasons = [];
-      if (sharedPattern) {
-        reasons.push(ex.patterns.filter(p => candidate.patterns.includes(p)).map(labelFor).join(", "));
-      } else if (sharedJA) {
-        reasons.push(ex.primaryJA.filter(ja => candidate.primaryJA.includes(ja)).map(labelFor).join(", "));
-      }
-      return { ex: candidate, score, reason: reasons[0] || "" };
-    })
-    .filter(result => result.score >= 3)
-    .sort((a, b) => b.score - a.score)
+function getSimilarityNeighbors(ex, limit = 8) {
+  return (ex.similarity?.neighbors || [])
+    .map(item => ({ ...item, ex: getExercise(item.id) }))
+    .filter(item => item.ex)
     .slice(0, limit);
+}
+
+function getSameFamilyExercises(ex, limit = 6) {
+  return (ex.similarity?.sameFamily || [])
+    .map(item => ({ ...item, ex: getExercise(item.id) }))
+    .filter(item => item.ex)
+    .slice(0, limit);
+}
+
+function renderSimilarityList(items, emptyMessage) {
+  if (!items.length) {
+    return `<div style="font-size:13px;color:var(--text-2)">${emptyMessage}</div>`;
+  }
+  return items.map(item => {
+    const metaParts = [];
+    if (item.reason) metaParts.push(item.reason);
+    if (item.fallback) metaParts.push("Filled from the closest available graph match.");
+    const meta = metaParts.join(" ");
+    return `
+      <div class="sub-card">
+        <div>
+          <div>${item.ex.name}</div>
+          ${meta ? `<div class="sub-why">${meta}</div>` : ""}
+        </div>
+        <button class="sub-view-btn" type="button" data-id="${item.ex.id}">View</button>
+      </div>
+    `;
+  }).join("");
 }
 
 
@@ -807,18 +821,9 @@ function renderSheetUser(ex) {
       `;
     }).join("");
 
-  const subs = getSubstitutes(ex);
-  const subsHtml = subs.length
-    ? subs.map(({ ex: sub, reason }) => `
-      <div class="sub-card">
-        <div>
-          <div>${sub.name}</div>
-          ${reason ? `<div class="sub-why">${reason}</div>` : ""}
-        </div>
-        <button class="sub-view-btn" type="button" data-id="${sub.id}">View</button>
-      </div>
-    `).join("")
-    : `<div style="font-size:13px;color:var(--text-2)">No close substitutes found.</div>`;
+  const similarExercises = getSimilarityNeighbors(ex);
+  const sameFamilyExercises = getSameFamilyExercises(ex);
+  const communitySize = ex.similarity?.communitySize || 0;
 
   return `
     ${badges.length ? `<div class="sheet-badges">${badges.join("")}</div>` : ""}
@@ -838,8 +843,12 @@ function renderSheetUser(ex) {
     <div class="section-label">Equipment</div>
     <div class="tag-list">${ex.equipment.map(eq => `<span class="tag">${labelFor(eq)}</span>`).join("") || '<span class="tag">Bodyweight</span>'}</div>
 
-    <div class="section-label">Substitutes</div>
-    <div class="sub-list">${subsHtml}</div>
+    <div class="section-label">Similar Exercises</div>
+    <div class="sub-list">${renderSimilarityList(similarExercises, "No similar exercises available yet.")}</div>
+
+    <div class="section-label">Same-Family Exercises</div>
+    ${communitySize > 1 ? `<div class="context-note" style="margin-bottom:10px">This exercise sits in a similarity family of ${formatCount(communitySize)} exercises.</div>` : ""}
+    <div class="sub-list">${renderSimilarityList(sameFamilyExercises, "No broader similarity family available yet.")}</div>
   `;
 }
 

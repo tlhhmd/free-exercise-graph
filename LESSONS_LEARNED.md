@@ -36,6 +36,10 @@ A running log of hard-won insights from building this project. Not a decision re
 
 **Repair queries as SPARQL UPDATE (ADR-048) is the right pattern for post-ingestion cleanup.** The alternative — fixing things in Python — encodes business logic in imperative code that's harder to read and audit. SPARQL UPDATE queries are declarative, stored in files, version-controlled, and human-readable. The useGroupLevel collapse, dedup, and cross-degree dedup are all expressed clearly as SPARQL.
 
+**Similarity graphs need sparse selection before export, not after.** The first Phase 1 exercise-similarity pass made the classic mistake: score a huge thresholded candidate cloud, keep every passing edge, and only then think about neighbors. On the real graph that produced a graph that was both too dense and too expensive — common features like `Core`, `ErectorSpinae`, and generic actions such as `HipExtension` effectively pushed candidate generation toward near all-pairs. The correct shape is: extract features, score plausible pairs, keep top-N neighbors per exercise, then treat the union of those neighbors as the graph. That preserves explainability while keeping build time, memory, and community detection in a tractable range.
+
+**Common ontology features are bad blocking keys.** Supporting joint actions, stabilizers, and other high-frequency concepts feel like useful similarity signals, but they are terrible pair generators. They connect massive portions of the exercise set and turn an offline graph build into a dense cloud of mediocre matches. The fix is to use stronger blocking keys such as movement patterns and prime movers to nominate candidates, then let the full weighted scorer consider broader context once the pair set is already small enough to manage.
+
 ---
 
 ## LLM Enrichment
