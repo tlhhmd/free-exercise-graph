@@ -83,7 +83,7 @@ feg:TrainingModality
 feg:JointAction
     a owl:Class ;
     rdfs:label "Joint Action" ;
-    rdfs:comment "A mechanical action occurring at a specific joint during an exercise. Joint actions describe what the body is doing at the level of individual joints, independent of how the exercise is categorised by other movement pattern terminology. A single exercise may involve multiple joint actions." ;
+    rdfs:comment "A biomechanical action produced at an individual joint, such as flexion, extension, abduction, or rotation. Joint actions describe movement at the level of specific joints rather than whole-exercise movement categories." ;
 .
 
 feg:Laterality
@@ -95,7 +95,7 @@ feg:Laterality
 feg:PlaneOfMotion
     a owl:Class ;
     rdfs:label "Plane of Motion" ;
-    rdfs:comment "One of the three cardinal planes of human movement: Sagittal, Frontal, or Transverse. See planes_of_motion.ttl for named individuals." ;
+    rdfs:comment "A standard anatomical reference plane used to characterize the directional pattern in which a movement primarily occurs. The canonical instances are Sagittal, Frontal, and Transverse." ;
 .
 
 feg:ExerciseStyle

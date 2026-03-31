@@ -301,6 +301,48 @@ def _build_vocab(g: Graph, counts: dict, exercises: list[dict]) -> dict:
         })
     equipment.sort(key=lambda e: -e["count"])
 
+    # Laterality
+    laterality = []
+    for lat in g.subjects(RDF.type, FEG.Laterality):
+        local = _local(lat)
+        count = counts.get(("laterality", local), 0)
+        if count <= 0:
+            continue
+        laterality.append({
+            "id": local,
+            "label": _label(g, lat),
+            "count": count,
+        })
+    laterality.sort(key=lambda item: (-item["count"], item["label"]))
+
+    # Planes of motion
+    planes = []
+    for plane in g.subjects(RDF.type, FEG.PlaneOfMotion):
+        local = _local(plane)
+        count = counts.get(("plane", local), 0)
+        if count <= 0:
+            continue
+        planes.append({
+            "id": local,
+            "label": _label(g, plane),
+            "count": count,
+        })
+    planes.sort(key=lambda item: (-item["count"], item["label"]))
+
+    # Exercise styles
+    styles = []
+    for style in g.subjects(RDF.type, FEG.ExerciseStyle):
+        local = _local(style)
+        count = counts.get(("style", local), 0)
+        if count <= 0:
+            continue
+        styles.append({
+            "id": local,
+            "label": _label(g, style),
+            "count": count,
+        })
+    styles.sort(key=lambda item: (-item["count"], item["label"]))
+
     # Muscle hierarchy: regions → descendants with rolled-up counts
     muscle_nodes: dict[str, dict] = {}
     muscle_children: dict[str | None, list[str]] = {}
@@ -394,6 +436,9 @@ def _build_vocab(g: Graph, counts: dict, exercises: list[dict]) -> dict:
         "joints": joints,
         "modalities": modalities,
         "equipment": equipment,
+        "laterality": laterality,
+        "planes": planes,
+        "styles": styles,
         "muscles": {"regions": regions},
     }
 
@@ -691,6 +736,8 @@ def _build_search_index(exercise: dict) -> dict:
     primary_ja = [_canonicalize_search_text(_pretty_local(item)) for item in exercise["primaryJA"]]
     supporting_ja = [_canonicalize_search_text(_pretty_local(item)) for item in exercise["supportingJA"]]
     equipment = [_canonicalize_search_text(_pretty_local(item)) for item in exercise["equipment"]]
+    planes = [_canonicalize_search_text(_pretty_local(item)) for item in exercise["planes"]]
+    styles = [_canonicalize_search_text(_pretty_local(item)) for item in exercise["style"]]
     regions = [_canonicalize_search_text(_REGION_DISPLAY.get(region, _pretty_local(region))) for region in exercise["visualRegions"]]
     aliases = _search_aliases(exercise)
     modality = _canonicalize_search_text(_pretty_local(exercise["modality"])) if exercise["modality"] else ""
@@ -713,6 +760,8 @@ def _build_search_index(exercise: dict) -> dict:
         *primary_ja,
         *supporting_ja,
         *equipment,
+        *planes,
+        *styles,
         *muscles,
         *regions,
         *aliases,
@@ -727,6 +776,8 @@ def _build_search_index(exercise: dict) -> dict:
         "primaryJA": primary_ja,
         "supportingJA": supporting_ja,
         "equipment": equipment,
+        "planes": planes,
+        "styles": styles,
         "muscles": muscles,
         "muscleEntries": muscle_entries,
         "regions": regions,
@@ -819,6 +870,7 @@ def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], d
         equipment = _collect_resolved(resolved, "equipment")
         laterality = next((r["value"] for r in inferred if r["predicate"] == "laterality"), None)
         modality_list = _collect_inferred(inferred, "training_modality")
+        planes = _collect_inferred(inferred, "plane_of_motion")
         style = _collect_inferred(inferred, "exercise_style")
         compound = next((r["value"] for r in inferred if r["predicate"] == "is_compound"), None)
         combination = next((r["value"] for r in inferred if r["predicate"] == "is_combination"), None)
@@ -828,12 +880,18 @@ def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], d
             counts[("muscle", m)] = counts.get(("muscle", m), 0) + 1
         for p in patterns:
             counts[("pattern", p)] = counts.get(("pattern", p), 0) + 1
-        for ja in primary_ja:
+        for ja in set(primary_ja) | set(supporting_ja):
             counts[("ja", ja)] = counts.get(("ja", ja), 0) + 1
         for eq in equipment:
             counts[("equipment", eq)] = counts.get(("equipment", eq), 0) + 1
         if modality_list:
             counts[("modality", modality_list[0])] = counts.get(("modality", modality_list[0]), 0) + 1
+        if laterality:
+            counts[("laterality", laterality)] = counts.get(("laterality", laterality), 0) + 1
+        for plane in planes:
+            counts[("plane", plane)] = counts.get(("plane", plane), 0) + 1
+        for style_item in style:
+            counts[("style", style_item)] = counts.get(("style", style_item), 0) + 1
 
         exercises.append({
             "id": eid,
@@ -845,6 +903,7 @@ def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], d
             "equipment": equipment,
             "laterality": laterality,
             "modality": modality_list[0] if modality_list else None,
+            "planes": planes,
             "style": style,
             "compound": compound == "true",
             "combination": combination == "true",
@@ -885,7 +944,7 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
             "id": _term_value(row["eid"]),
             "name": _term_value(row["label"]),
             "muscles": [], "patterns": [], "primaryJA": [], "supportingJA": [],
-            "equipment": [], "laterality": None, "modality": None,
+            "equipment": [], "laterality": None, "modality": None, "planes": [],
             "style": [], "compound": False, "combination": False,
         }
 
@@ -917,6 +976,7 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
         ("primaryJointAction", "primaryJA"),
         ("supportingJointAction", "supportingJA"),
         ("equipment", "equipment"),
+        ("planeOfMotion", "planes"),
         ("exerciseStyle", "style"),
     ]:
         for row in sparql(f"PREFIX feg: <{FEG_NS}> SELECT ?ex ?v WHERE {{ ?ex feg:{prop} ?v }}"):
@@ -949,12 +1009,18 @@ def _build_exercises_from_graph(graph_path: Path) -> tuple[list[dict], dict]:
             counts[("muscle", m)] = counts.get(("muscle", m), 0) + 1
         for p in ex["patterns"]:
             counts[("pattern", p)] = counts.get(("pattern", p), 0) + 1
-        for ja in ex["primaryJA"]:
+        for ja in set(ex["primaryJA"]) | set(ex["supportingJA"]):
             counts[("ja", ja)] = counts.get(("ja", ja), 0) + 1
         for eq in ex["equipment"]:
             counts[("equipment", eq)] = counts.get(("equipment", eq), 0) + 1
         if ex["modality"]:
             counts[("modality", ex["modality"])] = counts.get(("modality", ex["modality"]), 0) + 1
+        if ex["laterality"]:
+            counts[("laterality", ex["laterality"])] = counts.get(("laterality", ex["laterality"]), 0) + 1
+        for plane in ex["planes"]:
+            counts[("plane", plane)] = counts.get(("plane", plane), 0) + 1
+        for style_item in ex["style"]:
+            counts[("style", style_item)] = counts.get(("style", style_item), 0) + 1
 
     return exercises, counts
 

@@ -77,6 +77,30 @@ const TOKEN_NORMALIZATION = {
   obliques: "oblique",
 };
 
+const BROWSE_FILTER_KEYS = ["patterns", "modalities", "equipment", "joints", "laterality", "planes", "styles"];
+
+const FILTER_VALUE_GETTERS = {
+  modalities: exercise => exercise.modality ? [exercise.modality] : [],
+  equipment: exercise => exercise.equipment || [],
+  joints: exercise => [...(exercise.primaryJA || []), ...(exercise.supportingJA || [])],
+  laterality: exercise => exercise.laterality ? [exercise.laterality] : [],
+  planes: exercise => exercise.planes || [],
+  styles: exercise => exercise.style || [],
+};
+
+function createEmptyFilters() {
+  return {
+    muscles: [],
+    patterns: [],
+    modalities: [],
+    equipment: [],
+    joints: [],
+    laterality: [],
+    planes: [],
+    styles: [],
+  };
+}
+
 const state = {
   exercises: [],
   exerciseMap: new Map(),
@@ -85,13 +109,7 @@ const state = {
   activeTab: "exercises",
   mode: "explore",
   search: "",
-  filters: {
-    muscles: [],
-    patterns: [],
-    modalities: [],
-    equipment: [],
-    joints: [],
-  },
+  filters: createEmptyFilters(),
   patternDescendants: {},
   muscleDescendants: {},
   bodyView: "front",
@@ -153,6 +171,9 @@ function labelFor(id) {
   }
   for (const m of state.vocab.modalities || []) if (m.id === id) return m.label;
   for (const e of state.vocab.equipment || []) if (e.id === id) return e.label;
+  for (const lat of state.vocab.laterality || []) if (lat.id === id) return lat.label;
+  for (const plane of state.vocab.planes || []) if (plane.id === id) return plane.label;
+  for (const style of state.vocab.styles || []) if (style.id === id) return style.label;
   return id.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
 }
 
@@ -249,9 +270,12 @@ function searchableText(exercise) {
     ...(exercise.primaryJA || []).map(labelFor),
     ...(exercise.supportingJA || []).map(labelFor),
     ...(exercise.equipment || []).map(labelFor),
+    ...(exercise.planes || []).map(labelFor),
+    ...(exercise.style || []).map(labelFor),
     ...(exercise.muscles || []).map(([muscle]) => muscleLabel(muscle)),
   ];
   if (exercise.modality) parts.push(labelFor(exercise.modality));
+  if (exercise.laterality) parts.push(labelFor(exercise.laterality));
   return parts.join(" ").toLowerCase();
 }
 
@@ -260,6 +284,8 @@ function buildFallbackSearchIndex(exercise) {
   const primaryJAs = (exercise.primaryJA || []).map(labelFor).map(canonicalizeSearchText);
   const supportingJAs = (exercise.supportingJA || []).map(labelFor).map(canonicalizeSearchText);
   const equipment = (exercise.equipment || []).map(labelFor).map(canonicalizeSearchText);
+  const planes = (exercise.planes || []).map(labelFor).map(canonicalizeSearchText);
+  const styles = (exercise.style || []).map(labelFor).map(canonicalizeSearchText);
   const muscles = (exercise.muscles || []).map(([muscle]) => canonicalizeSearchText(muscleLabel(muscle)));
   const muscleEntries = (exercise.muscles || []).map(([muscle, degree]) => ({
     label: canonicalizeSearchText(muscleLabel(muscle)),
@@ -285,6 +311,8 @@ function buildFallbackSearchIndex(exercise) {
     ...primaryJAs,
     ...supportingJAs,
     ...equipment,
+    ...planes,
+    ...styles,
     ...muscles,
     ...regions,
     ...aliases,
@@ -300,6 +328,8 @@ function buildFallbackSearchIndex(exercise) {
     primaryJA: primaryJAs,
     supportingJA: supportingJAs,
     equipment,
+    planes,
+    styles,
     muscles,
     muscleEntries,
     regions,
@@ -521,21 +551,14 @@ function toggleFilter(type, id) {
 }
 
 function clearFilters() {
-  state.filters = {
-    muscles: [],
-    patterns: [],
-    modalities: [],
-    equipment: [],
-    joints: [],
-  };
+  state.filters = createEmptyFilters();
   rerenderAll();
 }
 
 function clearBrowseFilters() {
-  state.filters.patterns = [];
-  state.filters.modalities = [];
-  state.filters.equipment = [];
-  state.filters.joints = [];
+  for (const key of BROWSE_FILTER_KEYS) {
+    state.filters[key] = [];
+  }
   rerenderAll();
 }
 
@@ -549,15 +572,24 @@ function filterMatchesHierarchy(selected, descendantsMap, values) {
 
 function filteredExercises(baseExercises = state.exercises) {
   const q = state.search.trim().toLowerCase();
-  const { muscles, patterns, modalities, equipment, joints } = state.filters;
+  const { muscles, patterns } = state.filters;
   const matches = [];
 
   for (const ex of baseExercises) {
     if (!filterMatchesHierarchy(patterns, state.patternDescendants, ex.patterns)) continue;
     if (!filterMatchesHierarchy(muscles, state.muscleDescendants, ex.muscles.map(m => m[0]))) continue;
-    if (modalities.length && !modalities.includes(ex.modality)) continue;
-    if (equipment.length && !equipment.some(eq => ex.equipment.includes(eq))) continue;
-    if (joints.length && !joints.some(j => ex.primaryJA.includes(j) || ex.supportingJA.includes(j))) continue;
+    let blocked = false;
+    for (const key of BROWSE_FILTER_KEYS) {
+      if (key === "patterns") continue;
+      const selected = state.filters[key];
+      if (!selected.length) continue;
+      const values = FILTER_VALUE_GETTERS[key](ex);
+      if (!selected.some(id => values.includes(id))) {
+        blocked = true;
+        break;
+      }
+    }
+    if (blocked) continue;
 
     const musclePriority = muscleMatchScore(ex, muscles);
     const score = q ? searchScore(ex, q) : 1;
@@ -1309,11 +1341,7 @@ function renderMuscleResults() {
 
 function renderBrowseResults() {
   const results = filteredExercises();
-  const hasBrowseFilters =
-    state.filters.patterns.length > 0 ||
-    state.filters.modalities.length > 0 ||
-    state.filters.joints.length > 0 ||
-    state.filters.equipment.length > 0;
+  const hasBrowseFilters = BROWSE_FILTER_KEYS.some(key => state.filters[key].length > 0);
 
   const countLabel = hasBrowseFilters
     ? `${formatCount(results.length)} exercise${results.length !== 1 ? "s" : ""} match the current concept filters`
@@ -1398,6 +1426,36 @@ function renderVocab() {
     `;
   }).join("");
 
+  el("vocab-laterality").innerHTML = (state.vocab.laterality || []).map(item => {
+    const active = state.filters.laterality.includes(item.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="laterality" data-id="${item.id}">
+        <span>${item.label}</span>
+        <span class="vocab-item-count">${formatCount(item.count)}</span>
+      </div>
+    `;
+  }).join("");
+
+  el("vocab-planes").innerHTML = (state.vocab.planes || []).map(item => {
+    const active = state.filters.planes.includes(item.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="planes" data-id="${item.id}">
+        <span>${item.label}</span>
+        <span class="vocab-item-count">${formatCount(item.count)}</span>
+      </div>
+    `;
+  }).join("");
+
+  el("vocab-styles").innerHTML = (state.vocab.styles || []).map(item => {
+    const active = state.filters.styles.includes(item.id);
+    return `
+      <div class="vocab-item ${active ? "active" : ""}" data-type="styles" data-id="${item.id}">
+        <span>${item.label}</span>
+        <span class="vocab-item-count">${formatCount(item.count)}</span>
+      </div>
+    `;
+  }).join("");
+
   document.querySelectorAll(".vocab-item[data-type]").forEach(item => {
     item.addEventListener("click", () => toggleFilter(item.dataset.type, item.dataset.id));
   });
@@ -1461,11 +1519,7 @@ function updateMuscleClearBtn() {
 function updateBrowseClearBtn() {
   const button = el("clear-browse-filters");
   if (!button) return;
-  const hasBrowseFilters =
-    state.filters.patterns.length > 0 ||
-    state.filters.modalities.length > 0 ||
-    state.filters.equipment.length > 0 ||
-    state.filters.joints.length > 0;
+  const hasBrowseFilters = BROWSE_FILTER_KEYS.some(key => state.filters[key].length > 0);
   button.disabled = !hasBrowseFilters;
   button.classList.toggle("disabled", !hasBrowseFilters);
 }
@@ -1574,11 +1628,7 @@ function init() {
     rerenderAll();
   });
   el("clear-browse-filters")?.addEventListener("click", () => {
-    const hasBrowseFilters =
-      state.filters.patterns.length > 0 ||
-      state.filters.modalities.length > 0 ||
-      state.filters.equipment.length > 0 ||
-      state.filters.joints.length > 0;
+    const hasBrowseFilters = BROWSE_FILTER_KEYS.some(key => state.filters[key].length > 0);
     if (!hasBrowseFilters) return;
     clearBrowseFilters();
   });
