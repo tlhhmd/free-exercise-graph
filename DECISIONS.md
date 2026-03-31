@@ -3245,6 +3245,209 @@ and human-auditable historical artifacts.
 
 **Files to change:** `pipeline/enrich.py`, `pipeline/batch_ingest.py`, new
 `pipeline/release_bundle.py`, new playbook docs, onboarding docs.
+
+### ADR-106: Add Piriformis to muscles.ttl under feg:Glutes
+**Status:** Accepted
+
+**Context:** The LLM enrichment pipeline emitted `Piriformis` as a muscle for
+Miniband Side Lying Clamshell. The term was stripped at validation time because
+it had no corresponding concept in `muscles.ttl`, leaving an enrichment warning
+and an incomplete muscle profile for that exercise. Audit of the full dataset
+reveals 18 exercises with `HipExternalRotation` as a primary joint action
+(clamshells, fire hydrants, hip airplane variations) that are likely Piriformis
+candidates once the vocab exists. The exercise `Piriformis-SMR` — a named
+self-myofascial release targeting this muscle — exists in the dataset without
+the muscle itself in the vocabulary.
+
+**Decision:** Add `feg:Piriformis` as a `feg:MuscleGroup` concept under
+`feg:Glutes` with a `skos:scopeNote` clarifying that it is a deep hip external
+rotator grouped here for exercise-facing usability, not strict anatomical
+classification.
+
+The governing principle for adding muscle concepts is: **add when a muscle is
+materially present in exercise discourse, annotation, or retrieval — not when
+anatomy would permit it.** Piriformis meets that bar: it surfaces in enrichment
+output, appears in an exercise name, and is commonly referenced in coaching and
+rehab language. The other deep hip external rotators (obturators, gemelli,
+quadratus femoris) do not yet meet this bar and are not added.
+
+**Placement rationale:** Piriformis is not anatomically a gluteal muscle.
+However, `feg:Glutes` is the closest existing user-facing posterior-hip region
+in the vocabulary. A dedicated `feg:HipRotators` region is deferred until there
+is real demand to model multiple deep rotators, not just one.
+
+**Alternatives considered:**
+- New `feg:HipRotators` region: deferred. A region with one member is premature.
+  Revisit when additional deep rotators (obturators, gemelli) need representation.
+- `skos:broader feg:Abductors`: rejected. Piriformis's primary function is
+  external rotation, not abduction. TFL is under Abductors because abduction is
+  its defining role; the same logic does not apply here.
+- No addition: rejected. A named exercise (`Piriformis-SMR`) without the muscle
+  in vocab is a hard gap; enrichment stripping a real muscle is a data quality
+  defect.
+
+**Version bump:** `muscles.ttl` 0.12.1 → 0.13.0 (MINOR, new concept).
+
+**Files changed:** `ontology/muscles.ttl`. Follow-up: `--restamp Piriformis`
+to recover the enrichment warning for Miniband Side Lying Clamshell and trigger
+enrichment on other HipExternalRotation exercises.
+
+### ADR-107: Add CoreFlexion movement pattern for dynamic spinal flexion exercises
+
+**Status:** Accepted
+
+**Context:** 51 exercises — crunches, sit-ups, hanging leg raises, cable crunches,
+V-ups, and variations — have `SpinalFlexion` as their primary joint action and
+`RectusAbdominis`/`Obliques` as prime movers, but carry no movement pattern. This
+is the largest single cluster in the completeness warning (506 total missing). It
+creates a first-class retrieval failure: users cannot filter to this exercise category,
+and Builder View will show a blank movement pattern field for crunches.
+
+Four anti-movement sub-patterns under `TrunkStability` already exist:
+`AntiExtension`, `AntiRotation`, `AntiLateralFlexion`, `AntiFlexion`. The dynamic
+counterpart was never added.
+
+**Decision:** Add `feg:CoreFlexion` as a movement pattern under `feg:TrunkStability`.
+
+`CoreFlexion` is chosen over `SpinalFlexion` for two reasons:
+
+1. **Namespace collision.** `SpinalFlexion` already exists in the joint action layer.
+   Two concepts with the same label in different layers — same SPARQL queries, same
+   app UI, same enrichment prompts, same contributor conversations — creates constant
+   ambiguity. That is a worse trade than any gain in anatomical precision.
+
+2. **Design language consistency.** The trunk sub-patterns are coined user-facing
+   training terms (`AntiExtension`, `AntiRotation`), not anatomy textbook names.
+   `CoreFlexion` fits that scheme; `SpinalFlexion` doesn't. The project principle is
+   explicit: colloquial terms over formal anatomical names where both are accurate.
+
+**Naming rule codified:** Joint actions use anatomical/mechanical names (SpinalFlexion,
+HipFlexion). Movement patterns use the most legible user-facing training names
+(CoreFlexion, HipHinge). The two layers describe different things — what the joint is
+doing vs. what exercise category this is — and should not share labels.
+
+**Placement:** `skos:broader feg:TrunkStability`. This is a pragmatic interim
+placement. `TrunkStability` as a parent is imprecise for a dynamic movement pattern.
+Long-term, the trunk cluster should be renamed `Trunk` or `Core` to accommodate both
+anti-movement patterns and dynamic patterns under one accurate umbrella. Deferred:
+renaming a parent is a MAJOR version bump and a broader taxonomy discussion.
+
+**Scope note in rdfs:comment:** Explicitly distinguishes `CoreFlexion` (the exercise
+category) from `SpinalFlexion` (the joint action), so the distinction is machine-
+readable and survives contributor turnover.
+
+**Alternatives rejected:**
+- `SpinalFlexion` (movement pattern): namespace/UI collision with existing JA concept.
+  Rejected decisively.
+- No addition: leaves 51 exercises permanently unfilterable and shows blank in Builder
+  View. Not acceptable.
+- New parent `Trunk` or `Core` now: right long-term, wrong scope for this decision.
+  Deferred.
+
+**Version bump:** `movement_patterns.ttl` 0.6.0 → 0.7.0 (MINOR, new concept).
+
+**Files changed:** `ontology/movement_patterns.ttl`. Follow-up: force re-enrich the
+51 SpinalFlexion exercises — `--restamp` cannot be used since `CoreFlexion` was never
+previously stripped; use `--force` per entity or a batch script against the DB.
+
+### ADR-108: Movement patterns are compound-movement archetypes; isolation exercises are intentionally unpattern-classified
+
+**Status:** Accepted
+
+**Context:** After adding `CoreFlexion` (ADR-107), the completeness check in
+`validate.py` still flagged 458 exercises as missing `movement_pattern`. Investigation
+showed these are isolation exercises — bicep curls (125), tricep extensions (83),
+calf raises (37), lateral/rear delt raises (43), chest flyes (25), shrugs (20),
+shoulder ER exercises (18), wrist/forearm exercises (15), hip isolation (16), and
+other single-joint work. The LLM enrichment produced no movement pattern for them
+because nothing in the vocabulary fit — which is correct behavior, not a failure.
+
+**Decision:** Movement patterns in this project are functional-movement archetypes:
+multi-joint, load-transfer exercises with identifiable biomechanical signatures.
+Isolation exercises — those whose primary JA profile consists entirely of
+single-joint, non-load-transfer actions — are intentionally unpattern-classified.
+Retrieval for this population is via muscle group and joint action, both of which
+are first-class fields. No new vocabulary is added for isolation exercise families.
+
+**Naming rule preserved:** The movement pattern layer uses training/navigation names
+(HipHinge, CoreFlexion, HorizontalPull). The joint action layer uses anatomical
+names (HipExtension, SpinalFlexion, ShoulderExtension). They are separate by
+design. Adding isolation-tier movement patterns (ArmFlexion, CalfRaise, etc.)
+would redundantly encode what the joint action layer already captures.
+
+**Alternatives rejected:**
+- Isolation exercise family patterns (ArmFlexion, ArmExtension, CalfRaise, etc.):
+  semantic overlap with the joint action layer, no new competency questions answered,
+  taxonomy cost without retrieval gain.
+- `IsolationWork` meta-pattern: 458 undifferentiated exercises in one bucket;
+  less useful than the muscle + joint action combination already in the graph.
+
+**Validator update:** `check_completeness` in `validate.py` now distinguishes between
+exercises that should have a movement pattern (those with at least one compound-tier
+primary JA) and those that are intentionally unpattern-classified (isolation-tier JA
+profile only). The `_COMPOUND_JAS` frozenset in `validate.py` defines which JAs
+indicate compound movement. The warning now reads "exercises with compound JAs missing
+movementPattern" — explicit about what is being checked.
+
+**Genuine prompt misses fixed:** `Smith Machine Upright Row` and `Upright Row - With
+Bands` had `ShoulderAbduction + ElbowFlexion` (compound JA profile) but were missing
+`VerticalPull`. Fixed by targeted `--force` re-enrichment.
+
+**Files changed:** `pipeline/validate.py`. No ontology files modified.
+
+### ADR-109: Eval methodology — muscle scoring dimensions and exact movement pattern matching
+
+**Status:** Accepted
+
+**Context:** `eval.py` will score enrichment output against a human-annotated gold
+standard. Two design decisions govern how the scorer handles imperfect predictions:
+(1) how to score muscle involvements where the muscle name is correct but the degree
+is wrong, and (2) whether movement pattern matching should be hierarchy-aware (SKOS
+broader/narrower).
+
+**Decision 1 — Muscle degree: two separate dimensions, not partial credit.**
+
+Each muscle involvement has two components: the muscle name and the degree
+(PrimeMover, Synergist, Stabilizer, PassiveTarget). Scoring these as a single unit
+with partial credit collapses two distinct failure modes — vocabulary coverage and
+biomechanical role understanding — into one opaque number. Instead:
+
+- **Strict muscle F1**: treats each `(muscle_name, degree)` pair as a unit.
+  Precision/recall/F1 over the full `(muscle, degree)` set. This is the headline
+  number and measures end-to-end correctness.
+- **Muscle-only F1**: precision/recall/F1 over muscle names alone (degree ignored).
+  Measures whether the model identifies the right muscles independent of role.
+- **Degree accuracy**: for the subset of muscles that appear in both prediction and
+  gold (correct muscle identification), what fraction have the correct degree?
+  Measures role classification conditional on correct muscle identification.
+
+This gives three interpretable numbers with different failure-mode implications,
+rather than one partial-credit score that mixes them.
+
+**Decision 2 — Movement pattern hierarchy: exact match only; leaf-level annotation required.**
+
+The movement pattern vocabulary has a two-tier SKOS hierarchy (parent: KneeDominant,
+Pull; children: Squat, HorizontalPull, etc.). The LLM predicts at leaf level.
+Hierarchy-aware matching would give partial credit when prediction and gold are at
+different levels of the hierarchy. Rejected because:
+
+- If gold annotations are at leaf level (which they must be for the eval to be
+  actionable), hierarchy-awareness never comes into play.
+- An annotator who writes "Pull" when "HorizontalPull" is available has made an
+  annotation error — the scorer should not paper over it.
+- Exact matching keeps eval.py simple and reproducible.
+
+Gold annotation instructions: always annotate at the most specific concept that is
+clearly correct. Do not use parent-level concepts unless no child applies.
+
+**Other fields scored with exact match:**
+- Primary and supporting joint actions: exact set match, F1
+- Training modalities: exact set match, F1
+- `is_compound`, `is_unilateral`: binary accuracy
+- Movement patterns: exact set match, F1
+
+**Files changed:** `evals/eval.py` (new file).
+
 - **Power modality:** Olympic lifts and explosive strength movements are currently
   forced into `Plyometrics`. A `feg:Power` named individual would distinguish them.
 - **Cossack squat classification:** Currently Squat in v1. Does lateral plane movement

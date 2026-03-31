@@ -271,6 +271,24 @@ def check_timeliness(db_path: Path = DB_PATH) -> DimensionResult:
 
 # ─── Dimension: Completeness ──────────────────────────────────────────────────
 
+# Joint actions that imply a compound functional movement pattern should be
+# assigned (ADR-108). Isolation-tier JAs (ElbowFlexion alone, Plantarflexion,
+# WristFlexion, ScapularElevation, etc.) do not — their absence from the
+# movement_pattern field is intentional, not a gap. Exercises whose entire
+# primary JA profile consists of isolation-tier JAs are exempt from the
+# missing-movementPattern check; they are retrievable via muscle + joint action.
+_COMPOUND_JAS: frozenset[str] = frozenset({
+    "ShoulderExtension",          # rows, pull-downs
+    "ShoulderFlexion",            # overhead press, front-raise compound
+    "ShoulderHorizontalAdduction",# pressing (paired with ElbowExtension)
+    "HipExtension",               # hinges, deadlifts, glute bridges
+    "HipFlexion",                 # squat descent, leg press, step-ups
+    "KneeExtension",              # squat ascent, leg press, step-ups
+    "SpinalFlexion",              # dynamic core flexion (CoreFlexion pattern)
+    "SpinalExtension",            # back extensions, supermans
+})
+
+
 def check_completeness(db_path: Path = DB_PATH) -> DimensionResult:
     conn = get_connection(db_path)
 
@@ -296,13 +314,32 @@ def check_completeness(db_path: Path = DB_PATH) -> DimensionResult:
             """
         return [r[0] for r in conn.execute(base, (predicate, predicate)).fetchall()]
 
+    def missing_movement_pattern_compound(conn) -> list[str]:
+        """Entity IDs missing movement_pattern AND having at least one compound-tier
+        primary JA. Isolation exercises (curl, extension, calf raise, lateral raise, etc.)
+        are intentionally unpattern-classified and excluded from this check (ADR-108)."""
+        placeholders = ",".join("?" * len(_COMPOUND_JAS))
+        return [r[0] for r in conn.execute(f"""
+            SELECT e.entity_id FROM entities e
+            WHERE e.entity_id NOT IN (
+                SELECT DISTINCT entity_id FROM inferred_claims WHERE predicate = 'movement_pattern'
+                UNION
+                SELECT DISTINCT entity_id FROM resolved_claims  WHERE predicate = 'movement_pattern'
+            )
+            AND e.entity_id IN (
+                SELECT DISTINCT entity_id FROM inferred_claims
+                WHERE predicate = 'primary_joint_action'
+                AND value IN ({placeholders})
+            )
+        """, list(_COMPOUND_JAS)).fetchall()]
+
     # Involvements missing a degree
     no_degree = conn.execute("""
         SELECT COUNT(*) FROM inferred_claims
         WHERE predicate = 'muscle' AND (qualifier IS NULL OR qualifier = '')
     """).fetchone()[0]
 
-    missing_pattern   = missing("movement_pattern")
+    missing_pattern   = missing_movement_pattern_compound(conn)
     missing_involve   = missing("muscle")
     missing_pja       = missing("primary_joint_action", exempt_passive=True)
 
@@ -310,7 +347,7 @@ def check_completeness(db_path: Path = DB_PATH) -> DimensionResult:
 
     issues = []
     if missing_pattern:
-        issues.append(f"{len(missing_pattern):,}/{total:,} exercises missing movementPattern")
+        issues.append(f"{len(missing_pattern):,}/{total:,} exercises with compound JAs missing movementPattern")
     if missing_involve:
         issues.append(f"{len(missing_involve):,}/{total:,} exercises missing muscle involvements")
     if missing_pja:
@@ -328,7 +365,7 @@ def check_completeness(db_path: Path = DB_PATH) -> DimensionResult:
         if len(entity_ids) > limit:
             detail.append(f"    … and {len(entity_ids) - limit} more")
 
-    _sample("missing movementPattern", missing_pattern)
+    _sample("missing movementPattern (compound JA, no pattern assigned)", missing_pattern)
     _sample("missing muscle involvements", missing_involve)
     _sample("missing primaryJointAction", missing_pja)
 
