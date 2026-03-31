@@ -44,7 +44,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; color-scheme: light; }
 
 body {
   font-family: "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
@@ -341,7 +341,7 @@ body[data-tab="vocab"] .nav-btn {
   white-space: nowrap;
   min-height: 32px;
   display: flex; align-items: center;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
   box-shadow: 0 4px 12px rgba(31, 23, 17, 0.04);
 }
 .filter-chip.active {
