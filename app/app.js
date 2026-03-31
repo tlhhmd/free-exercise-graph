@@ -1070,6 +1070,7 @@ function openSheet(exerciseId) {
   `;
 
   el("sheet-overlay").classList.add("open");
+  el("detail-sheet").classList.toggle("builder-open", isBuilder);
   document.body.style.overflow = "hidden";
 
   bindSheetToggle(ex);
@@ -1110,6 +1111,7 @@ window.app = window.app || {};
 app.closeSheet = function(e) {
   if (e.target === el("sheet-overlay")) {
     el("sheet-overlay").classList.remove("open");
+    el("detail-sheet").classList.remove("builder-open");
     document.body.style.overflow = "";
     state.sheetExercise = null;
     state.sheetMode = "user";
@@ -1503,7 +1505,7 @@ function initSearch() {
     state.search = event.target.value;
     if (searchDebounceTimer) window.clearTimeout(searchDebounceTimer);
     searchDebounceTimer = window.setTimeout(() => {
-      rerenderAll();
+      rerenderForSearch();
     }, 120);
   });
 }
@@ -1519,6 +1521,16 @@ function initCopyLink() {
   const button = el("copy-link-btn");
   if (!button) return;
   button.addEventListener("click", copyCurrentUrl(button, "Copy current view"));
+}
+
+// Lightweight re-render for search: only touches exercise lists, not
+// filter panels / muscle hierarchy / vocab / anatomy — those don't change
+// with search text and are the expensive part of a full rerenderAll.
+function rerenderForSearch() {
+  renderExploreView();
+  renderMuscleResults();
+  renderBrowseResults();
+  syncUrlState();
 }
 
 function rerenderAll() {
