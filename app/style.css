@@ -1490,6 +1490,13 @@ body[data-tab="vocab"] .nav-btn {
     transform: translateX(-50%);
     width: min(760px, calc(100% - 24px));
     border: 1px solid rgba(19, 32, 54, 0.08);
-    border-radius: var(--r-xl) 22px 0 0;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
+  .sheet { animation: none; }
+  .bar-fill { transition: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
