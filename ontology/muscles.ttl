@@ -13,7 +13,7 @@ feg:MuscleScheme a skos:ConceptScheme ;
     rdfs:label "Muscle Vocabulary" ;
     skos:prefLabel "Muscle Vocabulary" ;
     rdfs:comment "SKOS concept scheme organizing muscles by region." ;
-    owl:versionInfo "0.12.1" .
+    owl:versionInfo "0.13.0" .
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SHOULDERS
@@ -367,6 +367,13 @@ feg:GluteusMinimus a feg:MuscleGroup, skos:Concept ;
     skos:prefLabel "Gluteus Minimus" ;
     skos:broader feg:Glutes ;
     skos:related feg:Abductors ;
+    skos:inScheme feg:MuscleScheme .
+
+feg:Piriformis a feg:MuscleGroup, skos:Concept ;
+    rdfs:label "Piriformis" ;
+    skos:prefLabel "Piriformis" ;
+    skos:broader feg:Glutes ;
+    skos:scopeNote "Deep hip external rotator located beneath the gluteal region. Grouped under Glutes for exercise-facing usability, not strict anatomical classification. Primary action: external rotation of the femur. Commonly targeted by clamshell variations and hip external rotation drills." ;
     skos:inScheme feg:MuscleScheme .
 
 # ══════════════════════════════════════════════════════════════════════════════

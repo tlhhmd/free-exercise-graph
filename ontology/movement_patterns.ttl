@@ -11,7 +11,7 @@ feg:MovementPatternScheme
     a skos:ConceptScheme ;
     rdfs:label "Movement Pattern Scheme" ;
     rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
-    owl:versionInfo "0.6.0" ;
+    owl:versionInfo "0.7.0" ;
 .
 
 feg:KneeDominant
@@ -131,6 +131,15 @@ feg:TrunkStability
     rdfs:label "Trunk Stability" ;
     skos:prefLabel "Trunk Stability" ;
     rdfs:comment "Movements that train the trunk to resist external forces rather than produce movement. Parent concept — prefer the more specific anti-movement sub-patterns where applicable." ;
+.
+
+feg:CoreFlexion
+    a owl:NamedIndividual, feg:MovementPattern, skos:Concept ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:broader feg:TrunkStability ;
+    rdfs:label "Core Flexion" ;
+    skos:prefLabel "Core Flexion" ;
+    rdfs:comment "Exercises that produce dynamic spinal flexion under load — the trunk actively shortens against resistance. Distinct from the joint action SpinalFlexion: this is the user-facing exercise category (crunch, sit-up, cable crunch, hanging leg raise), not the biomechanical descriptor. Representative: crunches, sit-ups, cable crunches, V-ups, hanging leg raises." ;
 .
 
 feg:AntiExtension
