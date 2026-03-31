@@ -1,0 +1,16 @@
+{
+  "ballisticMismatchPenalty": -2,
+  "combinationMismatchPenalty": -3,
+  "primaryActionCountMismatchPenalty": -1,
+  "sameCompoundStatus": 1,
+  "sameLaterality": 2,
+  "sameMovementPattern": 5,
+  "samePlaneOfMotion": 1,
+  "sharedEquipment": 1,
+  "sharedExerciseStyle": 1,
+  "sharedPrimeMover": 4,
+  "sharedPrimaryJointAction": 4,
+  "sharedStabilizer": 1,
+  "sharedSupportingJointAction": 2,
+  "sharedSynergist": 2
+}

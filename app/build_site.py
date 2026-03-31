@@ -30,6 +30,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 from pipeline.db import DB_PATH, get_connection
 
 _GRAPH_TTL = _PROJECT_ROOT / "graph.ttl"
+_GENERATED_SIMILARITY_DIR = _PROJECT_ROOT / "data" / "generated"
 
 FEG = Namespace("https://placeholder.url#")
 _ONTOLOGY_DIR = _PROJECT_ROOT / "ontology"
@@ -842,6 +843,91 @@ def _decorate_exercises(exercises: list[dict], ancestor_map: dict[str, frozenset
     return exercises
 
 
+def _load_similarity_artifacts(similarity_dir: Path) -> dict | None:
+    neighbors_path = similarity_dir / "exercise_neighbors.json"
+    communities_path = similarity_dir / "exercise_communities.json"
+    edges_path = similarity_dir / "exercise_similarity_edges.json"
+
+    if not neighbors_path.exists():
+        return None
+
+    neighbors = json.loads(neighbors_path.read_text(encoding="utf-8"))
+    communities = (
+        json.loads(communities_path.read_text(encoding="utf-8"))
+        if communities_path.exists()
+        else {}
+    )
+    edges = json.loads(edges_path.read_text(encoding="utf-8")) if edges_path.exists() else []
+    return {
+        "communities": communities,
+        "edges": edges,
+        "neighbors": neighbors,
+    }
+
+
+def _attach_similarity_data(exercises: list[dict], similarity_artifacts: dict | None) -> list[dict]:
+    if not similarity_artifacts:
+        for exercise in exercises:
+            exercise["similarity"] = {
+                "communityId": None,
+                "communitySize": 0,
+                "neighbors": [],
+                "sameFamily": [],
+            }
+        return exercises
+
+    exercise_map = {exercise["id"]: exercise for exercise in exercises}
+    edge_map: dict[tuple[str, str], dict] = {}
+    for edge in similarity_artifacts["edges"]:
+        key = tuple(sorted((edge["source"], edge["target"])))
+        edge_map[key] = edge
+
+    community_by_member: dict[str, str] = {}
+    for community_id, payload in similarity_artifacts["communities"].items():
+        for member_id in payload.get("members", []):
+            community_by_member[member_id] = community_id
+
+    for exercise in exercises:
+        neighbor_entries = []
+        for neighbor in similarity_artifacts["neighbors"].get(exercise["id"], []):
+            if neighbor["id"] not in exercise_map:
+                continue
+            neighbor_entries.append({
+                "communityId": neighbor.get("communityId"),
+                "fallback": bool(neighbor.get("fallback", False)),
+                "id": neighbor["id"],
+                "reason": neighbor.get("reason", ""),
+                "score": neighbor["score"],
+            })
+
+        community_id = community_by_member.get(exercise["id"])
+        community = similarity_artifacts["communities"].get(community_id, {}) if community_id else {}
+        neighbor_ids = {item["id"] for item in neighbor_entries}
+        same_family = []
+
+        for member_id in community.get("members", []):
+            if member_id == exercise["id"] or member_id in neighbor_ids or member_id not in exercise_map:
+                continue
+            pair = tuple(sorted((exercise["id"], member_id)))
+            edge = edge_map.get(pair, {})
+            same_family.append({
+                "communityId": community_id,
+                "id": member_id,
+                "reason": edge.get("reason", "Grouped in the same similarity family."),
+                "score": edge.get("score", 0),
+            })
+
+        same_family.sort(key=lambda item: (-item["score"], exercise_map[item["id"]]["name"]))
+        exercise["similarity"] = {
+            "communityId": community_id,
+            "communitySize": community.get("size", 0),
+            "neighbors": neighbor_entries,
+            "sameFamily": same_family[:8],
+        }
+
+    return exercises
+
+
 def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], dict]:
     entities = conn.execute(
         "SELECT entity_id, display_name FROM entities ORDER BY entity_id"
@@ -1032,6 +1118,7 @@ def generate(
     db_path: Path = DB_PATH,
     from_graph: bool = False,
     graph_path: Path = _GRAPH_TTL,
+    similarity_dir: Path = _GENERATED_SIMILARITY_DIR,
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1049,6 +1136,8 @@ def generate(
         conn.close()
 
     exercises = _decorate_exercises(exercises, ancestor_map)
+    similarity_artifacts = _load_similarity_artifacts(similarity_dir)
+    exercises = _attach_similarity_data(exercises, similarity_artifacts)
 
     print("Building vocabulary...")
     vocab = _build_vocab(g, counts, exercises)
@@ -1065,6 +1154,10 @@ def generate(
 
     print(f"Wrote {data_path} ({len(exercises)} exercises, {data_gz//1024} KB gzipped)")
     print(f"Wrote {vocab_path} ({vocab_gz//1024} KB gzipped)")
+    if similarity_artifacts:
+        print(f"Attached similarity artifacts from {similarity_dir}")
+    else:
+        print(f"No similarity artifacts found at {similarity_dir}; emitting empty similarity payloads")
 
 
 def main() -> None:
@@ -1074,8 +1167,15 @@ def main() -> None:
                         help="Read from graph.ttl instead of pipeline.db (used in CI)")
     parser.add_argument("--graph", type=Path, default=_GRAPH_TTL,
                         help="Path to graph.ttl (default: project root)")
+    parser.add_argument("--similarity-dir", type=Path, default=_GENERATED_SIMILARITY_DIR,
+                        help="Directory containing generated similarity JSON artifacts")
     args = parser.parse_args()
-    generate(out_dir=args.out, from_graph=args.from_graph, graph_path=args.graph)
+    generate(
+        out_dir=args.out,
+        from_graph=args.from_graph,
+        graph_path=args.graph,
+        similarity_dir=args.similarity_dir,
+    )
 
 
 if __name__ == "__main__":
