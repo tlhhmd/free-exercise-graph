@@ -50,6 +50,21 @@ jobs:
           assert isinstance(vocab, dict), "app/vocab.json must be a JSON object"
           print(f"app/data.json exercises: {len(data)}")
           print(f"app/vocab.json keys: {sorted(vocab.keys())}")
+
+          obs_path = site_dir / "observatory.json"
+          assert obs_path.exists(), "Missing deploy artifact: app/observatory.json"
+          obs = json.loads(obs_path.read_text())
+          assert isinstance(obs, list), "app/observatory.json must be a JSON array"
+          assert len(obs) > 0, "app/observatory.json is empty"
+          required_stage_keys = {"sources", "identity", "reconcile", "enrich"}
+          for entry in obs:
+              assert "entity_id" in entry, f"observatory entry missing entity_id: {entry}"
+              assert "display_name" in entry, f"observatory entry missing display_name: {entry}"
+              assert "narrative" in entry, f"observatory entry missing narrative: {entry}"
+              assert "stages" in entry, f"observatory entry missing stages: {entry}"
+              missing = required_stage_keys - entry["stages"].keys()
+              assert not missing, f"{entry['entity_id']} missing stage keys: {missing}"
+          print(f"app/observatory.json entries: {len(obs)} ({', '.join(e['entity_id'] for e in obs)})")
           PY
 
       - name: Upload Pages artifact
