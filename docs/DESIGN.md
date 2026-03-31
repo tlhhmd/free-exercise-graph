@@ -19,8 +19,8 @@ Three decisions make this work:
    surfaces over the colored background. This keeps the tab color visible and
    alive beneath the content.
 3. **League Gothic as the structural voice.** Navigation, headings, and labels
-   use League Gothic — condensed, uppercase, direct. Young Serif appears exactly
-   once (the main hero title) as a counterpoint.
+   use League Gothic — condensed, uppercase, direct. All three tab headers now
+   share the same voice and layout system.
 
 ---
 
@@ -63,7 +63,7 @@ redesign, not a theming tweak.
 
 ## Typography
 
-Four typefaces. Each has one job.
+Three typefaces. Each has one job.
 
 ### System sans-serif — body
 `"SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif`
@@ -76,14 +76,6 @@ content, and UI copy.
 
 Tab headings, navigation labels, hero eyebrows, section headers, and filter
 panel titles. Always uppercase. Letter-spacing 0.02–0.08em depending on size.
-
-### Young Serif — editorial
-`"Young Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif`
-
-Used exactly once: the main hero title on the Exercises tab
-(`.hero-title`, `var(--text-hero)`). Its purpose is contrast — a serif
-counterpoint to the condensed gothic all around it. It should not appear
-anywhere else.
 
 ### Caveat Brush — decorative kicker
 `"Caveat Brush", "Bradley Hand", cursive`
@@ -114,7 +106,6 @@ raw pixel value.
 | `--text-lg`     | 19px                    | Card titles, section headers, sheet name     |
 | `--text-xl`     | 24px                    | Subsection headings, vocab display           |
 | `--text-display`| `clamp(40px, 8vw, 64px)`| League Gothic tab headings                   |
-| `--text-hero`   | `clamp(30px, 5vw, 42px)`| Young Serif hero title                       |
 
 **Exception:** Caveat Brush kicker uses 28px, hardcoded. This is the only
 intentional departure from the scale.
@@ -154,14 +145,9 @@ radius scale value, it is a geometry choice.
 
 ## Component Vocabulary
 
-### hero-card
-Main page hero on the Exercises tab. Caveat Brush kicker (`tab-kicker`),
-Young Serif title (`.hero-title`, `var(--text-hero)`), body copy in `--text-2`
-(`.hero-copy`, `var(--text-base)`).
-
 ### tab-hero
-Compressed hero at the top of Muscles and Vocab tabs. Contains the Caveat
-Brush kicker + League Gothic tab title + short tab copy.
+Shared hero at the top of all three tabs. Contains the Caveat Brush kicker,
+League Gothic tab title, and short tab copy on a tab-colored glass surface.
 
 ### view-toggle (User / Builder)
 Appears on exercise detail sheets for the five curated Observatory exercises.

@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=League+Gothic&family=Young+Serif&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=League+Gothic&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -31,10 +31,10 @@
 
   <!-- ── Exercises tab ───────────────────────────────────────────────────── -->
   <div id="view-exercises" class="view active">
-    <header class="hero-card">
+    <header class="tab-hero tab-hero-exercises">
       <div class="tab-kicker">Semantic exercise atlas</div>
-      <h1 class="hero-title">Free Exercise Graph</h1>
-      <p class="hero-copy">Search exercises by muscle, movement, modality, joint action, and equipment.</p>
+      <h1 class="tab-title">Free Exercise Graph</h1>
+      <p class="tab-copy">Search exercises by muscle, movement, modality, joint action, and equipment.</p>
     </header>
     <div class="search-bar">
       <input id="search-input" type="search" placeholder="Search exercises, muscles, patterns, or equipment" autocomplete="off" />
@@ -141,6 +141,24 @@
         Equipment <span class="vocab-chevron">▼</span>
       </div>
       <div class="vocab-items" id="vocab-equipment"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="laterality">
+        Laterality <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-laterality"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="planes">
+        Planes of Motion <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-planes"></div>
+    </div>
+    <div class="vocab-section">
+      <div class="vocab-section-header" data-section="styles">
+        Exercise Styles <span class="vocab-chevron">▼</span>
+      </div>
+      <div class="vocab-items" id="vocab-styles"></div>
     </div>
     <div id="browse-results-section">
       <div class="section-label">Exercises for current concept filters</div>
