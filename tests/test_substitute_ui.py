@@ -129,6 +129,77 @@ def test_substitute_ui_separates_equipment_alternatives_from_closest():
     assert any(excluded["reason"] == "reserved_for_equipment_bucket" for excluded in debug["barbell_rdl"]["excluded"])
 
 
+def test_closest_alternatives_filter_out_stance_loading_and_partial_action_matches():
+    features = [
+        _feature(
+            "source",
+            "Barbell Conventional Deadlift",
+            movement_patterns=["HipHinge"],
+            primary_joint_actions=["HipExtension", "KneeExtension"],
+            prime_movers=["GluteusMaximus", "BicepsFemoris"],
+            equipment=["Barbell"],
+        ),
+        _feature(
+            "plain_swap",
+            "Barbell Deadlift",
+            movement_patterns=["HipHinge"],
+            primary_joint_actions=["HipExtension", "KneeExtension"],
+            prime_movers=["GluteusMaximus", "BicepsFemoris"],
+            equipment=["Barbell"],
+        ),
+        _feature(
+            "sumo_variant",
+            "Sumo Deadlift",
+            movement_patterns=["HipHinge"],
+            primary_joint_actions=["HipExtension", "KneeExtension"],
+            prime_movers=["GluteusMaximus", "BicepsFemoris"],
+            equipment=["Barbell"],
+        ),
+        _feature(
+            "paused_variant",
+            "Paused Deadlift",
+            movement_patterns=["HipHinge"],
+            primary_joint_actions=["HipExtension", "KneeExtension"],
+            prime_movers=["GluteusMaximus", "BicepsFemoris"],
+            equipment=["Barbell"],
+        ),
+        _feature(
+            "partial_overlap",
+            "Barbell Romanian Deadlift",
+            movement_patterns=["HipHinge"],
+            primary_joint_actions=["HipExtension"],
+            prime_movers=["GluteusMaximus", "BicepsFemoris"],
+            equipment=["Barbell"],
+        ),
+    ]
+    neighbors = {
+        "source": [
+            _neighbor("plain_swap", score=20, shared_patterns=["HipHinge"], shared_primary=["HipExtension", "KneeExtension"], shared_prime=["GluteusMaximus", "BicepsFemoris"]),
+            _neighbor("sumo_variant", score=19, shared_patterns=["HipHinge"], shared_primary=["HipExtension", "KneeExtension"], shared_prime=["GluteusMaximus", "BicepsFemoris"], shared_equipment=["Barbell"]),
+            _neighbor("paused_variant", score=18, shared_patterns=["HipHinge"], shared_primary=["HipExtension", "KneeExtension"], shared_prime=["GluteusMaximus", "BicepsFemoris"], shared_equipment=["Barbell"]),
+            _neighbor("partial_overlap", score=17, shared_patterns=["HipHinge"], shared_primary=["HipExtension"], shared_prime=["GluteusMaximus", "BicepsFemoris"], shared_equipment=["Barbell"]),
+        ]
+    }
+    communities = {"0": {"members": [feature["id"] for feature in features], "size": len(features)}}
+
+    ui, debug = build_substitute_ui_artifacts(
+        features=features,
+        neighbors=neighbors,
+        communities=communities,
+        settings={
+            "closestAlternativesMax": 4,
+            "equipmentAlternativesMax": 4,
+            "familyHighlightsMax": 4,
+            "familyGroupsMax": 2,
+            "familyPerGroupMax": 2,
+        },
+    )
+
+    assert [item["id"] for item in ui["source"]["closestAlternatives"]] == ["plain_swap"]
+    excluded_ids = {item["id"] for item in debug["source"]["excluded"] if item["bucket"] == "closestAlternatives"}
+    assert {"sumo_variant", "paused_variant", "partial_overlap"} <= excluded_ids
+
+
 def test_substitute_ui_dedupes_visible_close_variants():
     features = [
         _feature("source", "Barbell Row", movement_patterns=["HorizontalPull"], primary_joint_actions=["ShoulderExtension"], prime_movers=["LatissimusDorsi"], equipment=["Barbell"]),
@@ -197,5 +268,5 @@ def test_substitute_ui_builds_grouped_family_highlights():
 
     groups = ui["source"]["familyHighlights"]
     labels = [group["label"] for group in groups]
-    assert "More dumbbell options" in labels
-    assert "Unilateral options" in labels
+    assert "Related hip hinge variations" in labels
+    assert "Unilateral / staggered variations" in labels

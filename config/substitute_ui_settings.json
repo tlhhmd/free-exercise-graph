@@ -1,5 +1,5 @@
 {
-  "closestAlternativesMax": 5,
+  "closestAlternativesMax": 4,
   "equipmentAlternativesMax": 4,
   "emitDebug": true,
   "familyGroupsMax": 3,

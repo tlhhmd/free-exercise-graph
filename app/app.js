@@ -845,7 +845,7 @@ function renderSheetUser(ex) {
     }).join("");
 
   const substituteUi = getSubstituteUi(ex);
-  const closestAlternatives = getSubstituteItems(substituteUi.closestAlternatives || [], 6);
+  const closestAlternatives = getSubstituteItems(substituteUi.closestAlternatives || [], 4);
   const equipmentAlternatives = getSubstituteItems(substituteUi.equipmentAlternatives || [], 4);
   const familyHighlights = getSubstituteGroups(substituteUi.familyHighlights || []);
 

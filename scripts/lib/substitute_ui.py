@@ -37,6 +37,22 @@ _LATERALITY_TOKENS = {
     "single",
     "unilateral",
 }
+_STANCE_MODIFIER_PATTERNS = {
+    "sumo": re.compile(r"\bsumo\b"),
+    "wide_stance": re.compile(r"\bwide stance\b"),
+    "narrow_stance": re.compile(r"\bnarrow stance\b"),
+    "staggered": re.compile(r"\bstaggered\b"),
+    "split_stance": re.compile(r"\bsplit stance\b"),
+}
+_LOADING_MODIFIER_PATTERNS = {
+    "reverse_band": re.compile(r"\breverse bands?\b"),
+    "banded": re.compile(r"\bbanded\b"),
+    "chains": re.compile(r"\bchains?\b"),
+    "tempo": re.compile(r"\btempo\b"),
+    "paused": re.compile(r"\bpaused?\b"),
+    "deficit": re.compile(r"\bdeficit\b"),
+}
+_RESISTANCE_BAND_TOKENS = {"miniband", "superband", "resistance band", "band"}
 
 
 def _humanize(value: str | None) -> str:
@@ -50,6 +66,10 @@ def _title_tokens(name: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", str(name or "").lower())
 
 
+def _title_text(name: str) -> str:
+    return " ".join(_title_tokens(name))
+
+
 def _title_stem(name: str) -> str:
     tokens = [
         token
@@ -57,6 +77,11 @@ def _title_stem(name: str) -> str:
         if token not in _EQUIPMENT_TOKENS and token not in _LATERALITY_TOKENS
     ]
     return " ".join(tokens)
+
+
+def _modifier_tags(feature: dict, patterns: dict[str, re.Pattern[str]]) -> tuple[str, ...]:
+    title = _title_text(feature.get("name", ""))
+    return tuple(sorted(tag for tag, pattern in patterns.items() if pattern.search(title)))
 
 
 def _dedupe_key(feature: dict) -> tuple:
@@ -94,6 +119,14 @@ def _pair_summary(source: dict, target: dict, neighbor_entry: dict | None) -> di
     source_equipment = set(source.get("equipment") or ["Bodyweight"])
     target_equipment = set(target.get("equipment") or ["Bodyweight"])
     target_unique_equipment = sorted(target_equipment - source_equipment)
+    source_movement_patterns = tuple(sorted(source.get("movementPatterns", [])))
+    target_movement_patterns = tuple(sorted(target.get("movementPatterns", [])))
+    source_primary_actions = tuple(sorted(source.get("primaryJointActions", [])))
+    target_primary_actions = tuple(sorted(target.get("primaryJointActions", [])))
+    source_stance_modifiers = _modifier_tags(source, _STANCE_MODIFIER_PATTERNS)
+    target_stance_modifiers = _modifier_tags(target, _STANCE_MODIFIER_PATTERNS)
+    source_loading_modifiers = _modifier_tags(source, _LOADING_MODIFIER_PATTERNS)
+    target_loading_modifiers = _modifier_tags(target, _LOADING_MODIFIER_PATTERNS)
 
     return {
         "candidateId": target["id"],
@@ -102,28 +135,40 @@ def _pair_summary(source: dict, target: dict, neighbor_entry: dict | None) -> di
         "dedupeKey": _dedupe_key(target),
         "equipmentShift": target_equipment != source_equipment,
         "fallback": bool((neighbor_entry or {}).get("fallback", False)),
+        "lateralityMatch": source.get("laterality") == target.get("laterality"),
         "neighborRank": (neighbor_entry or {}).get("_rank"),
         "score": float((neighbor_entry or {}).get("score", 0.0)),
         "sameCompound": same_compound is not None,
         "sameLaterality": same_laterality,
+        "sameMovementPatternSet": bool(source_movement_patterns) and source_movement_patterns == target_movement_patterns,
+        "samePrimaryJointActionSet": bool(source_primary_actions) and source_primary_actions == target_primary_actions,
         "sharedEquipment": shared_equipment,
         "sharedMovementPatterns": shared_patterns,
         "sharedPrimaryJointActions": shared_primary,
         "sharedPrimeMovers": shared_prime,
+        "sourceLoadingModifiers": source_loading_modifiers,
         "sourceNameStem": _title_stem(source["name"]),
+        "sourceStanceModifiers": source_stance_modifiers,
+        "targetLoadingModifiers": target_loading_modifiers,
         "targetNameStem": _title_stem(target["name"]),
+        "targetStanceModifiers": target_stance_modifiers,
         "targetUniqueEquipment": target_unique_equipment,
         "usefulEquipmentShift": bool(target_unique_equipment),
     }
 
 
 def _is_close_match(summary: dict) -> bool:
+    # Closest Alternatives are a post-rank UX bucket for near 1:1 swaps, not a generic "high score" list.
     return bool(
-        summary["sharedMovementPatterns"]
-        and summary["sharedPrimaryJointActions"]
+        summary["sameMovementPatternSet"]
+        and summary["samePrimaryJointActionSet"]
         and summary["sharedPrimeMovers"]
         and not summary["combinationMismatch"]
         and summary["sameCompound"]
+        and summary["lateralityMatch"]
+        and summary["sourceStanceModifiers"] == summary["targetStanceModifiers"]
+        and not summary["sourceLoadingModifiers"]
+        and not summary["targetLoadingModifiers"]
         and not summary["fallback"]
     )
 
@@ -150,13 +195,15 @@ def _reason_for_equipment(source: dict, summary: dict) -> str:
 
 
 def _family_group_label(source: dict, target: dict, summary: dict) -> str:
+    # Keep family labels user-oriented instead of mirroring raw equipment taxonomy.
+    target_equipment = {_humanize(item).lower() for item in target.get("equipment", [])}
     if source.get("laterality") != target.get("laterality") and target.get("laterality"):
-        return f"{_humanize(target['laterality'])} options"
-    if summary["targetUniqueEquipment"]:
-        return f"More {_humanize(summary['targetUniqueEquipment'][0]).lower()} options"
-    if source.get("movementPatterns") != target.get("movementPatterns") and target.get("movementPatterns"):
+        return "Unilateral / staggered variations"
+    if target_equipment & _RESISTANCE_BAND_TOKENS:
+        return "Resistance band options"
+    if target.get("movementPatterns"):
         return f"Related {_humanize(target['movementPatterns'][0]).lower()} variations"
-    return "Related variations"
+    return "More variations"
 
 
 def _reason_for_family(source: dict, target: dict, summary: dict) -> str:
