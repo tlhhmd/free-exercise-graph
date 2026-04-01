@@ -3456,3 +3456,82 @@ clearly correct. Do not use parent-level concepts unless no child applies.
   or does it need a sub-pattern?
 - **Namespace:** Placeholder `https://placeholder.url#` needs a real URI before any
   public release.
+
+### ADR-110: Source catalog — ontology/catalog.ttl and dcterms:source provenance
+**Status:** Accepted
+
+**Context:** `feg:legacySourceId` was originally documented as specific to `yuhonas/free-exercise-db`. The graph now ingests two upstream sources (`free-exercise-db` and `functional-fitness-db`). The property carried no source attribution — a merged entity with two `legacySourceId` literals gave no way to know which ID belonged to which dataset except by parsing string prefixes implicitly encoded in the ID values. This is the kind of implicit encoding ontologies exist to make explicit.
+
+**Decision:** Two coordinated changes:
+
+1. **`ontology/catalog.ttl`** — new file (v1.0.0). Defines two `dcat:Dataset` named individuals representing upstream sources:
+   - `feg:FreeExerciseDB` — yuhonas/free-exercise-db
+   - `feg:FunctionalFitnessDB` — Strength to Overcome functional-fitness-db
+   Each carries `rdfs:label`, `dcterms:title`, `dcterms:publisher`, and `dcat:landingPage`. No `dcat:downloadURL` — landing pages are stable; download URLs embed version numbers that go stale.
+
+2. **`pipeline/build.py`** — emits `dcterms:source` pointing to the appropriate `dcat:Dataset` individual, and `feg:legacySourceId` with the actual upstream source ID, once per source in `entity_sources`. For merged entities (multiple sources), both properties appear once per source. The previous behaviour of emitting `entity_id` as `legacySourceId` is replaced — for merged entities the entity_id slug was not a meaningful upstream identifier.
+
+3. **`ontology/ontology.ttl`** — `legacySourceId` comment updated to remove the single-source reference and point to `dcterms:source`. PATCH bump 1.0.0 → 1.0.1.
+
+**Why `dcterms:source` and `dcat:Dataset`:** `dcterms:source` is precisely "a related resource from which the described resource is derived." Using it with typed `dcat:Dataset` individuals gives queryable, standards-aligned provenance without minting a new `feg:` property. Reusing established vocabularies is preferable to proliferating custom properties for well-modelled concepts.
+
+**Alternatives considered:**
+- *New `feg:sourceDataset` property*: Unnecessary when `dcterms:source` carries exactly the right semantics.
+- *String literal for source name*: Less queryable, no typing, not standards-aligned.
+- *`prov:wasDerivedFrom`*: Correct provenance semantics but heavier dependency; `dcterms:source` is sufficient and more widely understood.
+
+**Files changed:** `ontology/catalog.ttl` (new), `ontology/ontology.ttl` (comment + PATCH bump), `pipeline/build.py`.
+
+---
+
+### ADR-111: Hyphen normalization fix in identity.py — treat hyphens as word separators
+**Status:** Accepted
+
+**Context:** `pipeline/identity.py` `_normalize()` stripped punctuation with `re.sub(r"[^a-z0-9\s]", "", name)` before tokenizing. This fused hyphenated compounds (e.g. `stiff-legged`) into a single token (`stifflegged`), which then failed to match the same term written as two words (`stiff legged`). Token Jaccard for such pairs scored as low as 0.25 (below the 0.5 threshold), so they were never evaluated biomechanically and fell through as separate entities. 215 of 978 exercises in `free-exercise-db` contain hyphens; `functional-fitness-db` uses no hyphens. This means all cross-source hyphen collisions were invisible — not deferred to triage, simply missed.
+
+The issue was identified via `feg:ex_ffdb_Barbell_Stiff_Legged_Deadlift` and `feg:ex_stifflegged_deadlift`, which are biomechanically identical but appeared as separate entities.
+
+ADR-064 documented the 215 hyphenated exercises for URI hygiene purposes but did not address normalization. ADR-092 introduced the token Jaccard pre-filter but did not revisit hyphen handling.
+
+**Decision:** In `_normalize()`, replace hyphens with spaces before the punctuation-stripping regex:
+
+```python
+name = name.replace("-", " ")  # treat hyphens as word separators before stripping punctuation
+name = re.sub(r"[^a-z0-9\s]", "", name)
+```
+
+This makes `stiff-legged` tokenize as `{"stiff", "legged"}` rather than `{"stifflegged"}`, allowing correct Jaccard comparison against space-separated variants. The fix is minimal and safe — hyphenation is orthographic variation, not a meaningful distinction between exercises.
+
+**Pipeline impact:** Re-running `identity.py` after this fix will produce a new triage queue. Previously-invisible hyphen-collision pairs will surface as merges or triage candidates. The existing 61 open `possible_matches` are unaffected. Re-run with `--drop-enrichment` if enrichment has already run on affected entities, then re-run `canonicalize.py`, `reconcile.py`, and `enrich.py` as needed.
+
+**General rule:** Normalize orthographic variants before tokenizing. Hyphens and similar word-joining characters must be converted to spaces as the first normalization step, before punctuation stripping. Stripping them as punctuation collapses compound terms into single tokens that no longer match their space-separated equivalents.
+
+**Files changed:** `pipeline/identity.py`.
+
+### ADR-112: Manual merge exclusions in identity.py
+**Status:** Accepted
+
+**Context:** After the hyphen normalization fix (ADR-111), three false-positive auto-merges surfaced where the biomechanical scorer returned ≥ 0.7 for exercises that are genuinely distinct movements:
+
+- `free-exercise-db:3_4_Sit_Up` ↔ `functional-fitness-db:Bodyweight_Butterfly_Sit_Up` — different ROM and leg position
+- `free-exercise-db:Press_Sit_Up` ↔ `functional-fitness-db:Barbell_Turkish_Sit_Up` — different movement pattern
+- `free-exercise-db:Single_Arm_Cable_Crossover` ↔ `functional-fitness-db:Single_Arm_Cable_Bayesian_Curl` — different movement entirely
+
+**Decision:** Add a `_MERGE_EXCLUSIONS` set in `pipeline/identity.py` — a set of frozensets of `(source, source_id)` pairs. Any pair present in this set is skipped before scoring, preventing auto-merge regardless of biomechanical similarity. Excluded pairs are silently dropped — they are not deferred to triage.
+
+Exclusions are keyed by `(source, source_id)` rather than entity ID, so they remain stable across entity ID changes (e.g. if normalization changes or entities are re-clustered).
+
+**When to add an exclusion:** When a pair auto-merges at ≥ 0.7 but is confirmed to be a distinct exercise on manual review. This is the correct escape hatch — the scorer is a heuristic and will occasionally produce false positives for exercises that share muscles and movement pattern but differ in ROM, loading angle, or technique emphasis.
+
+**Files changed:** `pipeline/identity.py`.
+
+### ADR-113: Fix --drop-enrichment deletion bug in identity.py
+**Status:** Accepted
+
+**Context:** `pipeline/identity.py` had a bug where `--drop-enrichment` suppressed the RuntimeError for protected entity removal but did not actually enable deletion of those entities. `removable` was always computed as `removed_ids - protected_ids` regardless of the flag, leaving stale entity rows in the DB. This caused duplicate label failures in `validate.py` whenever identity was re-run after enrichment had already run (the old entity IDs survived alongside the new ones).
+
+The bug surfaced during the hyphen normalization re-cluster (ADR-111), where 6 entity IDs were renamed (e.g. `stifflegged_deadlift` → `stiff_legged_deadlift`). Both the old and new IDs ended up in the graph with the same label.
+
+**Decision:** When `drop_enrichment=True`, set `removable = removed_ids` rather than `removed_ids - protected_ids`. The flag's stated intent is to allow removal of entities with enrichment state — the deletion logic must match.
+
+**Files changed:** `pipeline/identity.py`.

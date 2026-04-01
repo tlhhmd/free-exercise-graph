@@ -1,0 +1,30 @@
+@prefix feg:     <https://placeholder.url#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<https://placeholder.url#catalog>
+    a owl:Ontology ;
+    rdfs:label "Free Exercise Graph — Source Catalog" ;
+    rdfs:comment "DCAT Dataset individuals representing upstream data sources ingested into the graph." ;
+    owl:versionInfo "1.0.0" ;
+.
+
+feg:FreeExerciseDB
+    a dcat:Dataset ;
+    rdfs:label "free-exercise-db" ;
+    dcterms:title "Free Exercise Database" ;
+    dcterms:publisher "yuhonas" ;
+    dcat:landingPage <https://github.com/yuhonas/free-exercise-db> ;
+.
+
+feg:FunctionalFitnessDB
+    a dcat:Dataset ;
+    rdfs:label "functional-fitness-db" ;
+    dcterms:title "Functional Fitness Exercise Database" ;
+    dcterms:publisher "Strength to Overcome" ;
+    dcat:landingPage <https://strengthtoovercome.com/functional-fitness-exercise-database> ;
+.

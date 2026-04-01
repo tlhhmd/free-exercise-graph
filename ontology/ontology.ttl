@@ -9,7 +9,7 @@
     a owl:Ontology ;
     rdfs:label "Free Exercise Graph Ontology" ;
     rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "1.0.1" ;
 .
 
 ###################
@@ -189,7 +189,7 @@ feg:supportingJointAction
 feg:legacySourceId
     a owl:DatatypeProperty ;
     rdfs:label "legacy source ID" ;
-    rdfs:comment "The original identifier for this exercise in the yuhonas/free-exercise-db dataset. Preserved for provenance and upstream traceability." ;
+    rdfs:comment "The original identifier for this exercise in its upstream source dataset. Preserved for provenance and upstream traceability. Use dcterms:source to identify which dataset this ID belongs to." ;
     rdfs:domain feg:Exercise ;
     rdfs:range xsd:string ;
 .
