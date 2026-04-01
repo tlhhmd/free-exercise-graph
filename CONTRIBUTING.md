@@ -7,9 +7,10 @@ Read `DECISIONS.md` for the full ADR history before making any ontology or pipel
 
 ## Where to Start
 
-1. **Read `DECISIONS.md`** — every non-trivial decision is documented there. Check it before touching ontology files or pipeline behaviour. ADRs are numbered sequentially; the highest number is the most recent.
-2. **Read `TODO.md`** — current open items in priority order.
-3. **Confirm your environment is healthy** before making changes:
+1. **Open [docs/index.md](/Users/talha/Code/free-exercise-graph/docs/index.md)** — it routes to the shortest relevant guide by task.
+2. **Read `DECISIONS.md`** — every non-trivial decision is documented there. Check it before touching ontology files or pipeline behaviour. ADRs are numbered sequentially; the highest number is the most recent.
+3. **Read `TODO.md`** — current open items in priority order.
+4. **Confirm your environment is healthy** before making changes:
 
 ```bash
 pip install -e .
@@ -21,9 +22,29 @@ python3 test_shacl.py
 Then read:
 - [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md)
 - [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md)
+- [docs/quickstart_graph.md](/Users/talha/Code/free-exercise-graph/docs/quickstart_graph.md)
 - [docs/sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md)
 - [docs/quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
 - [docs/triage_workflow.md](/Users/talha/Code/free-exercise-graph/docs/triage_workflow.md)
+
+---
+
+## Docs Stay In Lockstep
+
+If your change modifies any of the following, update the relevant docs in the
+same PR or commit:
+
+- a pipeline entrypoint or operator command
+- a committed build artifact
+- a deploy-required app artifact
+- a contributor workflow
+- a docs entrypoint that new readers are expected to follow
+
+Common examples:
+
+- changing app build outputs means updating [app/README.md](/Users/talha/Code/free-exercise-graph/app/README.md) and possibly [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md)
+- changing onboarding flow means updating [docs/index.md](/Users/talha/Code/free-exercise-graph/docs/index.md), this file, or both
+- changing rebuild/reset semantics means updating [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md) and [docs/troubleshooting.md](/Users/talha/Code/free-exercise-graph/docs/troubleshooting.md)
 
 ---
 
@@ -86,6 +107,8 @@ python3 pipeline/enrich.py --restamp HipCircumduction
 | `graph.ttl` | Gitignored (derived) | Assembled by `pipeline/build.py` |
 | `app/data.json` | **Committed, derived** | Static app exercise payload exported by `app/build_site.py` |
 | `app/vocab.json` | **Committed, derived** | Static app vocabulary payload exported by `app/build_site.py` |
+| `app/exercise_substitute_ui.json` | **Committed, derived** | Static app substitute presentation artifact |
+| `app/observatory.json` | **Committed, derived** | Builder View payload exported by `app/build_observatory.py` |
 | `app/index.html`, `app/style.css`, `app/app.js` | **Committed** | Static GitHub Pages UI |
 
 Source-of-truth boundaries are described in [docs/system_contracts.md](/Users/talha/Code/free-exercise-graph/docs/system_contracts.md).
@@ -110,6 +133,7 @@ Source-of-truth boundaries are described in [docs/system_contracts.md](/Users/ta
 | `pipeline/import_enrichment.py` | Restore exported enrichment into the current deterministic DB |
 | `pipeline/release_bundle.py` | Freeze current DB + graph + scorecard into a timestamped bundle |
 | `app/build_site.py` | Export the static app payload and UI-facing JSON from `pipeline.db` or `graph.ttl` |
+| `app/build_observatory.py` | Export Builder View / observatory payload for curated exercises |
 | `test_shacl.py` | Read-only; exits 0/1 — CI gate |
 
 ### Enrichment options
@@ -167,7 +191,10 @@ Typical flow:
 
 ```bash
 python3 pipeline/run.py --to build
-python3 app/build_site.py --from-graph
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+python3 app/build_observatory.py --out app
 python3 -m http.server 8000
 ```
 

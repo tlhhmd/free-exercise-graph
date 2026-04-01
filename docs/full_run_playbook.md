@@ -2,6 +2,12 @@
 
 This is the safest end-to-end way to run `free-exercise-graph` locally.
 
+If you want the short version for a specific task, use:
+
+- [quickstart_graph.md](/Users/talha/Code/free-exercise-graph/docs/quickstart_graph.md)
+- [quickstart_mcp.md](/Users/talha/Code/free-exercise-graph/docs/quickstart_mcp.md)
+- [quickstart_app.md](/Users/talha/Code/free-exercise-graph/docs/quickstart_app.md)
+
 Use this document when you want to:
 - rebuild from source truth
 - preserve paid-for enrichment
@@ -179,7 +185,29 @@ Interpretation:
 
 ---
 
-## 9. Freeze a Release Bundle
+## 9. Build Product Artifacts
+
+Once `graph.ttl` is current and validation looks good, build the static substitute/app artifacts:
+
+```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+python3 app/build_observatory.py --out app
+```
+
+What this gives you:
+- sparse similarity graph artifacts under `data/generated/`
+- app-facing substitute buckets in `data/generated/exercise_substitute_ui.json`
+- refreshed static app payloads in `app/`
+- refreshed Builder View payload in `app/observatory.json`
+
+If you are only operating the MCP server, you can stop at `graph.ttl`.
+If you are shipping the static app, this step is part of the real publish path.
+
+---
+
+## 10. Freeze a Release Bundle
 
 Once you have a graph state you want to keep, freeze it:
 
@@ -198,7 +226,7 @@ This is the easiest artifact to copy to another machine or archive before risky 
 
 ---
 
-## 10. Start the MCP Server
+## 11. Start the MCP Server
 
 ```bash
 python3 mcp_server.py
@@ -212,7 +240,7 @@ python3 pipeline/run.py --to build
 
 ---
 
-## 11. If You Truly Need a Destructive Rebuild
+## 12. If You Truly Need a Destructive Rebuild
 
 This should be rare.
 
@@ -234,7 +262,7 @@ Do **not** use this casually if you have unexported enrichment state.
 
 ---
 
-## 12. Recovery Commands
+## 13. Recovery Commands
 
 Restore the latest SQLite backup:
 
@@ -257,7 +285,7 @@ python3 pipeline/build.py
 
 ---
 
-## 13. Recommended Operator Habits
+## 14. Recommended Operator Habits
 
 For any meaningful paid run:
 1. `python3 pipeline/db_backup.py backup`
