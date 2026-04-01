@@ -53,6 +53,21 @@ _SOURCE_PREFIX = {
 }
 
 
+# ─── Manual merge exclusions (ADR-112) ───────────────────────────────────────
+#
+# Pairs that must never be auto-merged, keyed by frozenset of (source, source_id).
+# Add an entry here when the biomechanical scorer produces a false positive — i.e.
+# two exercises that score ≥ 0.7 but are genuinely distinct movements.
+_MERGE_EXCLUSIONS: set[frozenset] = {
+    # 3/4 Sit-Up ≠ Butterfly Sit-Up: different ROM and leg position
+    frozenset([("free-exercise-db", "3_4_Sit_Up"), ("functional-fitness-db", "Bodyweight_Butterfly_Sit_Up")]),
+    # Press Sit-Up ≠ Turkish Sit-Up: different movement pattern
+    frozenset([("free-exercise-db", "Press_Sit_Up"), ("functional-fitness-db", "Barbell_Turkish_Sit_Up")]),
+    # Single Arm Cable Crossover ≠ Single Arm Cable Bayesian Curl: different movement entirely
+    frozenset([("free-exercise-db", "Single_Arm_Cable_Crossover"), ("functional-fitness-db", "Single_Arm_Cable_Bayesian_Curl")]),
+}
+
+
 # ─── Equipment modifier words (ADR-092) ───────────────────────────────────────
 
 # Words that describe equipment context, not exercise identity (ADR-001).
@@ -98,6 +113,7 @@ _FED_MUSCLE_MAP: dict[str, str] = {
 def _normalize(name: str) -> str:
     """Lowercase, strip punctuation, strip equipment modifiers, collapse whitespace."""
     name = name.lower()
+    name = name.replace("-", " ")  # treat hyphens as word separators before stripping punctuation
     name = re.sub(r"[^a-z0-9\s]", "", name)
     tokens = [t for t in name.split() if t not in _EQUIPMENT_MODIFIERS]
     return " ".join(tokens).strip()
@@ -337,6 +353,9 @@ def cluster(conn, dry_run: bool = False, drop_enrichment: bool = False) -> dict:
                             continue
 
                         src_id_b = eb["sources"][0][1]
+                        pair_key = frozenset([(src_a, src_id_a), (src_b, src_id_b)])
+                        if pair_key in _MERGE_EXCLUSIONS:
+                            continue
                         score = _biomechanical_score(conn, src_a, src_id_a, src_b, src_id_b)
                         if score >= 0.7:
                             ea["sources"].append((src_b, src_id_b, score))
@@ -388,7 +407,7 @@ def cluster(conn, dry_run: bool = False, drop_enrichment: bool = False) -> dict:
                 "if you intentionally want a full rebuild."
             )
 
-        removable = removed_ids - protected_ids
+        removable = removed_ids if drop_enrichment else (removed_ids - protected_ids)
         delete_entity_runtime_state(conn, removable)
         if removable:
             conn.executemany(

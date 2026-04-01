@@ -2,7 +2,7 @@
 
 **[→ Live app](https://www.talha.foo/free-exercise-graph/)**
 
-A semantic knowledge graph of **3,455 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
+A semantic knowledge graph of **3,442 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
 
 The ontology, multi-source reconciliation pipeline, data quality framework, and 109 architecture decision records are original work. The exercise data comes from freely shared community datasets.
 
@@ -20,11 +20,11 @@ The ontology, multi-source reconciliation pipeline, data quality framework, and 
 
 | | |
 |---|---|
-| **3,455** canonical entities | resolved from **4,113** source records across multiple datasets |
-| **239,054** graph triples | assembled from resolved + inferred claims |
+| **3,442** canonical entities | resolved from **4,113** source records across multiple datasets |
+| **242,637** graph triples | assembled from resolved + inferred claims |
 | **46** joint actions | across **9** joints |
 | **11** ontology files | independently versioned (semver) |
-| **109** ADRs | every non-trivial decision documented |
+| **113** ADRs | every non-trivial decision documented |
 | **14/14** SHACL tests | passing |
 
 ---
@@ -169,7 +169,7 @@ LLM classification instructions are embedded as `rdfs:comment` on OWL property d
 
 ## Governance
 
-Every non-trivial decision — vocabulary additions, pipeline behavior changes, prompt rules — is documented as an Architecture Decision Record in `DECISIONS.md`. 105 ADRs and counting. The discipline is intentional: the graph is used for structured querying, and incorrect classifications have real downstream consequences.
+Every non-trivial decision — vocabulary additions, pipeline behavior changes, prompt rules — is documented as an Architecture Decision Record in `DECISIONS.md`. 113 ADRs and counting. The discipline is intentional: the graph is used for structured querying, and incorrect classifications have real downstream consequences.
 
 **Hard rules:**
 - Never add or remove vocabulary concepts without an ADR
@@ -249,7 +249,7 @@ enrichment/        LLM prompt assembly, provider adapters, Pydantic output schem
 app/               static GitHub Pages app (HTML/CSS/JS + build script)
 mcp_server.py      5-tool MCP server backed by pyoxigraph
 docs/              system contracts, data model, playbooks, worked examples
-DECISIONS.md       105 architecture decision records
+DECISIONS.md       113 architecture decision records
 ```
 
 All URIs use `https://placeholder.url#` (prefix `feg:`) — placeholder pending a permanent domain. Full file-level map: [docs/repo_map.md](docs/repo_map.md)

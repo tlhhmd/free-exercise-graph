@@ -25,7 +25,7 @@ import sys
 from pathlib import Path
 
 from rdflib import Graph, Literal, Namespace, URIRef
-from rdflib.namespace import RDF, RDFS, XSD
+from rdflib.namespace import DCTERMS, RDF, RDFS, XSD
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
@@ -171,11 +171,25 @@ def _effective_claims(conn, entity_id: str) -> dict[str, list[tuple[str, str | N
 
 # ─── RDF assembly ─────────────────────────────────────────────────────────────
 
-def _add_entity(g: Graph, entity_id: str, display_name: str, claims: dict, group_level_map: dict[str, str], ancestor_map: dict[str, frozenset[str]]) -> None:
+# Maps pipeline source names to feg:Dataset individuals in catalog.ttl (ADR-110)
+_SOURCE_DATASET: dict[str, URIRef] = {
+    "free-exercise-db":      FEG["FreeExerciseDB"],
+    "functional-fitness-db": FEG["FunctionalFitnessDB"],
+}
+
+
+def _add_entity(g: Graph, entity_id: str, display_name: str, claims: dict, sources: list[tuple[str, str]], group_level_map: dict[str, str], ancestor_map: dict[str, frozenset[str]]) -> None:
     uri = _ex_uri(entity_id)
     g.add((uri, RDF.type, FEG.Exercise))
     g.add((uri, RDFS.label, Literal(display_name, datatype=XSD.string)))
-    g.add((uri, FEG.legacySourceId, Literal(entity_id, datatype=XSD.string)))
+
+    # Source provenance (ADR-110): emit dcterms:source and legacySourceId per upstream source.
+    # For merged entities (multiple sources) this emits one pair of triples per source.
+    for source, source_id in sources:
+        dataset = _SOURCE_DATASET.get(source)
+        if dataset:
+            g.add((uri, DCTERMS.source, dataset))
+        g.add((uri, FEG.legacySourceId, Literal(source_id, datatype=XSD.string)))
 
     # Equipment
     for eq, _ in claims.get("equipment", []):
@@ -289,7 +303,14 @@ def build(output: Path = _DEFAULT_OUTPUT, db_path: Path = DB_PATH) -> int:
         entity_id    = row["entity_id"]
         display_name = row["display_name"]
         claims = _effective_claims(conn, entity_id)
-        _add_entity(g, entity_id, display_name, claims, group_level_map, ancestor_map)
+        sources = [
+            (r["source"], r["source_id"])
+            for r in conn.execute(
+                "SELECT source, source_id FROM entity_sources WHERE entity_id = ?",
+                (entity_id,),
+            ).fetchall()
+        ]
+        _add_entity(g, entity_id, display_name, claims, sources, group_level_map, ancestor_map)
 
     conn.close()
 

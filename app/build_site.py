@@ -1,13 +1,20 @@
 """
 build_site.py
 
-Generate app/data.json and app/vocab.json from pipeline.db or graph.ttl.
+Generate the static app payload from pipeline.db or graph.ttl.
+
+Outputs:
+    - app/data.json
+    - app/vocab.json
+    - app/exercise_substitute_ui.json (when present in the generated similarity directory)
+
 Run before deploying the static site.
 
 Usage:
-    python3 app/build_site.py                  # read from pipeline.db (local dev)
-    python3 app/build_site.py --from-graph     # read from graph.ttl (CI / no DB)
-    python3 app/build_site.py --out app/       # explicit output directory
+    python3 app/build_site.py                                          # read from pipeline.db (local dev)
+    python3 app/build_site.py --from-graph                             # read from graph.ttl (CI / no DB)
+    python3 app/build_site.py --similarity-dir data/generated          # copy similarity/substitute UI artifacts
+    python3 app/build_site.py --out app/                               # explicit output directory
 """
 
 from __future__ import annotations
