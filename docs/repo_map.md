@@ -60,17 +60,45 @@ free-exercise-graph/
     prompt_builder.py              renders prompt_template.md from live ontology graphs
     _vocab.py                      vocab extraction utilities
 
+  scripts/
+    build_similarity_graph.py      offline RDF → weighted exercise similarity graph build
+    build_substitute_ui.py         offline similarity → substitute presentation artifact build
+    lib/
+      rdf_extract.py               exercise feature extraction from RDF/Turtle
+      feature_normalize.py         canonical feature normalization for graph build
+      similarity.py                weighted pairwise scoring and neighbor selection
+      community.py                 Louvain community detection helpers
+      export_json.py               stable JSON writer helpers
+      substitute_ui.py             bucket, dedupe, and reason-string logic for substitute UX
+
+  data/generated/                  generated similarity and substitute artifacts (derived)
+    exercise_features.json         canonical feature projection per exercise
+    exercise_similarity_edges.json sparse exported similarity edges
+    exercise_neighbors.json        top neighbors per exercise
+    exercise_communities.json      community membership export
+    build_metrics.json             graph build diagnostics
+    exercise_substitute_ui.json    app-facing substitute buckets + reasons
+    exercise_substitute_ui_debug.json optional debug metadata for bucket decisions
+
   evals/                           gold standard annotation and eval tooling
   queries/                         example SPARQL discovery queries
   app/
     README.md                      app-specific guide: build, preview, deploy, product roadmap
-    build_site.py                  export app/data.json + app/vocab.json from graph.ttl or pipeline.db
+    build_site.py                  export app/data.json + app/vocab.json and copy substitute UI artifact
+    build_observatory.py           export Builder View / observatory payload for curated exercises
     index.html                     static app shell
     style.css                      static app visual system
     app.js                         client-side state, filtering, and interactions
     data.json                      committed exercise payload for GitHub Pages
     vocab.json                     committed vocabulary payload for GitHub Pages
+    exercise_substitute_ui.json    committed substitute presentation artifact for GitHub Pages
+    observatory.json               committed Builder View payload for GitHub Pages
   docs/
+    index.md                       canonical docs landing page and task router
+    quickstart_graph.md            shortest path to a deterministic local graph build
+    quickstart_mcp.md              shortest path to Claude Desktop MCP usage
+    quickstart_app.md              shortest path to local app rebuild + preview
+    troubleshooting.md             stale-state, rebuild, and missing-artifact guide
     system_contracts.md            source-of-truth boundaries, reset/replay semantics
     full_run_playbook.md           step-by-step safe runbook for local full runs
     sqlite_data_model.md           SQLite table dictionary, ERD, and RDF mapping
@@ -83,4 +111,6 @@ free-exercise-graph/
   codexlog.md                      refactor log: what changed and why
   DECISIONS.md                     full ADR history
   TODO.md                          open items
+  LESSONS_LEARNED.md               meta-level project takeaways
+  pipeline_playbook.ipynb          operator notebook for rebuild and export flows
 ```

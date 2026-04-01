@@ -21,6 +21,11 @@ controlled ontology (muscles, movement patterns, joint actions, training
 modalities, equipment), and materialised as RDF. The graph is queryable
 via SPARQL and exposed through an MCP server for use in AI applications.
 
+The static app now also depends on an offline substitute-discovery layer:
+`graph.ttl` is projected into a sparse exercise similarity graph, then
+reshaped into a UI-oriented substitute artifact. The browser reads those
+precomputed JSON files; it does not compute graph logic at runtime.
+
 **Owner:** Talha Ahmad — ontologist, knowledge graph architect. He can
 read and write code but prefers to focus on design decisions. Be a
 collaborative partner, not just an executor.
@@ -31,12 +36,45 @@ collaborative partner, not just an executor.
 
 - `ontology/` — TTL vocabulary and schema files (one file per concept domain)
 - `sources/` — one subdirectory per upstream dataset; each is self-contained with its own `adapter.py`, `fetch.py`, `raw/`, and `mappings/`
+- `pipeline/` — canonicalize → identity → reconcile → enrich → build → validate
 - `enrichment/` — shared LLM enrichment service (`service.py`, `prompt_template.md`, schema)
+- `scripts/` — offline similarity graph + substitute UI builders
+- `data/generated/` — generated similarity, community, metrics, and substitute UI artifacts
+- `app/` — static GitHub Pages app plus `build_site.py` export step
 - `evals/` — gold standard annotation and eval tooling
 - `queries/` — example SPARQL discovery queries
 - `mcp_server.py` — MCP server backed by pyoxigraph in-process
 - `test_shacl.py` — SHACL unit test suite
 - `constants.py` — single source of truth for `FEG_NS`; import from here, never hardcode
+
+---
+
+## Read These When Relevant
+
+- Core startup context:
+  - `DECISIONS.md` — ADR history; required context for ontology or pipeline behavior changes
+  - `TODO.md` — live open-work list; update this at session end
+  - `docs/system_contracts.md` — what is source truth vs derived, and the safe rebuild order
+  - `docs/repo_map.md` — fastest orientation map of where pipeline, scripts, app, and docs live
+
+- Read when operating the pipeline:
+  - `docs/full_run_playbook.md` — rebuilds, exports, release prep, and recovery
+  - `docs/quality_surfaces.md` — what `test_shacl.py`, `pipeline/validate.py`, and CI each prove
+  - `docs/sqlite_data_model.md` — table-level details for `pipeline/pipeline.db`
+  - `docs/triage_workflow.md` — how to handle `possible_matches` and identity ambiguity
+  - `pipeline_playbook.ipynb` — notebook-driven rebuild/debug flow
+
+- Read when working on the app or product UX:
+  - `app/README.md` — static app build, preview, and deploy flow
+  - `docs/app_field_provenance.md` — which app fields are graph-native, computed, heuristic, or UI-only
+  - `docs/DESIGN.md` — design system, visual direction, and frontend implementation guidance
+
+- Read when you need examples or historical context:
+  - `docs/reconciliation_example.md` — worked example of how one exercise moves through the pipeline
+  - `LESSONS_LEARNED.md` — project-level takeaways, trade-offs, and scaling lessons
+  - `codexlog.md` — recent implementation context that may not yet be fully condensed into permanent docs
+
+Use `CLAUDE.md` for the mental model; use the docs above for the authoritative details.
 
 ---
 
@@ -100,6 +138,15 @@ All vocabulary and schema files live in `ontology/`. Each file is independently 
 
 The pipeline operates across all sources together, not per-source. Intermediate state lives in a SQLite database (`pipeline/pipeline.db`). Raw LLM responses are the only artifact retained as JSON.
 
+Important distinction:
+
+- the ontology + pipeline DB + `graph.ttl` are the graph build system
+- the similarity/substitute scripts are downstream derived-artifact builders
+- the static app is a consumer of those derived artifacts
+
+For truth-boundary details, see `docs/system_contracts.md`.
+For schema details, see `docs/sqlite_data_model.md`.
+
 ### Stage 1 — fetch.py (per source)
 Downloads upstream source data into `sources/<source>/raw/`. Never modify raw files.
 
@@ -148,14 +195,7 @@ python3 pipeline/enrich.py --quarantine            # list entities with ≥3 fai
 
 **Model tracking:** `enrichment_stamps.model` records which LLM model enriched each entity.
 
-**Additional DB tables:**
-
-| Table | Purpose |
-|---|---|
-| `enrichment_failures` | `(entity_id, failed_at, error)` — API/validation errors |
-| `enrichment_warnings` | `(entity_id, predicate, stripped_value, enriched_at)` — stripped vocab terms |
-
-`enrichment_stamps` also carries a `model TEXT` column for provenance.
+For table-by-table details on these bookkeeping surfaces, see `docs/sqlite_data_model.md`.
 
 ### Stage 6 — build.py
 Assembles RDF from resolved and inferred claims. Asserted claims always take precedence over inferred. Writes `graph.ttl`.
@@ -164,22 +204,81 @@ Assembles RDF from resolved and inferred claims. Asserted claims always take pre
 python3 pipeline/build.py
 ```
 
+### Stage 7 — scripts/build_similarity_graph.py
+Projects `graph.ttl` into a weighted exercise-to-exercise similarity graph.
+Emits sparse graph artifacts under `data/generated/`, including features,
+edges, neighbors, communities, and build metrics.
+
+```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+```
+
+### Stage 8 — scripts/build_substitute_ui.py
+Consumes generated similarity/community/features artifacts and emits a
+UI-facing substitute artifact with:
+
+- `Closest Alternatives`
+- `Different Equipment`
+- collapsed `Explore This Family`
+
+This stage also handles build-time bucket assignment, near-duplicate
+suppression for visible substitutes, and reason-string generation.
+
+```bash
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+```
+
+### Stage 9 — app/build_site.py
+Builds the static app payload from `pipeline.db` or `graph.ttl`, and
+copies `exercise_substitute_ui.json` into `app/` when present.
+
+```bash
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+```
+
 ### validate.py — data quality scorecard (ADR-095)
 
-5-dimension scorecard against the live SQLite DB and graph. Run after every build.
+Run after every build.
 
 ```bash
 python3 pipeline/validate.py --verbose        # fast (no SHACL)
 python3 pipeline/validate.py --shacl --verbose  # full (slow, ~45s via oxrdflib)
 ```
 
-| Dimension    | Severity | What it checks |
-|---|---|---|
-| validity     | fail | SHACL conformance (requires `--shacl`) |
-| uniqueness   | fail | duplicate exercise labels |
-| integrity    | fail | every vocab reference in inferred_claims resolves to a known ontology term |
-| timeliness   | warn | unresolved enrichment_warnings (stripped terms not yet restamped) |
-| completeness | warn | movement patterns, muscle involvements, and primary JAs present |
+Use:
+
+- `test_shacl.py` for ontology/shape regression
+- `pipeline/validate.py` for graph/data-product health
+- CI for minimum repo-level release confidence
+
+See `docs/quality_surfaces.md` for the authoritative breakdown.
+
+### Static app build order
+
+If you are shipping or reviewing the static app, the normal post-graph
+build sequence is:
+
+```bash
+python3 pipeline/run.py --to build
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+```
+
+Generated downstream artifacts include:
+
+- `data/generated/exercise_features.json`
+- `data/generated/exercise_similarity_edges.json`
+- `data/generated/exercise_neighbors.json`
+- `data/generated/exercise_communities.json`
+- `data/generated/build_metrics.json`
+- `data/generated/exercise_substitute_ui.json`
+- `app/data.json`
+- `app/vocab.json`
+- `app/exercise_substitute_ui.json`
+
+If you need the worked example for how facts move from messy source data to final graph output, read `docs/reconciliation_example.md`.
+If you are dealing with ambiguous identity pairs, read `docs/triage_workflow.md`.
 
 **URI conventions (ADR-040):**
 - Exercises: `feg:ex_{id}` (avoids leading numeral / invalid NCName issues)

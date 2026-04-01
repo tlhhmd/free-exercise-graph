@@ -23,13 +23,18 @@ These are not manually edited:
 - `pipeline/artifacts/raw_responses/`
 - `pipeline/releases/`
 - `graph.ttl`
+- `data/generated/*.json`
+- `app/data.json`
+- `app/vocab.json`
+- `app/exercise_substitute_ui.json`
+- `app/observatory.json`
 - quality reports and temporary batch/runtime files
 
 ---
 
 ## Pipeline Truth Layers
 
-The system intentionally has three truth layers:
+The system intentionally has five truth layers:
 
 1. **Source truth**
    Raw source records plus crosswalks.
@@ -58,6 +63,21 @@ The system intentionally has three truth layers:
    - `pipeline/releases/`
 
    These exist so paid-for enrichment can survive DB resets, machine moves, and release cutovers.
+
+5. **Product delivery artifacts**
+   Files built from the current graph for the static app:
+   - `data/generated/exercise_features.json`
+   - `data/generated/exercise_similarity_edges.json`
+   - `data/generated/exercise_neighbors.json`
+   - `data/generated/exercise_communities.json`
+   - `data/generated/build_metrics.json`
+   - `data/generated/exercise_substitute_ui.json`
+   - `app/data.json`
+   - `app/vocab.json`
+   - `app/exercise_substitute_ui.json`
+   - `app/observatory.json`
+
+   These are deterministic derived artifacts. They are committed for deployment convenience, but they are not source truth.
 
 Fresh-clone implication:
 - a deterministic rebuild works from committed source truth
@@ -89,6 +109,15 @@ python3 pipeline/run.py --with-enrich --to build --concurrency 4
 
 For a step-by-step safe operator workflow, see
 [docs/full_run_playbook.md](/Users/talha/Code/free-exercise-graph/docs/full_run_playbook.md).
+
+When shipping the static app, the normal build order after `graph.ttl` is current is:
+
+```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+python3 app/build_observatory.py --out app
+```
 
 ---
 
@@ -157,6 +186,24 @@ python3 pipeline/export_enrichment.py
 - warns loudly when the graph is deterministic-only or only partially enriched
 - deterministic given the current DB + ontology
 
+### `scripts/build_similarity_graph.py`
+
+- projects RDF exercise semantics into a weighted exercise-to-exercise graph
+- emits sparse similarity, neighbor, community, and metrics artifacts under `data/generated/`
+- deterministic given the current graph + config
+
+### `scripts/build_substitute_ui.py`
+
+- consumes generated similarity/community/features artifacts
+- emits product-facing substitute buckets and debug metadata
+- deterministic given the current generated similarity artifacts + config
+
+### `app/build_observatory.py`
+
+- emits `app/observatory.json` for the static app Builder View
+- deterministic given the current pipeline SQLite state and curated observatory list
+- separate from `build_site.py` on purpose so Builder View data stays explicit
+
 ### `validate.py`
 
 - reports graph/data-product health
@@ -201,4 +248,13 @@ pip install -e .
 python3 pipeline/run.py --to build
 python3 pipeline/validate.py --verbose
 python3 test_shacl.py
+```
+
+If they are working on the static app rather than just the graph, add:
+
+```bash
+python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
+python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
+python3 app/build_site.py --from-graph --similarity-dir data/generated --out app
+python3 app/build_observatory.py --out app
 ```

@@ -6,7 +6,6 @@ Remaining work is grouped by execution horizon.
 
 ## Now
 
-- [ ] **Residual movement pattern gaps** — TODO text is stale. The graph still has compound exercises with no movement pattern, and `DECISIONS.md` still treats this as an open vocabulary/design question rather than a closed bookkeeping task. Reconcile the current backlog count and decide which are legitimate no-pattern cases vs. candidates for new pattern concepts.
 - [ ] **Gold standard annotation** — `evals/gold_annotation.xlsx` is now seeded (51 sheets total including index), so the workbook is no longer blank. Remaining work: verify/correct 30–50 exercises. Current sheets appear to still be in `Pending` status. Methodology: strict (muscle, degree) pair F1 + muscle-name F1 + conditional degree accuracy; exact movement pattern match; leaf-level annotation required (ADR-109). Use `run_notes.md` flags as candidates.
 
 ---

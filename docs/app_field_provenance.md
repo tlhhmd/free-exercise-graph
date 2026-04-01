@@ -14,6 +14,8 @@ Primary implementation files:
 
 - [app/build_site.py](/Users/talha/Code/free-exercise-graph/app/build_site.py)
 - [app/app.js](/Users/talha/Code/free-exercise-graph/app/app.js)
+- [scripts/build_substitute_ui.py](/Users/talha/Code/free-exercise-graph/scripts/build_substitute_ui.py)
+- [scripts/lib/substitute_ui.py](/Users/talha/Code/free-exercise-graph/scripts/lib/substitute_ui.py)
 
 ---
 
@@ -86,6 +88,35 @@ They are not ontology terms and should not be mistaken for graph-native concepts
 
 ---
 
+## Substitute Artifact
+
+The substitute UX is no longer assembled inside `app/data.json`.
+It now ships as a separate build-time artifact:
+
+- [app/exercise_substitute_ui.json](/Users/talha/Code/free-exercise-graph/app/exercise_substitute_ui.json)
+
+This artifact is derived from Phase 1 similarity outputs rather than from browser-side logic.
+
+| Artifact / Field | Current Status | Current Source | Notes | Promotion Target |
+| --- | --- | --- | --- | --- |
+| `exercise_substitute_ui.json` | Graph-governed computed export | `scripts/build_substitute_ui.py` over generated similarity/community/features artifacts | app-ready substitute presentation layer; deterministic and inspectable | keep as computed export |
+| `closestAlternatives` | Graph-governed computed export with strict UX heuristics | ranked neighbors + post-rank qualification in `substitute_ui.py` | exacting “direct swap” bucket; stricter than general similarity | candidate to stay as computed export |
+| `equipmentAlternatives` | Graph-governed computed export with UX heuristics | ranked neighbors + equipment-difference filter | intentionally separated from direct swaps | candidate to stay as computed export |
+| `familyHighlights` | Graph-governed computed export with presentational grouping | neighbors + communities + grouping heuristics | broader exploration bucket; secondary and collapsed in UI | candidate to stay as computed export |
+| `reason` strings | Product heuristic / presentation grounded in graph features | `substitute_ui.py` | user-facing explanations; should remain truthful to actual feature diffs | improve build-time correctness; do not move to browser |
+| debug artifact | Developer-only derived artifact | `exercise_substitute_ui_debug.json` | explains bucket assignment, dedupe, and exclusion decisions | keep debug-only |
+
+Important boundary:
+
+- the browser does not score pairs
+- the browser does not dedupe substitute variants
+- the browser does not assign substitute buckets
+- the browser does not generate substitute reason strings
+
+It only renders the precomputed artifact.
+
+---
+
 ## Vocabulary Payload Fields
 
 | Field | Current Status | Current Source | Notes | Promotion Target |
@@ -111,6 +142,7 @@ If product shortcuts return later, they should be tracked here explicitly as UI 
 - `compareAttributes`
 - `whyHints`
 - `practicalNote`
+- substitute section layout / collapsed state
 - share-state / URL serialization
 - card layout metadata
 
@@ -123,6 +155,7 @@ These are presentation-layer concerns.
 - `explosiveness`
 - `builderRoles`
 - maybe `movementFamily`
+- substitute bucket exports like `closestAlternatives` / `familyHighlights` should remain here rather than drifting back into browser logic
 
 These are useful enough that they may deserve a governed deterministic layer closer to the graph.
 

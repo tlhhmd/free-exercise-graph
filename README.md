@@ -4,11 +4,21 @@
 
 A semantic knowledge graph of **3,442 exercises** — reconciled from multiple open datasets, classified against a governed OWL/SHACL ontology, and queryable via MCP (for AI agents) and a static app (for humans).
 
-The ontology, multi-source reconciliation pipeline, data quality framework, and 109 architecture decision records are original work. The exercise data comes from freely shared community datasets.
+The graph now also powers an offline similarity layer for substitute discovery: RDF remains the source of truth, while a deterministic build step projects `graph.ttl` into sparse similarity and substitute UI artifacts for the static app.
+
+The ontology, multi-source reconciliation pipeline, data quality framework, and 113 architecture decision records are original work. The exercise data comes from freely shared community datasets.
+
+## Start Here
+
+- **Docs home:** [docs/index.md](docs/index.md)
+- **Quickstart: build the graph:** [docs/quickstart_graph.md](docs/quickstart_graph.md)
+- **Quickstart: use the MCP server:** [docs/quickstart_mcp.md](docs/quickstart_mcp.md)
+- **Quickstart: build the static app:** [docs/quickstart_app.md](docs/quickstart_app.md)
+- **Troubleshooting:** [docs/troubleshooting.md](docs/troubleshooting.md)
 
 ## What You Can Do With It
 
-- **Find true substitutes** for any exercise based on shared movement patterns and prime movers — not just keyword similarity
+- **Find tighter substitutes** for any exercise through a precomputed similarity graph and substitute UI adapter — direct swaps first, broader family exploration second
 - **Audit a training program** for muscle coverage gaps, joint action imbalances, or missing movement patterns
 - **Ground an AI coaching agent** with structured, validated exercise data via MCP — no hallucinated muscle involvements
 - **Query by joint action** to find or exclude exercises around a rehab constraint (e.g. "everything involving shoulder external rotation, nothing involving spinal flexion")
@@ -18,10 +28,12 @@ The ontology, multi-source reconciliation pipeline, data quality framework, and 
 
 ## By the Numbers
 
+Counts below reflect the current committed app payload and local `graph.ttl`.
+
 | | |
 |---|---|
 | **3,442** canonical entities | resolved from **4,113** source records across multiple datasets |
-| **242,637** graph triples | assembled from resolved + inferred claims |
+| **242,642** graph triples | assembled from resolved + inferred claims |
 | **46** joint actions | across **9** joints |
 | **11** ontology files | independently versioned (semver) |
 | **113** ADRs | every non-trivial decision documented |
@@ -46,7 +58,7 @@ Source datasets provide exercise names, basic muscle lists, and broad categories
 
 ## Architecture
 
-Identity-first: resolve exercises into canonical entities across sources, then enrich each entity exactly once. Intermediate state lives in SQLite.
+Identity-first: resolve exercises into canonical entities across sources, then enrich each entity exactly once. Intermediate state lives in SQLite. The app-facing substitute layer is built after `graph.ttl`, not in the browser.
 
 ```
 sources/*/raw/              upstream source data (read-only)
@@ -77,14 +89,24 @@ sources/*/raw/              upstream source data (read-only)
                             asserted always takes precedence over inferred
         │
         ▼
-   graph.ttl                assembled knowledge graph (gitignored)
+   graph.ttl                assembled knowledge graph
         │
-   ┌────┴─────────────────────┐
-   ▼                          ▼
-validate.py               test_shacl.py
-data product health       ontology/shape regression tests
-        │
-        ▼
+   ┌────┼──────────────────────────────┬───────────────────────┐
+   ▼    ▼                              ▼                       ▼
+validate.py  test_shacl.py   build_similarity_graph.py   app/build_site.py
+data product health          weighted exercise graph      static app export
+ontology/shape tests         + communities JSON           copies substitute UI artifact
+                                  │
+                                  ▼
+                         build_substitute_ui.py
+                         UI buckets + reasons + dedupe
+                                  │
+                                  ▼
+                     app/exercise_substitute_ui.json
+                                  │
+                                  ▼
+                         static app substitute UX
+
 mcp_server.py             pyoxigraph in-process SPARQL
 5 MCP tools               search, get, substitute, hierarchy, joint-action
 ```
@@ -209,11 +231,31 @@ For the full operational playbook (backups, resets, enrichment import/export, re
 
 A static GitHub Pages app under [app/](app/) — the human-facing surface of the graph. Client-side filtering by muscle, movement pattern, equipment, and modality. Anatomy illustrations. Deterministic search that understands ontology labels. All expensive ontology work happens at build time; the browser only does fast filtering and rendering.
 
+Substitute discovery is now built in two offline layers:
+
+1. `scripts/build_similarity_graph.py` projects RDF exercise semantics into a weighted exercise-to-exercise graph.
+2. `scripts/build_substitute_ui.py` reshapes those graph outputs into product-facing buckets:
+   - `Closest Alternatives`
+   - `Different Equipment`
+   - collapsed `Explore This Family`
+
+The browser does not compute similarity, graph neighborhoods, deduplication, or substitute reason strings at runtime. It only reads precomputed JSON.
+
 ```bash
 python3 scripts/build_similarity_graph.py --input graph.ttl --out data/generated
 python3 scripts/build_substitute_ui.py --input-dir data/generated --out data/generated
-python3 app/build_site.py    # export data.json + vocab.json from the graph
+python3 app/build_site.py --from-graph --similarity-dir data/generated
 ```
+
+Generated artifacts for this flow include:
+
+- `data/generated/exercise_features.json`
+- `data/generated/exercise_similarity_edges.json`
+- `data/generated/exercise_neighbors.json`
+- `data/generated/exercise_communities.json`
+- `data/generated/build_metrics.json`
+- `data/generated/exercise_substitute_ui.json`
+- optional debug artifacts such as `exercise_substitute_ui_debug.json`
 
 See ADR-086–090 in `DECISIONS.md` for architecture rationale, and [app/README.md](app/README.md) for the full guide.
 
@@ -229,13 +271,16 @@ This project stands on the shoulders of people who freely shared their work. We 
 
 ---
 
-## Docs by Audience
+## Docs by Task
 
-- **New engineer / ontology engineer:** [docs/system_contracts.md](docs/system_contracts.md) → [docs/sqlite_data_model.md](docs/sqlite_data_model.md) → [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Pipeline operator:** [docs/full_run_playbook.md](docs/full_run_playbook.md)
-- **Ontologist / taxonomy reviewer:** [DECISIONS.md](DECISIONS.md), [ontology/](ontology/), [docs/sqlite_data_model.md](docs/sqlite_data_model.md), [docs/quality_surfaces.md](docs/quality_surfaces.md)
-- **Product / design context:** this README → [docs/reconciliation_example.md](docs/reconciliation_example.md) → [app/README.md](app/README.md) → [codexlog.md](codexlog.md)
-- **Frontend / static-app:** [app/README.md](app/README.md) → [docs/app_field_provenance.md](docs/app_field_provenance.md)
+- **Start from the docs router:** [docs/index.md](docs/index.md)
+- **Build the graph locally:** [docs/quickstart_graph.md](docs/quickstart_graph.md)
+- **Run the MCP server:** [docs/quickstart_mcp.md](docs/quickstart_mcp.md)
+- **Build and preview the static app:** [docs/quickstart_app.md](docs/quickstart_app.md)
+- **Safe end-to-end operator workflow:** [docs/full_run_playbook.md](docs/full_run_playbook.md)
+- **Contributor rules and guardrails:** [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Field provenance for app heuristics vs graph truth:** [docs/app_field_provenance.md](docs/app_field_provenance.md)
+- **Troubleshooting stale state and missing artifacts:** [docs/troubleshooting.md](docs/troubleshooting.md)
 
 ---
 
@@ -246,6 +291,8 @@ ontology/          11 TTL vocabulary + schema files (independently versioned)
 sources/           per-source adapters, crosswalks, and read-only raw data
 pipeline/          6-stage pipeline: canonicalize → identity → reconcile → enrich → build → validate
 enrichment/        LLM prompt assembly, provider adapters, Pydantic output schema
+scripts/           offline similarity-graph and substitute-UI builders
+data/generated/    generated similarity, community, and substitute UI artifacts
 app/               static GitHub Pages app (HTML/CSS/JS + build script)
 mcp_server.py      5-tool MCP server backed by pyoxigraph
 docs/              system contracts, data model, playbooks, worked examples
