@@ -935,12 +935,81 @@ def _attach_similarity_data(exercises: list[dict], similarity_artifacts: dict | 
     return exercises
 
 
-def _copy_json_artifact(src_path: Path, dest_path: Path) -> bool:
-    if not src_path.exists():
-        return False
-    payload = json.loads(src_path.read_text(encoding="utf-8"))
-    dest_path.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
-    return True
+def _exercise_name_key(name: str) -> str:
+    return _canonicalize_search_text(str(name or ""))
+
+
+def _build_name_to_id(items: list[dict], *, id_key: str = "id", name_key: str = "name") -> dict[str, str]:
+    name_to_ids: dict[str, set[str]] = {}
+    for item in items:
+        name_key_value = _exercise_name_key(item.get(name_key, ""))
+        item_id = str(item.get(id_key, "") or "")
+        if not name_key_value or not item_id:
+            continue
+        name_to_ids.setdefault(name_key_value, set()).add(item_id)
+    return {
+        name_key_value: next(iter(ids))
+        for name_key_value, ids in name_to_ids.items()
+        if len(ids) == 1
+    }
+
+
+def _build_similarity_id_map(exercises: list[dict], similarity_dir: Path) -> dict[str, str]:
+    id_map = {str(exercise["id"]): str(exercise["id"]) for exercise in exercises}
+    features_path = similarity_dir / "exercise_features.json"
+    if not features_path.exists():
+        return id_map
+
+    features = json.loads(features_path.read_text(encoding="utf-8"))
+    app_name_to_id = _build_name_to_id(exercises)
+    feature_name_to_id = _build_name_to_id(features)
+
+    for feature_name_key, feature_id in feature_name_to_id.items():
+        app_id = app_name_to_id.get(feature_name_key)
+        if app_id:
+            id_map[feature_id] = app_id
+    return id_map
+
+
+def _remap_substitute_ui_artifact(payload: dict, id_map: dict[str, str]) -> dict:
+    remapped: dict[str, dict] = {}
+
+    def remap_items(items: list[dict]) -> list[dict]:
+        results: list[dict] = []
+        seen_ids: set[str] = set()
+        for item in items:
+            mapped_id = id_map.get(str(item.get("id", "")))
+            if not mapped_id or mapped_id in seen_ids:
+                continue
+            results.append({
+                **item,
+                "id": mapped_id,
+            })
+            seen_ids.add(mapped_id)
+        return results
+
+    def remap_groups(groups: list[dict]) -> list[dict]:
+        results: list[dict] = []
+        for group in groups:
+            remapped_items = remap_items(group.get("items", []))
+            if not remapped_items:
+                continue
+            results.append({
+                **group,
+                "items": remapped_items,
+            })
+        return results
+
+    for source_id, buckets in payload.items():
+        mapped_source_id = id_map.get(str(source_id))
+        if not mapped_source_id:
+            continue
+        remapped[mapped_source_id] = {
+            "closestAlternatives": remap_items(buckets.get("closestAlternatives", [])),
+            "equipmentAlternatives": remap_items(buckets.get("equipmentAlternatives", [])),
+            "familyHighlights": remap_groups(buckets.get("familyHighlights", [])),
+        }
+    return remapped
 
 
 def _build_exercises(conn, group_level_map, ancestor_map) -> tuple[list[dict], dict]:
@@ -1161,10 +1230,18 @@ def generate(
 
     data_path.write_text(json.dumps(exercises, separators=(",", ":")), encoding="utf-8")
     vocab_path.write_text(json.dumps(vocab, separators=(",", ":")), encoding="utf-8")
-    copied_substitute_ui = _copy_json_artifact(
-        similarity_dir / "exercise_substitute_ui.json",
-        substitute_ui_path,
-    )
+    substitute_ui_src = similarity_dir / "exercise_substitute_ui.json"
+    if substitute_ui_src.exists():
+        substitute_payload = json.loads(substitute_ui_src.read_text(encoding="utf-8"))
+        substitute_id_map = _build_similarity_id_map(exercises, similarity_dir)
+        remapped_substitute_payload = _remap_substitute_ui_artifact(substitute_payload, substitute_id_map)
+        substitute_ui_path.write_text(
+            json.dumps(remapped_substitute_payload, separators=(",", ":")),
+            encoding="utf-8",
+        )
+        copied_substitute_ui = True
+    else:
+        copied_substitute_ui = False
 
     import gzip
     data_gz = len(gzip.compress(data_path.read_bytes()))
