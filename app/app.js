@@ -78,6 +78,14 @@ const TOKEN_NORMALIZATION = {
 };
 
 const BROWSE_FILTER_KEYS = ["patterns", "modalities", "equipment", "joints", "laterality", "planes", "styles"];
+const DEFAULT_THEME = "gold";
+const THEME_STORAGE_KEY = "feg-theme";
+const THEMES = {
+  gold: { label: "Gold", swatchStart: "#ffd94f", swatchEnd: "#c83200" },
+  mono: { label: "Mono", swatchStart: "#efefef", swatchEnd: "#202020" },
+  dark: { label: "Dark", swatchStart: "#2a2e35", swatchEnd: "#f4efe7" },
+  campbell: { label: "Campbell", swatchStart: "#f6e2bd", swatchEnd: "#c9242b" },
+};
 
 const FILTER_VALUE_GETTERS = {
   modalities: exercise => exercise.modality ? [exercise.modality] : [],
@@ -121,11 +129,79 @@ const state = {
   observatoryData: null,
   observatoryLoadPromise: null,
   substituteUi: {},
+  theme: DEFAULT_THEME,
 };
 
 let searchDebounceTimer = null;
 
 function el(id) { return document.getElementById(id); }
+
+function normalizeTheme(theme) {
+  return Object.prototype.hasOwnProperty.call(THEMES, theme) ? theme : DEFAULT_THEME;
+}
+
+function getStoredTheme() {
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function setStoredTheme(theme) {
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore storage errors in private browsing or restricted environments.
+  }
+}
+
+function renderThemeMenu() {
+  const menu = el("theme-menu");
+  if (!menu) return;
+  menu.innerHTML = Object.entries(THEMES).map(([id, theme]) => `
+    <button
+      class="theme-option${state.theme === id ? " active" : ""}"
+      type="button"
+      data-theme="${id}">
+      <span
+        class="theme-option-swatch"
+        style="--swatch-start:${theme.swatchStart}; --swatch-end:${theme.swatchEnd};"
+        aria-hidden="true"></span>
+      <span>${theme.label}</span>
+    </button>
+  `).join("");
+}
+
+function setThemeMenuOpen(open) {
+  const dock = el("theme-dock");
+  const toggle = el("theme-toggle");
+  const menu = el("theme-menu");
+  if (!dock || !toggle || !menu) return;
+  dock.classList.toggle("open", open);
+  menu.hidden = !open;
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function applyTheme(theme, { persist = true, sync = true } = {}) {
+  const nextTheme = normalizeTheme(theme);
+  state.theme = nextTheme;
+  document.body.dataset.theme = nextTheme;
+
+  const toggle = el("theme-toggle");
+  if (toggle) {
+    const label = THEMES[nextTheme]?.label || nextTheme;
+    toggle.setAttribute("aria-label", `Switch color theme. Current theme: ${label}`);
+    toggle.title = `Theme: ${label}`;
+  }
+
+  document.querySelectorAll(".theme-option[data-theme]").forEach(button => {
+    button.classList.toggle("active", button.dataset.theme === nextTheme);
+  });
+
+  if (persist) setStoredTheme(nextTheme);
+  if (sync) syncUrlState();
+}
 
 async function loadJson(path) {
   const res = await fetch(path);
@@ -677,6 +753,7 @@ function renderFamilyHighlights(groups) {
 
 function syncUrlState() {
   const params = new URLSearchParams();
+  if (state.theme !== DEFAULT_THEME) params.set("theme", state.theme);
   if (state.activeTab !== "exercises") params.set("tab", state.activeTab);
   if (state.search) params.set("q", state.search);
   if (state.sheetExercise) params.set("detail", state.sheetExercise);
@@ -694,6 +771,7 @@ function syncUrlState() {
 
 function restoreUrlState() {
   const params = new URLSearchParams(window.location.search);
+  state.theme = normalizeTheme(params.get("theme") || getStoredTheme() || DEFAULT_THEME);
   state.activeTab = params.get("tab") || "exercises";
   state.search = params.get("q") || "";
   state.sheetExercise = params.get("detail") || null;
@@ -1206,6 +1284,10 @@ app.setBodyView = function(view) {
   syncUrlState();
 };
 
+app.setTheme = function(theme) {
+  applyTheme(theme);
+};
+
 function renderPatternTags() {
   el("pattern-tags").innerHTML = (state.vocab.patterns || []).map(pattern => {
     const active = state.filters.patterns.includes(pattern.id);
@@ -1616,6 +1698,43 @@ function initNav() {
   });
 }
 
+function initThemeDock() {
+  const dock = el("theme-dock");
+  const toggle = el("theme-toggle");
+  const menu = el("theme-menu");
+  if (!dock || !toggle || !menu) return;
+
+  if (Object.keys(THEMES).length <= 1) {
+    dock.hidden = true;
+    applyTheme(state.theme, { persist: false, sync: false });
+    return;
+  }
+
+  renderThemeMenu();
+  applyTheme(state.theme, { persist: false, sync: false });
+  setThemeMenuOpen(false);
+
+  toggle.addEventListener("click", event => {
+    event.stopPropagation();
+    setThemeMenuOpen(menu.hidden);
+  });
+
+  menu.addEventListener("click", event => {
+    const button = event.target.closest(".theme-option[data-theme]");
+    if (!button) return;
+    applyTheme(button.dataset.theme);
+    setThemeMenuOpen(false);
+  });
+
+  document.addEventListener("click", event => {
+    if (!dock.contains(event.target)) setThemeMenuOpen(false);
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") setThemeMenuOpen(false);
+  });
+}
+
 
 function initCopyLink() {
   const button = el("copy-link-btn");
@@ -1661,6 +1780,7 @@ function initBuilderKeyboard() {
 }
 
 function init() {
+  initThemeDock();
   initNav();
   initSearch();
   initFilterChips();

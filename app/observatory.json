@@ -748,12 +748,6 @@
               "value": "Unilateral"
             }
           ],
-          "Human override": [
-            {
-              "predicate": "Movement Pattern",
-              "value": "Hip Hinge"
-            }
-          ],
           "Union": [
             {
               "predicate": "Equipment",
@@ -776,7 +770,6 @@
         "method_counts": {
           "Consensus": 1,
           "Coverage gap": 3,
-          "Human override": 1,
           "Union": 4
         },
         "conflicts": []

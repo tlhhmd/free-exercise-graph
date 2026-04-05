@@ -12,32 +12,35 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.talha.foo/free-exercise-graph/" />
   <meta property="og:title" content="free-exercise-graph" />
-  <meta property="og:description" content="A semantic knowledge graph of 3,442 exercises — multi-source reconciliation, governed OWL ontology, SHACL validation, MCP server, and a static app. 113 architecture decision records." />
+  <meta property="og:description"
+    content="A semantic knowledge graph of 3,442 exercises — multi-source reconciliation, governed OWL ontology, SHACL validation, MCP server, and a static app. 113 architecture decision records." />
   <meta property="og:image" content="https://www.talha.foo/free-exercise-graph/illustrations/anatomy-front.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="free-exercise-graph" />
-  <meta name="twitter:description" content="A semantic knowledge graph of 3,442 exercises — multi-source reconciliation, governed OWL ontology, SHACL validation, MCP server, and a static app." />
+  <meta name="twitter:description"
+    content="A semantic knowledge graph of 3,442 exercises — multi-source reconciliation, governed OWL ontology, SHACL validation, MCP server, and a static app." />
   <meta name="twitter:image" content="https://www.talha.foo/free-exercise-graph/illustrations/anatomy-front.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=League+Gothic&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=League+Gothic&family=Lobster&family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 
-<body data-tab="exercises">
+<body data-tab="exercises" data-theme="gold">
 
   <!-- ── Exercises tab ───────────────────────────────────────────────────── -->
   <div id="view-exercises" class="view active">
-    <header class="tab-hero tab-hero-exercises">
-      <div class="tab-kicker">Semantic exercise atlas</div>
+    <header class="tab-hero">
+      <div class="tab-kicker">Under Construction</div>
       <h1 class="tab-title">Free Exercise Graph</h1>
-      <p class="tab-copy">Search exercises by muscle, movement, modality, joint action, and equipment.</p>
+      <p class="tab-copy">Exercise discovery engine</p>
     </header>
     <div class="search-bar">
-      <input id="search-input" type="search" placeholder="Search exercises, muscles, patterns, or equipment" autocomplete="off" />
+      <input id="search-input" type="search" placeholder="Search exercises, muscles, patterns, or equipment"
+        autocomplete="off" />
       <div class="filter-row" id="filter-chips">
         <button class="filter-chip" data-panel="patterns">Patterns</button>
         <button class="filter-chip" data-panel="muscles">Muscles</button>
@@ -71,7 +74,7 @@
 
   <!-- ── Muscles tab ─────────────────────────────────────────────────────── -->
   <div id="view-muscles" class="view">
-    <header class="tab-hero tab-hero-muscles">
+    <header class="tab-hero">
       <div class="tab-kicker">Anatomy view</div>
       <h2 class="tab-title">Muscles & Regions</h2>
       <p class="tab-copy">Trace the graph through the body, then refine the exercise list with a visible muscle
@@ -91,7 +94,7 @@
     <div class="anatomy-col-right">
       <div id="muscle-list-section">
         <div class="section-label">Browse by muscle hierarchy</div>
-        <div class="context-note context-note-muscles">Select a body region or muscle group to filter the graph right here.</div>
+        <div class="context-note">Select a body region or muscle group to filter the graph right here.</div>
         <div class="muscle-list" id="muscle-list"></div>
       </div>
       <div id="muscle-results-section">
@@ -108,7 +111,7 @@
 
   <!-- ── Vocabulary tab ─────────────────────────────────────────────────────── -->
   <div id="view-vocab" class="view">
-    <header class="tab-hero tab-hero-browse">
+    <header class="tab-hero">
       <div class="tab-kicker">Ontology browse</div>
       <h2 class="tab-title">Training Concepts</h2>
       <p class="tab-copy">Browse movement patterns, modalities, joint actions, and equipment without losing your place.
@@ -162,7 +165,7 @@
     </div>
     <div id="browse-results-section">
       <div class="section-label">Exercises for current concept filters</div>
-      <div class="context-note context-note-browse">Stay on Browse and open full exercise details from here.</div>
+      <div class="context-note">Stay on Browse and open full exercise details from here.</div>
       <div id="browse-result-count" class="result-count"></div>
       <div id="browse-exercise-list" class="exercise-list"></div>
     </div>
@@ -177,6 +180,15 @@
   </div>
 
   <!-- ── Bottom nav ─────────────────────────────────────────────────────────── -->
+  <div class="theme-dock" id="theme-dock">
+    <div class="theme-dock-menu" id="theme-menu" hidden></div>
+    <button class="theme-dock-toggle" id="theme-toggle" type="button" aria-label="Switch color theme"
+      aria-controls="theme-menu" aria-expanded="false">
+      <span class="theme-dock-dot" aria-hidden="true"></span>
+      Theme
+    </button>
+  </div>
+
   <nav class="bottom-nav">
     <button class="nav-btn active" data-tab="exercises">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -204,7 +216,7 @@
     </button>
   </nav>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=2"></script>
 </body>
 
 </html>
