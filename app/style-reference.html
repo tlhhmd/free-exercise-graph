@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Visual style reference for free-exercise-graph." />
+  <title>free-exercise-graph style reference</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=League+Gothic&family=Lobster&family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=6" />
+
+  <style>
+    body.reference-page {
+      padding-bottom: 48px;
+    }
+
+    .reference-page .view {
+      display: block;
+      max-width: 1040px;
+      padding-bottom: 32px;
+    }
+
+    .reference-page .search-bar {
+      position: static;
+      padding-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .reference-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .reference-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 16px;
+      box-shadow: 0 12px 28px rgba(19, 32, 54, 0.08);
+    }
+
+    .reference-panel p {
+      color: var(--text-2);
+      font-size: var(--text-sm);
+      line-height: 1.5;
+    }
+
+    .component-row,
+    .token-grid,
+    .scale-list,
+    .type-demo-list,
+    .nav-preview {
+      display: grid;
+      gap: 10px;
+    }
+
+    .reference-kpi {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .reference-kpi-card {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 12px;
+    }
+
+    .reference-kpi-card span {
+      display: block;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-2);
+      margin-bottom: 4px;
+    }
+
+    .reference-kpi-card strong {
+      display: block;
+      font-size: var(--text-lg);
+      line-height: 1.1;
+      color: var(--navy);
+      font-family: var(--font-display);
+      letter-spacing: 0.03em;
+    }
+
+    .token-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .token-card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      min-height: 128px;
+    }
+
+    .token-swatch {
+      height: 72px;
+      border-bottom: 1px solid var(--border);
+      background: var(--swatch, transparent);
+    }
+
+    .token-meta {
+      padding: 10px 12px 12px;
+    }
+
+    .token-name {
+      display: block;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .token-value {
+      display: block;
+      font-size: var(--text-sm);
+      color: var(--text-2);
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .scale-list,
+    .type-demo-list {
+      grid-template-columns: 1fr;
+    }
+
+    .scale-item,
+    .type-demo {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 12px;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 12px 14px;
+    }
+
+    .scale-item code,
+    .type-demo code {
+      font-size: var(--text-xs);
+      color: var(--text-2);
+    }
+
+    .scale-item strong,
+    .type-demo strong {
+      display: block;
+      color: var(--navy);
+      font-size: var(--text-sm);
+      margin-bottom: 2px;
+    }
+
+    .radius-chip-row,
+    .badge-row,
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .radius-chip {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--text);
+      font-size: var(--text-xs);
+    }
+
+    .nav-preview {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .nav-preview .nav-btn {
+      min-height: 74px;
+    }
+
+    .component-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .component-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-sheet {
+      background: rgba(255, 250, 241, 0.98);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 14px;
+      box-shadow: 0 14px 28px rgba(19, 32, 54, 0.1);
+    }
+
+    .mini-sheet .sheet-handle {
+      position: static;
+      width: 100%;
+      height: auto;
+      margin: 0 0 10px;
+      background: none;
+    }
+
+    .mini-sheet .sheet-handle::after {
+      margin-top: 0;
+    }
+
+    .mini-sheet .sheet-title {
+      margin-top: 0;
+    }
+
+    .component-caption {
+      font-size: var(--text-xs);
+      color: var(--text-2);
+      margin-top: -2px;
+    }
+
+    .code-link {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .code-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .reference-grid,
+      .component-row {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-preview,
+      .reference-kpi {
+        grid-template-columns: 1fr;
+      }
+
+      .scale-item,
+      .type-demo {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="reference-page" data-tab="vocab" data-theme="gold">
+  <div class="view active">
+    <header class="tab-hero">
+      <div class="tab-kicker">Design surface</div>
+      <h1 class="tab-title">Style Reference</h1>
+      <p class="tab-copy">A single-page reference for the app's tokens, palette, type scale, radii, and core components.</p>
+    </header>
+
+    <div class="reference-grid">
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Shared Palette</div>
+        <p>The app now uses the Browse tab palette everywhere. All token values below come directly from the live CSS variables in <a class="code-link" href="style.css">style.css</a>.</p>
+        <div class="reference-kpi">
+          <div class="reference-kpi-card">
+            <span>Page max width</span>
+            <strong>760px</strong>
+          </div>
+          <div class="reference-kpi-card">
+            <span>Bottom nav height</span>
+            <strong id="nav-height-value">82px</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Fonts</div>
+        <p>Typography now rides with the theme too: each scheme can swap the display, kicker, and body font tokens.</p>
+        <div class="type-demo-list">
+          <div class="type-demo">
+            <div>
+              <strong>Display</strong>
+              <code>var(--font-display)</code>
+            </div>
+            <div class="tab-title" style="margin:0; font-size:var(--text-display);">Atlas</div>
+          </div>
+          <div class="type-demo">
+            <div>
+              <strong>Kicker</strong>
+              <code>var(--font-kicker)</code>
+            </div>
+            <div class="tab-kicker" style="margin:0;">Semantic exercise atlas</div>
+          </div>
+          <div class="type-demo">
+            <div>
+              <strong>Body</strong>
+              <code>var(--font-body)</code>
+            </div>
+            <div style="font-size:var(--text-base); color:var(--text); line-height:1.5;">Search exercises by muscle, movement, modality, joint action, and equipment.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="reference-panel">
+      <div class="section-label section-label-inline">Color Tokens</div>
+      <p>These swatches are pulled from the computed CSS custom properties on the shared app theme.</p>
+      <div class="token-grid" id="color-token-grid"></div>
+    </section>
+
+    <div class="reference-grid">
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Size Tokens</div>
+        <div class="scale-list" id="size-scale-list"></div>
+      </section>
+
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Radius Tokens</div>
+        <div class="scale-list" id="radius-scale-list"></div>
+        <div class="component-caption">Visual preview</div>
+        <div class="radius-chip-row" id="radius-chip-row"></div>
+      </section>
+    </div>
+
+    <section class="reference-panel">
+      <div class="section-label section-label-inline">Type Scale</div>
+      <div class="type-demo-list" id="type-scale-list"></div>
+    </section>
+
+    <section class="reference-panel">
+      <div class="section-label section-label-inline">Component Samples</div>
+      <div class="component-row">
+        <div class="component-stack">
+          <div class="component-caption">Filter controls</div>
+          <div class="filter-row">
+            <button class="filter-chip active" type="button">Patterns</button>
+            <button class="filter-chip" type="button">Muscles</button>
+            <button class="filter-chip" type="button">Modality</button>
+            <button class="filter-chip clear-btn" type="button">Clear</button>
+          </div>
+
+          <div class="filter-panel open">
+            <div class="filter-panel-title">Movement Patterns</div>
+            <div class="filter-tags">
+              <button class="filter-tag active" type="button">Squat</button>
+              <button class="filter-tag" type="button">Push</button>
+              <button class="filter-tag" type="button">Pull</button>
+              <button class="filter-tag" type="button">Carry</button>
+            </div>
+          </div>
+
+          <div class="component-caption">Active filters and text helpers</div>
+          <div class="active-filters">
+            <div class="active-filter-pill">Glutes <button type="button">x</button></div>
+            <div class="active-filter-pill">Hip Hinge <button type="button">x</button></div>
+          </div>
+          <div class="result-count">123 exercises match the current filters.</div>
+          <div class="context-note">Selections here populate Exercise filters without kicking you out of this tab.</div>
+        </div>
+
+        <div class="component-stack">
+          <div class="component-caption">Card patterns</div>
+          <article class="exercise-card v2-card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <div class="movement-glyph">↓</div>
+                <div class="card-name">Goblet Squat</div>
+              </div>
+              <div class="card-badges">
+                <span class="badge badge-compound">Compound</span>
+                <span class="badge badge-modality">Strength</span>
+              </div>
+            </div>
+            <div class="mini-region-row">
+              <span class="mini-region mini-region-legs_front">Quads</span>
+              <span class="mini-region mini-region-glutes">Glutes</span>
+              <span class="mini-region mini-region-core">Core</span>
+            </div>
+            <div class="card-facts">
+              <div class="card-fact-line">Primary joint action: Knee extension, Hip extension</div>
+              <div class="card-note">Compact card with hierarchy, tags, and movement glyph.</div>
+            </div>
+            <div class="card-actions">
+              <button class="card-btn card-btn-primary" type="button">Open details</button>
+            </div>
+          </article>
+
+          <div class="component-caption">Sheet surface</div>
+          <div class="mini-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Exercise detail sheet</div>
+            <div class="sheet-subtitle">The app uses this as the main drill-down surface.</div>
+            <div class="sheet-hero-panel">
+              <div class="sheet-glyph"><span>→</span><small>Push</small></div>
+              <div class="sheet-hero-copy">
+                <p>Large details live on a warm paper surface with navy accents, rounded corners, and compact information cards.</p>
+              </div>
+            </div>
+            <div class="detail-summary-grid">
+              <div class="detail-summary-card"><span>Primary</span><strong>Chest</strong></div>
+              <div class="detail-summary-card"><span>Equipment</span><strong>Dumbbell</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="reference-grid">
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Status Colors</div>
+        <p>The muscle involvement colors are separate semantic tokens from the page themes.</p>
+        <div class="pill-row">
+          <span class="muscle-pill pill-prime">Prime mover</span>
+          <span class="muscle-pill pill-synergist">Synergist</span>
+          <span class="muscle-pill pill-stabilizer">Stabilizer</span>
+          <span class="badge" style="background:#e2e8f0; color:#475569;">Passive target</span>
+        </div>
+      </section>
+
+      <section class="reference-panel">
+        <div class="section-label section-label-inline">Bottom Navigation</div>
+        <div class="nav-preview">
+          <button class="nav-btn active" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            Exercises
+          </button>
+          <button class="nav-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+              <path d="M4 22h16" />
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+            </svg>
+            Muscles
+          </button>
+          <button class="nav-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </svg>
+            Browse
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <section class="reference-panel">
+      <div class="section-label section-label-inline">Vocabulary Rows</div>
+      <div class="vocab-section">
+        <div class="vocab-section-header open">
+          <div class="muscle-header-label">Movement Patterns</div>
+          <span class="vocab-item-count">24</span>
+          <span class="vocab-chevron">▼</span>
+        </div>
+        <div class="vocab-items open">
+          <div class="vocab-item active">
+            <div class="vocab-item-main">
+              <span>Squat</span>
+              <small>Compound lower-body pattern</small>
+            </div>
+            <span class="vocab-item-count">153</span>
+          </div>
+          <div class="vocab-item">
+            <div class="vocab-item-main">
+              <span>Push</span>
+              <small>Upper-body pressing pattern</small>
+            </div>
+            <span class="vocab-item-count">127</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const COLOR_TOKENS = [
+      "--bg",
+      "--bg-top",
+      "--surface",
+      "--surface-2",
+      "--surface-3",
+      "--border",
+      "--border-strong",
+      "--text",
+      "--text-2",
+      "--accent",
+      "--accent-soft",
+      "--accent-2",
+      "--navy",
+      "--paper",
+      "--poster-shadow",
+      "--title-shadow",
+      "--deg-prime",
+      "--deg-synergist",
+      "--deg-stabilizer",
+      "--deg-passive"
+    ];
+
+    const SIZE_TOKENS = [
+      "--nav-h",
+      "--gap"
+    ];
+
+    const RADIUS_TOKENS = [
+      "--r-xs",
+      "--r-sm",
+      "--r-md",
+      "--r-lg",
+      "--r-xl",
+      "--r-full"
+    ];
+
+    const TYPE_TOKENS = [
+      "--text-xs",
+      "--text-sm",
+      "--text-base",
+      "--text-lg",
+      "--text-xl",
+      "--text-display"
+    ];
+
+    const typeLabels = {
+      "--text-xs": "Fine print and badges",
+      "--text-sm": "Secondary labels and helper copy",
+      "--text-base": "Body copy and card names",
+      "--text-lg": "Card titles and section accents",
+      "--text-xl": "Section labels and vocabulary display",
+      "--text-display": "Hero display headline"
+    };
+
+    function tokenValue(name) {
+      return getComputedStyle(document.body).getPropertyValue(name).trim();
+    }
+
+    function renderColorTokens() {
+      const container = document.getElementById("color-token-grid");
+      container.innerHTML = COLOR_TOKENS.map(name => `
+        <div class="token-card">
+          <div class="token-swatch" style="--swatch:${tokenValue(name)};"></div>
+          <div class="token-meta">
+            <span class="token-name">${name}</span>
+            <span class="token-value">${tokenValue(name)}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderScaleList(containerId, names) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = names.map(name => `
+        <div class="scale-item">
+          <div>
+            <strong>${name}</strong>
+            <code>${tokenValue(name)}</code>
+          </div>
+          <div style="color:var(--text-2); font-size:var(--text-sm);">${tokenValue(name)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderRadiusPreview() {
+      const container = document.getElementById("radius-chip-row");
+      container.innerHTML = RADIUS_TOKENS.map(name => `
+        <div class="radius-chip" style="border-radius:${tokenValue(name)};">
+          ${name}
+        </div>
+      `).join("");
+    }
+
+    function renderTypeScale() {
+      const container = document.getElementById("type-scale-list");
+      container.innerHTML = TYPE_TOKENS.map(name => `
+        <div class="type-demo">
+          <div>
+            <strong>${name}</strong>
+            <code>${tokenValue(name)}</code>
+          </div>
+          <div style="font-size:${tokenValue(name)}; line-height:1.15; color:var(--text); font-family:${name === "--text-display" ? "var(--font-display)" : "var(--font-body)"};">
+            ${typeLabels[name]}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderReference() {
+      document.getElementById("nav-height-value").textContent = tokenValue("--nav-h");
+      renderColorTokens();
+      renderScaleList("size-scale-list", SIZE_TOKENS);
+      renderScaleList("radius-scale-list", RADIUS_TOKENS);
+      renderRadiusPreview();
+      renderTypeScale();
+    }
+
+    renderReference();
+  </script>
+</body>
+
+</html>

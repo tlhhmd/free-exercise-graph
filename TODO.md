@@ -6,7 +6,7 @@ Remaining work is grouped by execution horizon.
 
 ## Now
 
-- [ ] **Gold standard annotation** — `evals/gold_annotation.xlsx` is now seeded (51 sheets total including index), so the workbook is no longer blank. Remaining work: verify/correct 30–50 exercises. Current sheets appear to still be in `Pending` status. Methodology: strict (muscle, degree) pair F1 + muscle-name F1 + conditional degree accuracy; exact movement pattern match; leaf-level annotation required (ADR-109). Use `run_notes.md` flags as candidates.
+- [ ] **Gold standard annotation** — review the batched workbooks in `evals/unreviewed/`, then move completed batches into `evals/submitted/` for scoring with `python3 evals/eval.py`. Batches are generated from the live canonical `pipeline.db` using a representative 50-exercise sample plus a small edge-case coverage slice, split into 10-exercise files. Methodology: strict (muscle, degree) pair F1 + muscle-name F1 + conditional degree accuracy; exact movement pattern match; leaf-level annotation required (ADR-109). Use `run_notes.md` flags as candidates for explicit inclusion when rebuilding the workbook.
 
 ---
 

@@ -80,7 +80,7 @@ free-exercise-graph/
     exercise_substitute_ui.json    app-facing substitute buckets + reasons
     exercise_substitute_ui_debug.json optional debug metadata for bucket decisions
 
-  evals/                           gold standard annotation and eval tooling
+  evals/                           canonical gold workbook generator, workbook, and eval scorer
   queries/                         example SPARQL discovery queries
   app/
     README.md                      app-specific guide: build, preview, deploy, product roadmap

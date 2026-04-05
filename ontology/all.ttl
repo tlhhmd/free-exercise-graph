@@ -1,0 +1,2277 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix feg: <https://placeholder.url#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+feg: a owl:Ontology ;
+    rdfs:label "Free Exercise Graph Ontology" ;
+    rdfs:comment "An ontology for exercise science, extending free-exercise-db with semantic properties." ;
+    owl:versionInfo "1.0.1" .
+
+feg:AbWheel a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Ab Wheel" ;
+    rdfs:comment "A small wheel with handles used for rollout exercises targeting the core." .
+
+feg:AdductorBrevis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Adductor Brevis" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Adductor Brevis" .
+
+feg:AdductorLongus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Adductor Longus" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Adductor Longus" .
+
+feg:AdductorMagnus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Adductor Magnus" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Adductor Magnus" .
+
+feg:Anconeus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Anconeus" ;
+    rdfs:comment "Small elbow extensor muscle on the posterior forearm. Assists TricepsBrachii during elbow extension and stabilises the elbow joint." ;
+    skos:broader feg:Triceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Anconeus" .
+
+feg:AnimalFlow a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Animal Flow" ;
+    rdfs:comment "A ground-based movement practice inspired by animal locomotion patterns. Emphasises mobility, coordination, and movement flow across multiple planes." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:AnkleEversion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Ankle Eversion" ;
+    rdfs:comment "Turning the sole of the foot outward. Primary drivers: peroneus longus, peroneus brevis." ;
+    skos:broader feg:Ankle ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Ankle Eversion" .
+
+feg:AnkleInversion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Ankle Inversion" ;
+    rdfs:comment "Turning the sole of the foot inward. Primary drivers: tibialis posterior, tibialis anterior." ;
+    skos:broader feg:Ankle ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Ankle Inversion" .
+
+feg:AnteriorDeltoid a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Anterior Deltoid" ;
+    skos:altLabel "Front Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Anterior Deltoid" .
+
+feg:AnteriorScalene a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Anterior Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Anterior Scalene" .
+
+feg:AntiExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Anti Extension" ;
+    rdfs:comment "Exercises that train the trunk to resist extension forces — the spine is braced against a load that attempts to extend it. Representative: plank, ab wheel rollout, dead bug, hollow hold." ;
+    skos:broader feg:TrunkStability ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Anti Extension" .
+
+feg:AntiFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Anti Flexion" ;
+    rdfs:comment "Exercises that train the trunk to resist flexion forces — the spine is braced against a load that attempts to flex it. Representative: back extension, Superman hold, good morning with isometric hold." ;
+    skos:broader feg:TrunkStability ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Anti Flexion" .
+
+feg:AntiLateralFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Anti Lateral Flexion" ;
+    rdfs:comment "Exercises that train the trunk to resist lateral flexion forces — the spine is braced against a load that attempts to bend it to the side. Representative: side plank, suitcase carry, single-arm overhead carry." ;
+    skos:broader feg:TrunkStability ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Anti Lateral Flexion" .
+
+feg:AntiRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Anti Rotation" ;
+    rdfs:comment "Exercises that train the trunk to resist rotational forces — the spine is braced against a load that attempts to rotate it. Representative: Pallof press, single-arm carry, single-arm cable row." ;
+    skos:broader feg:TrunkStability ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Anti Rotation" .
+
+feg:Balance a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Balance" ;
+    rdfs:comment "Exercises whose primary demand is proprioceptive and vestibular challenge. The defining stimulus is maintaining equilibrium under load or in unstable conditions, not muscle development or cardiovascular adaptation." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Ballistics a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Ballistics" ;
+    rdfs:comment "A kettlebell sport category for explosive, cyclical swinging movements — swings, cleans, snatches, and jerks performed with kettlebells. Distinct from slow-strength kettlebell work (Grinds)." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Bands a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bands" ;
+    rdfs:comment "Elastic resistance bands used to add or accommodate load." ;
+    skos:altLabel "Resistance Bands" .
+
+feg:Barbell a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Barbell" ;
+    rdfs:comment "A long straight bar loaded with weight plates on each end." .
+
+feg:BattleRopes a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Battle Ropes" ;
+    rdfs:comment "Heavy ropes anchored at one end, used for wave and slam exercises targeting conditioning and upper body." .
+
+feg:BenchDecline a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bench (Decline)" ;
+    rdfs:comment "A bench angled downward, used for decline pressing and decline curl variations." ;
+    skos:altLabel "Decline Bench" .
+
+feg:BenchFlat a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bench (Flat)" ;
+    rdfs:comment "A flat weight bench used as a surface or support for pressing, rowing, and hip thrust exercises." ;
+    skos:altLabel "Flat Bench" .
+
+feg:BenchIncline a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bench (Incline)" ;
+    rdfs:comment "An adjustable bench set at an incline angle, used for incline pressing and prone row variations." ;
+    skos:altLabel "Incline Bench" .
+
+feg:BicepsFemoris a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Biceps Femoris" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Biceps Femoris" .
+
+feg:BicepsLongHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Biceps Long Head" ;
+    skos:broader feg:BicepsBrachii ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Biceps Long Head" .
+
+feg:BicepsShortHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Biceps Short Head" ;
+    skos:broader feg:BicepsBrachii ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Biceps Short Head" .
+
+feg:Bilateral a owl:NamedIndividual,
+        feg:Laterality ;
+    rdfs:label "Bilateral" ;
+    rdfs:comment "Both limbs work simultaneously and symmetrically. Examples: barbell squat, bench press, pull up." ;
+    skos:inScheme feg:LateralityScheme .
+
+feg:Bodybuilding a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Bodybuilding" ;
+    rdfs:comment "Exercises drawn from the bodybuilding tradition, emphasising muscle isolation, controlled tempo, and aesthetic development. Typically machine or dumbbell-based isolation movements." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Bodyweight a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bodyweight" ;
+    rdfs:comment "No external equipment; the exercise uses the athlete's own body mass as resistance." ;
+    skos:altLabel "Body Only" .
+
+feg:Brachialis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Brachialis" ;
+    skos:broader feg:Biceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Brachialis" .
+
+feg:Brachioradialis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Brachioradialis" ;
+    skos:broader feg:Forearms ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Brachioradialis" ;
+    skos:related feg:Biceps .
+
+feg:BulgarianBag a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Bulgarian Bag" ;
+    rdfs:comment "A crescent-shaped sand-filled bag worn over the shoulders, used for rotational and throwing movements." .
+
+feg:Cable a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Cable" ;
+    rdfs:comment "A pulley-based cable machine providing constant tension through the range of motion." .
+
+feg:Calisthenics a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Calisthenics" ;
+    rdfs:comment "Bodyweight exercises using gymnastic and street workout principles. Emphasis on relative strength, movement skill, and progressive overload through leverage rather than external load." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Cardio a owl:NamedIndividual,
+        feg:TrainingModality ;
+    rdfs:label "Cardio" ;
+    rdfs:comment "Training principally focused on improving cardiovascular endurance and aerobic capacity." .
+
+feg:Carry a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Carry" ;
+    rdfs:comment "Movements in which load is held and transported through space, demanding full-body stability and grip strength." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Carry" .
+
+feg:ClavicularHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Clavicular Head" ;
+    skos:altLabel "Upper Chest" ;
+    skos:broader feg:PectoralisMajor ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Clavicular Head" .
+
+feg:ClimbingRope a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Climbing Rope" ;
+    rdfs:comment "A thick rope suspended from above, used for rope climbing and hanging exercises." .
+
+feg:Clubbell a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Clubbell" ;
+    rdfs:comment "A club-shaped weight used for circular and swinging movements emphasising shoulder and wrist mobility." .
+
+feg:Contralateral a owl:NamedIndividual,
+        feg:Laterality ;
+    rdfs:label "Contralateral" ;
+    rdfs:comment "Opposite limbs work together — one arm and the opposite leg move simultaneously. Characteristic of exercises that train anti-rotational core stability. Examples: bird dog, dead bug, contralateral reverse lunge." ;
+    skos:inScheme feg:LateralityScheme .
+
+feg:Core a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Core" ;
+    skos:altLabel "Anterior Core" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Core" ;
+    skos:scopeNote "Convenience term for the anterior trunk as a functional unit. Use on compound movements where abdominal bracing is incidental. Use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) for dedicated core exercises where the core is the primary target." .
+
+feg:CoreFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Core Flexion" ;
+    rdfs:comment "Exercises that produce dynamic spinal flexion under load — the trunk actively shortens against resistance. Distinct from the joint action SpinalFlexion: this is the user-facing exercise category (crunch, sit-up, cable crunch, hanging leg raise), not the biomechanical descriptor. Representative: crunches, sit-ups, cable crunches, V-ups, hanging leg raises." ;
+    skos:broader feg:TrunkStability ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Core Flexion" .
+
+feg:Dorsiflexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Dorsiflexion" ;
+    rdfs:comment "Pulling the top of the foot upward toward the shin. Primary drivers: tibialis anterior." ;
+    skos:broader feg:Ankle ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Dorsiflexion" .
+
+feg:Dumbbell a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Dumbbell" ;
+    rdfs:comment "A short hand-held weight, typically used in pairs." .
+
+feg:EZBar a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "EZ Bar" ;
+    rdfs:comment "A short angled barbell designed to reduce wrist strain during curling and skull crusher movements." ;
+    skos:altLabel "E-Z Curl Bar" .
+
+feg:EZCurlBar a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "EZ Curl Bar" ;
+    rdfs:comment "A short angled barbell designed to reduce wrist strain during curling movements." ;
+    skos:altLabel "E-Z Curl Bar" .
+
+feg:ElbowExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Elbow Extension" ;
+    rdfs:comment "Straightening the elbow to increase the angle between the forearm and upper arm. Primary drivers: triceps brachii." ;
+    skos:broader feg:Elbow ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Elbow Extension" .
+
+feg:ElbowFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Elbow Flexion" ;
+    rdfs:comment "Bending the elbow to decrease the angle between the forearm and upper arm. Primary drivers: biceps brachii, brachialis, brachioradialis." ;
+    skos:broader feg:Elbow ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Elbow Flexion" .
+
+feg:EquipmentVocabulary a owl:Ontology ;
+    owl:versionInfo "0.2.0" .
+
+feg:ExerciseBall a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Exercise Ball" ;
+    rdfs:comment "A large inflatable ball used to introduce instability or support in exercises." ;
+    skos:altLabel "Stability Ball" .
+
+feg:ExerciseShape a sh:NodeShape ;
+    rdfs:label "Exercise Shape" ;
+    rdfs:comment "Validates that every Exercise individual is correctly and completely described." ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "An exercise must have exactly one rdfs:label." ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ sh:datatype xsd:boolean ;
+            sh:maxCount 1 ;
+            sh:message "isUnilateral is deprecated (ADR-075). Use feg:laterality instead." ;
+            sh:path feg:isUnilateral ],
+        [ sh:class feg:Laterality ;
+            sh:maxCount 1 ;
+            sh:message "feg:laterality must be a known Laterality individual (Bilateral, Unilateral, Contralateral, Ipsilateral)." ;
+            sh:path feg:laterality ],
+        [ sh:datatype xsd:boolean ;
+            sh:maxCount 1 ;
+            sh:message "isCombination must be a single boolean value." ;
+            sh:path feg:isCombination ],
+        [ sh:class feg:PlaneOfMotion ;
+            sh:message "feg:planeOfMotion must be a known PlaneOfMotion individual (SagittalPlane, FrontalPlane, TransversePlane)." ;
+            sh:path feg:planeOfMotion ],
+        [ sh:class feg:ExerciseStyle ;
+            sh:message "feg:exerciseStyle must be a known ExerciseStyle individual." ;
+            sh:path feg:exerciseStyle ],
+        [ sh:class feg:JointAction ;
+            sh:message "Primary joint action must be a known JointAction individual." ;
+            sh:path feg:primaryJointAction ],
+        [ sh:class feg:JointAction ;
+            sh:message "Supporting joint action must be a known JointAction individual." ;
+            sh:path feg:supportingJointAction ],
+        [ sh:datatype xsd:boolean ;
+            sh:maxCount 1 ;
+            sh:message "isCompound must be a single boolean value." ;
+            sh:path feg:isCompound ],
+        [ sh:class feg:MovementPattern ;
+            sh:message "Movement pattern must be a known MovementPattern individual." ;
+            sh:minCount 0 ;
+            sh:path feg:movementPattern ],
+        [ sh:class feg:MuscleInvolvement ;
+            sh:message "An exercise must have at least one muscle involvement." ;
+            sh:minCount 1 ;
+            sh:path feg:hasInvolvement ],
+        [ sh:class feg:TrainingModality ;
+            sh:message "Training modality must be a known TrainingModality individual." ;
+            sh:path feg:trainingModality ],
+        [ sh:class feg:Equipment ;
+            sh:message "Equipment must be a known Equipment individual." ;
+            sh:path feg:equipment ],
+        [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "legacySourceId must be a single string value." ;
+            sh:path feg:legacySourceId ] ;
+    sh:sparql [ sh:message "A joint action may not appear in both primaryJointAction and supportingJointAction." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:primaryJointAction ?ja ;
+                      feg:supportingJointAction ?ja .
+            }
+        """ ],
+        [ sh:message "An exercise may not assign both a muscle and one of its ancestors — this double-counts the same muscle mass. Use the most specific term only." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                $this feg:hasInvolvement ?inv1 ;
+                      feg:hasInvolvement ?inv2 .
+                ?inv1 feg:muscle ?child .
+                ?inv2 feg:muscle ?ancestor .
+                FILTER (?inv1 != ?inv2)
+                ?child skos:broader+ ?ancestor .
+            }
+        """ ],
+        [ sh:message "An exercise must have at least one PrimeMover involvement, or at least one PassiveTarget involvement for Mobility and SoftTissue exercises." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PrimeMover .
+                }
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PassiveTarget .
+                }
+            }
+        """ ],
+        [ sh:message "An exercise must have at least one primaryJointAction, unless it has only PassiveTarget involvements (Mobility/SoftTissue exercises)." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this feg:primaryJointAction ?ja .
+                }
+                FILTER NOT EXISTS {
+                    $this feg:hasInvolvement ?inv .
+                    ?inv feg:degree feg:PassiveTarget .
+                }
+            }
+        """ ],
+        [ sh:message "A muscle may not appear more than once across an exercise's muscle involvements." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:hasInvolvement ?inv1 ;
+                      feg:hasInvolvement ?inv2 .
+                ?inv1 feg:muscle ?muscle .
+                ?inv2 feg:muscle ?muscle .
+                FILTER (?inv1 != ?inv2)
+            }
+        """ ] ;
+    sh:targetClass feg:Exercise .
+
+feg:ExerciseStyleVocabulary a owl:Ontology ;
+    owl:versionInfo "1.0.0" .
+
+feg:ExtensorCarpiRadialis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Extensor Carpi Radialis" ;
+    skos:broader feg:WristExtensors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Extensor Carpi Radialis" .
+
+feg:ExtensorCarpiUlnaris a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Extensor Carpi Ulnaris" ;
+    skos:broader feg:WristExtensors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Extensor Carpi Ulnaris" .
+
+feg:ExtensorDigitorumLongus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Extensor Digitorum Longus" ;
+    rdfs:comment "Anterior lower leg muscle responsible for toe extension and ankle dorsiflexion." ;
+    skos:broader feg:Shins ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Extensor Digitorum Longus" .
+
+feg:ExtensorHallucisLongus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Extensor Hallucis Longus" ;
+    rdfs:comment "Anterior lower leg muscle responsible for big toe extension and ankle dorsiflexion." ;
+    skos:broader feg:Shins ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Extensor Hallucis Longus" .
+
+feg:ExternalOblique a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "External Oblique" ;
+    skos:altLabel "ObliqueExternal" ;
+    skos:broader feg:Obliques ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "External Oblique" .
+
+feg:FlexorCarpiRadialis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Flexor Carpi Radialis" ;
+    skos:broader feg:WristFlexors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Flexor Carpi Radialis" .
+
+feg:FlexorCarpiUlnaris a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Flexor Carpi Ulnaris" ;
+    skos:broader feg:WristFlexors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Flexor Carpi Ulnaris" .
+
+feg:FlexorDigitorumLongus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Flexor Digitorum Longus" ;
+    rdfs:comment "Deep posterior lower leg muscle. Flexes the lesser toes and assists plantarflexion and ankle inversion." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Flexor Digitorum Longus" .
+
+feg:FlexorHallucisLongus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Flexor Hallucis Longus" ;
+    rdfs:comment "Deep posterior lower leg muscle. Flexes the big toe and assists plantarflexion. Relevant on calf raises and push-off movements." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Flexor Hallucis Longus" .
+
+feg:FoamRoller a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Foam Roller" ;
+    rdfs:comment "A cylindrical foam implement used for self-myofascial release." ;
+    skos:altLabel "Foam Roll" .
+
+feg:ForearmPronation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Forearm Pronation" ;
+    rdfs:comment "Rotating the forearm so the palm faces downward or backward. Primary drivers: pronator teres, pronator quadratus." ;
+    skos:broader feg:Forearm ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Forearm Pronation" .
+
+feg:ForearmSupination a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Forearm Supination" ;
+    rdfs:comment "Rotating the forearm so the palm faces upward or forward. Primary drivers: biceps brachii, supinator." ;
+    skos:broader feg:Forearm ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Forearm Supination" .
+
+feg:FreeExerciseDB a dcat:Dataset ;
+    rdfs:label "free-exercise-db" ;
+    dcterms:publisher "yuhonas" ;
+    dcterms:title "Free Exercise Database" ;
+    dcat:landingPage <https://github.com/yuhonas/free-exercise-db> .
+
+feg:FrontalPlane a owl:NamedIndividual,
+        feg:PlaneOfMotion ;
+    rdfs:label "Frontal Plane" ;
+    rdfs:comment "The anatomical plane that divides the body into anterior and posterior portions. Movements occurring primarily in this plane are typically lateral in orientation. Examples include lateral raises, lateral lunges, side shuffles, and lateral trunk flexion." ;
+    skos:inScheme feg:PlaneOfMotionScheme .
+
+feg:FunctionalFitnessDB a dcat:Dataset ;
+    rdfs:label "functional-fitness-db" ;
+    dcterms:publisher "Strength to Overcome" ;
+    dcterms:title "Functional Fitness Exercise Database" ;
+    dcat:landingPage <https://strengthtoovercome.com/functional-fitness-exercise-database> .
+
+feg:GluteusMaximus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Gluteus Maximus" ;
+    skos:broader feg:Glutes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Gluteus Maximus" .
+
+feg:GluteusMedius a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Gluteus Medius" ;
+    skos:broader feg:Glutes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Gluteus Medius" ;
+    skos:related feg:Abductors .
+
+feg:GluteusMinimus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Gluteus Minimus" ;
+    skos:broader feg:Glutes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Gluteus Minimus" ;
+    skos:related feg:Abductors .
+
+feg:Gracilis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Gracilis" ;
+    skos:broader feg:Adductors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Gracilis" .
+
+feg:GravityBoots a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Gravity Boots" ;
+    rdfs:comment "Ankle hooks that attach to a pull-up bar, allowing the user to hang inverted for core and back exercises." .
+
+feg:Grinds a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Grinds" ;
+    rdfs:comment "A kettlebell sport category for slow-strength movements — presses, squats, deadlifts, and Turkish get-ups performed with kettlebells. Distinct from explosive cyclical movements (Ballistics)." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:GymnasticRings a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Gymnastic Rings" ;
+    rdfs:comment "Suspended wooden or plastic rings used for bodyweight pulling, pushing, and stability exercises." ;
+    skos:altLabel "Rings" .
+
+feg:HeavySandbag a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Heavy Sandbag" ;
+    rdfs:comment "A large sand-filled bag used for carrying, lifting, and throwing exercises. Heavier and less structured than a standard sandbag." .
+
+feg:HipAbduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Abduction" ;
+    rdfs:comment "Moving the thigh outward away from the midline in the frontal plane. Primary drivers: gluteus medius, gluteus minimus, tensor fasciae latae." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Abduction" .
+
+feg:HipAdduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Adduction" ;
+    rdfs:comment "Moving the thigh inward toward and across the midline. Primary drivers: adductor magnus, adductor longus, adductor brevis, gracilis." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Adduction" .
+
+feg:HipCircumduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Circumduction" ;
+    rdfs:comment "Circular or conical movement of the femur combining sequential hip flexion, abduction, extension, and adduction. Occurs in leg circles, hip CARs, and certain mobility drills. Engages the full hip musculature through its range." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Circumduction" .
+
+feg:HipExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Extension" ;
+    rdfs:comment "Increasing the angle between the thigh and torso by driving the hip to full extension. Primary drivers: gluteus maximus, hamstrings." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Extension" .
+
+feg:HipExternalRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip External Rotation" ;
+    rdfs:comment "Rotating the femur outward in the transverse plane. Primary drivers: piriformis, deep hip external rotators, gluteus maximus (posterior fibers)." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip External Rotation" .
+
+feg:HipFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Flexion" ;
+    rdfs:comment "Decreasing the angle between the thigh and torso by lifting the thigh forward. Primary drivers: iliopsoas, rectus femoris." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Flexion" .
+
+feg:HipHinge a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Hip Hinge" ;
+    rdfs:comment "Movements in which the hips are the primary joint driving the exercise, involving significant posterior chain recruitment." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Hip Hinge" .
+
+feg:HipHorizontalAbduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Horizontal Abduction" ;
+    rdfs:comment "Moving the thigh away from the midline in the transverse plane when the hip is already flexed to approximately 90°. Distinct from frontal-plane abduction. Primary drivers: gluteus medius, gluteus minimus." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Horizontal Abduction" .
+
+feg:HipHorizontalAdduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Horizontal Adduction" ;
+    rdfs:comment "Moving the thigh toward the midline in the transverse plane when the hip is already flexed to approximately 90°. Distinct from frontal-plane adduction. Primary drivers: adductors, pectineus." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Horizontal Adduction" .
+
+feg:HipInternalRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Hip Internal Rotation" ;
+    rdfs:comment "Rotating the femur inward in the transverse plane. Primary drivers: gluteus medius (anterior fibers), tensor fasciae latae." ;
+    skos:broader feg:Hip ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip Internal Rotation" .
+
+feg:HorizontalPull a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Horizontal Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling horizontally toward the body, principally targeting the mid-back, rear deltoid, and biceps." ;
+    skos:broader feg:Pull ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Horizontal Pull" .
+
+feg:HorizontalPush a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Horizontal Push" ;
+    rdfs:comment "Movements in which force is produced by pushing horizontally away from the body, principally targeting the chest, anterior deltoid, and triceps." ;
+    skos:broader feg:Push ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Horizontal Push" .
+
+feg:Hypertrophy a owl:NamedIndividual,
+        feg:TrainingModality ;
+    rdfs:label "Hypertrophy" ;
+    rdfs:comment "Training principally focused on increasing muscle size through moderate loads and moderate to high repetitions." .
+
+feg:Iliocostalis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Iliocostalis" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Iliocostalis" .
+
+feg:Iliopsoas a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Iliopsoas" ;
+    skos:altLabel "Psoas Major" ;
+    skos:broader feg:Psoas ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Iliopsoas" .
+
+feg:IndianClub a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Indian Club" ;
+    rdfs:comment "A bottle-shaped club swung through circular patterns to develop shoulder mobility and coordination." .
+
+feg:Infraspinatus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Infraspinatus" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Infraspinatus" .
+
+feg:InternalOblique a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Internal Oblique" ;
+    skos:altLabel "ObliqueInternal" ;
+    skos:broader feg:Obliques ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Internal Oblique" .
+
+feg:InvolvementDegreeVocabulary a owl:Ontology ;
+    owl:versionInfo "0.2.2" .
+
+feg:Ipsilateral a owl:NamedIndividual,
+        feg:Laterality ;
+    rdfs:label "Ipsilateral" ;
+    rdfs:comment "Same-side limbs work together — one arm and the same-side leg move simultaneously. Examples: ipsilateral loaded carry variations, certain single-leg single-arm press combinations." ;
+    skos:inScheme feg:LateralityScheme .
+
+feg:IsometricHold a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Isometric Hold" ;
+    rdfs:comment "Exercises whose defining characteristic is maintaining a static position under load rather than producing movement through a range of motion. Representative: wall sit, loaded carry (static component), L-sit, bar hang. Distinct from Anti-Extension and Anti-Rotation, which are specific trunk resistance patterns." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Isometric Hold" .
+
+feg:JointActionShape a sh:NodeShape ;
+    rdfs:label "Joint Action Shape" ;
+    rdfs:comment "Validates joint action vocabulary concepts." ;
+    sh:property [ sh:datatype xsd:string ;
+            sh:maxCount 1 ;
+            sh:message "A joint action must have exactly one rdfs:label." ;
+            sh:minCount 1 ;
+            sh:path rdfs:label ],
+        [ sh:hasValue feg:JointActionScheme ;
+            sh:message "A joint action must be in feg:JointActionScheme." ;
+            sh:minCount 1 ;
+            sh:path skos:inScheme ],
+        [ sh:message "A joint action must have a skos:broader joint grouping node (e.g. feg:Shoulder, feg:Hip)." ;
+            sh:minCount 1 ;
+            sh:path skos:broader ] ;
+    sh:targetClass feg:JointAction .
+
+feg:Kettlebell a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Kettlebell" ;
+    rdfs:comment "A cast-iron weight with a handle, suited to ballistic and grind movements." ;
+    skos:altLabel "Kettlebells" .
+
+feg:KneeExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Knee Extension" ;
+    rdfs:comment "Straightening the knee to increase the angle between the lower and upper leg. Primary drivers: quadriceps." ;
+    skos:broader feg:Knee ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Knee Extension" .
+
+feg:KneeFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Knee Flexion" ;
+    rdfs:comment "Bending the knee to decrease the angle between the lower and upper leg. Primary drivers: hamstrings, gastrocnemius." ;
+    skos:broader feg:Knee ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Knee Flexion" .
+
+feg:Landmine a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Landmine" ;
+    rdfs:comment "A barbell sleeve anchored at floor level, creating a pivot point for rotational and pressing movements." .
+
+feg:LateralDeltoid a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Lateral Deltoid" ;
+    skos:altLabel "Side Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lateral Deltoid" .
+
+feg:LateralGastrocnemius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Lateral Gastrocnemius" ;
+    skos:broader feg:Gastrocnemius ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lateral Gastrocnemius" .
+
+feg:LateralLocomotion a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Lateral Locomotion" ;
+    rdfs:comment "Movements involving side-to-side travel through space. Representative: lateral shuffle, lateral bound, side-step." ;
+    skos:broader feg:Locomotion ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Lateral Locomotion" .
+
+feg:LateralityVocabulary a owl:Ontology ;
+    owl:versionInfo "1.0.0" .
+
+feg:LatissimusDorsi a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Latissimus Dorsi" ;
+    skos:altLabel "Lats" ;
+    skos:broader feg:Lats ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Latissimus Dorsi" .
+
+feg:LevatorScapulae a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Levator Scapulae" ;
+    skos:broader feg:Neck ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Levator Scapulae" ;
+    skos:scopeNote "Elevates and downwardly rotates the scapula. Co-active with upper trapezius in shoulder shrugs and neck lateral flexion." .
+
+feg:Longissimus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Longissimus" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Longissimus" .
+
+feg:LowerTrapezius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Lower Trapezius" ;
+    skos:altLabel "Lower Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lower Trapezius" .
+
+feg:Lunge a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Lunge" ;
+    rdfs:comment "A knee dominant movement in which one foot travels to create a staggered stance, introducing a dynamic balance demand absent in the split squat." ;
+    skos:broader feg:KneeDominant ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Lunge" .
+
+feg:Macebell a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Macebell" ;
+    rdfs:comment "A long-handled implement with a heavy ball at one end, swung in circular patterns around the body." ;
+    skos:altLabel "Mace" .
+
+feg:Machine a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Machine" ;
+    rdfs:comment "A guided resistance machine that constrains the movement path." .
+
+feg:MedialGastrocnemius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Medial Gastrocnemius" ;
+    skos:broader feg:Gastrocnemius ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Medial Gastrocnemius" .
+
+feg:MedicineBall a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Medicine Ball" ;
+    rdfs:comment "A weighted ball used for throwing, catching, and rotational exercises." .
+
+feg:MiddleScalene a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Middle Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Middle Scalene" .
+
+feg:MiddleTrapezius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Middle Trapezius" ;
+    skos:altLabel "Mid Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Middle Trapezius" ;
+    skos:related feg:MiddleBack .
+
+feg:Miniband a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Miniband" ;
+    rdfs:comment "A small loop resistance band placed around the ankles, knees, or wrists to add resistance to bodyweight movements." ;
+    skos:altLabel "Mini Band" .
+
+feg:Mobility a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern,
+        feg:TrainingModality ;
+    rdfs:label "Mobility" ;
+    rdfs:comment "Static and dynamic stretching, flexibility work, and range of motion exercises. Distinct from SoftTissue, which covers foam rolling and myofascial release.",
+        "Training principally focused on improving range of motion and movement quality at a joint or across multiple joints." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Mobility" .
+
+feg:MuscleInvolvementShape a sh:NodeShape ;
+    rdfs:label "Muscle Involvement Shape" ;
+    rdfs:comment "Validates that every MuscleInvolvement instance is complete and well-formed." ;
+    sh:property [ sh:class feg:Muscle ;
+            sh:maxCount 1 ;
+            sh:message "A muscle involvement must reference exactly one known Muscle individual." ;
+            sh:minCount 1 ;
+            sh:path feg:muscle ],
+        [ sh:class feg:InvolvementDegree ;
+            sh:maxCount 1 ;
+            sh:message "A muscle involvement must have exactly one degree, and it must be a known InvolvementDegree individual." ;
+            sh:minCount 1 ;
+            sh:path feg:degree ],
+        [ sh:in ( feg:PrimeMover feg:Synergist feg:Stabilizer feg:PassiveTarget ) ;
+            sh:message "Degree must be one of: PrimeMover, Synergist, Stabilizer, PassiveTarget." ;
+            sh:path feg:degree ] ;
+    sh:sparql [ sh:message "A muscle involvement's feg:muscle value is a JointAction individual, not a Muscle. Joint action concept names (e.g. ScapularUpwardRotation, ScapularRetraction, HipFlexion) describe movement at a joint — they are not muscles. Check the muscle hierarchy for the correct muscle name." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT $this WHERE {
+                $this feg:muscle ?muscle .
+                ?muscle rdf:type feg:JointAction .
+            }
+        """ ],
+        [ sh:message "A MuscleInvolvement must be referenced by at least one Exercise via hasInvolvement." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    ?exercise feg:hasInvolvement $this .
+                }
+            }
+        """ ],
+        [ sh:message "Core must be assigned as Stabilizer only. For dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            SELECT $this WHERE {
+                $this feg:muscle feg:Core .
+                $this feg:degree ?degree .
+                FILTER (?degree != feg:Stabilizer)
+            }
+        """ ],
+        [ sh:message "This involvement references a muscle head whose parent group has useGroupLevel=true. Use the group-level term instead." ;
+            sh:select """
+            PREFIX feg: <https://placeholder.url#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                $this feg:muscle ?head .
+                ?head skos:broader ?group .
+                ?group feg:useGroupLevel true .
+            }
+        """ ] ;
+    sh:targetClass feg:MuscleInvolvement .
+
+feg:MuscleShape a sh:NodeShape ;
+    rdfs:label "Muscle Group Shape" ;
+    rdfs:comment "Validates muscle group vocabulary concepts." ;
+    sh:property [ sh:datatype xsd:boolean ;
+            sh:maxCount 1 ;
+            sh:message "useGroupLevel must be a single boolean value." ;
+            sh:path feg:useGroupLevel ] ;
+    sh:targetClass feg:MuscleGroup .
+
+feg:OlympicWeightlifting a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Olympic Weightlifting" ;
+    rdfs:comment "Exercises from the sport of weightlifting: the snatch, clean and jerk, and their derivatives (hang cleans, power snatches, etc.). Emphasis on explosive force production, bar speed, and technique." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Other a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Other" ;
+    rdfs:comment "Equipment not covered by the current vocabulary. Indicates a known gap in the source dataset." .
+
+feg:ParalletteBar a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Parallette Bars" ;
+    rdfs:comment "Low parallel bars placed on the floor, used for push-up and L-sit variations and hand balancing." ;
+    skos:altLabel "Parallettes" .
+
+feg:PectoralisMinor a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Pectoralis Minor" ;
+    skos:altLabel "Pec Minor" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Pectoralis Minor" .
+
+feg:PeroneusBrevis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Peroneus Brevis" ;
+    rdfs:comment "Lateral lower leg muscle. Primary evertor of the ankle; assists plantarflexion." ;
+    skos:altLabel "Fibularis Brevis" ;
+    skos:broader feg:Peroneals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Peroneus Brevis" .
+
+feg:PeroneusLongus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Peroneus Longus" ;
+    rdfs:comment "Lateral lower leg muscle. Everts the ankle and assists plantarflexion. Active as a synergist on calf raises and single-leg stability work." ;
+    skos:altLabel "Fibularis Longus" ;
+    skos:broader feg:Peroneals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Peroneus Longus" .
+
+feg:Piriformis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Piriformis" ;
+    skos:broader feg:Glutes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Piriformis" ;
+    skos:scopeNote "Deep hip external rotator located beneath the gluteal region. Grouped under Glutes for exercise-facing usability, not strict anatomical classification. Primary action: external rotation of the femur. Commonly targeted by clamshell variations and hip external rotation drills." .
+
+feg:PlanesOfMotionVocabulary a owl:Ontology ;
+    owl:versionInfo "1.0.0" .
+
+feg:Plantarflexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Plantarflexion" ;
+    rdfs:comment "Pointing the foot downward away from the shin. Primary drivers: gastrocnemius, soleus." ;
+    skos:broader feg:Ankle ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Plantarflexion" .
+
+feg:PlyoBox a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Plyo Box" ;
+    rdfs:comment "A sturdy box used for box jumps, step-ups, elevated push-ups, and hip thrust setup." ;
+    skos:altLabel "Plyometric Box" .
+
+feg:Plyometrics a owl:NamedIndividual,
+        feg:TrainingModality ;
+    rdfs:label "Plyometrics" ;
+    rdfs:comment "Training principally focused on developing explosive power through rapid stretch-shortening cycles." .
+
+feg:PosteriorDeltoid a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Posterior Deltoid" ;
+    skos:altLabel "Rear Delt" ;
+    skos:broader feg:Deltoid ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Posterior Deltoid" .
+
+feg:PosteriorScalene a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Posterior Scalene" ;
+    skos:broader feg:Scalenes ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Posterior Scalene" .
+
+feg:Postural a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Postural" ;
+    rdfs:comment "Exercises focused on corrective movement quality, postural alignment, and neuromuscular control. Often prescribed in rehabilitation and movement screening contexts." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:Power a owl:NamedIndividual,
+        feg:TrainingModality ;
+    rdfs:label "Power" ;
+    rdfs:comment "Training principally focused on developing rate of force development under load. The defining exercises are Olympic lifts and their derivatives: clean, snatch, jerk, and their hang, power, and split variants. Distinct from Plyometrics: explosive force production under load, no stretch-shortening cycle." .
+
+feg:Powerlifting a owl:NamedIndividual,
+        feg:ExerciseStyle ;
+    rdfs:label "Powerlifting" ;
+    rdfs:comment "Exercises from the powerlifting tradition, centred on the squat, bench press, and deadlift and their close derivatives. Emphasis on maximal load in a strict movement pattern." ;
+    skos:inScheme feg:ExerciseStyleScheme .
+
+feg:PullUpBar a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Pull Up Bar" ;
+    rdfs:comment "A fixed overhead bar used for pull-ups, chin-ups, hanging core exercises, and muscle-ups." ;
+    skos:altLabel "Pull-Up Bar" .
+
+feg:QuadratusLumborum a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Quadratus Lumborum" ;
+    skos:altLabel "QL" ;
+    skos:broader feg:LowerBack ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Quadratus Lumborum" .
+
+feg:RectusAbdominis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Rectus Abdominis" ;
+    skos:altLabel "Abs" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rectus Abdominis" .
+
+feg:RectusFemoris a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Rectus Femoris" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rectus Femoris" ;
+    skos:related feg:HipFlexors .
+
+feg:ResistanceBand a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Resistance Band" ;
+    rdfs:comment "A flat loop or tube resistance band used to add or accommodate load. Distinct from Miniband (loop around limbs) and Superband (large loop for assisted pull-ups)." ;
+    skos:altLabel "Band" .
+
+feg:RhomboidMajor a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Rhomboid Major" ;
+    skos:broader feg:Rhomboids ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rhomboid Major" .
+
+feg:RhomboidMinor a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Rhomboid Minor" ;
+    skos:broader feg:Rhomboids ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rhomboid Minor" .
+
+feg:Rotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Rotation" ;
+    rdfs:comment "Movements involving rotation or anti-rotation of the trunk, principally targeting the obliques and deep core musculature." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Rotation" .
+
+feg:SagittalPlane a owl:NamedIndividual,
+        feg:PlaneOfMotion ;
+    rdfs:label "Sagittal Plane" ;
+    rdfs:comment "The anatomical plane that divides the body into left and right portions. Movements occurring primarily in this plane are typically flexion- and extension-dominant. Examples include squats, deadlifts, biceps curls, and running." ;
+    skos:inScheme feg:PlaneOfMotionScheme .
+
+feg:Sandbag a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Sandbag" ;
+    rdfs:comment "A sand-filled bag with handles, used as a free weight for carrying, pressing, and squatting exercises." .
+
+feg:Sartorius a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Sartorius" ;
+    skos:broader feg:HipFlexors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Sartorius" ;
+    skos:scopeNote "Anterior thigh muscle; assists knee flexion and hip flexion. Relevant as a synergist on leg curl and hip flexion exercises." .
+
+feg:ScapularDepression a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Depression" ;
+    rdfs:comment "Pulling the shoulder blades downward. Primary drivers: lower trapezius, pectoralis minor." ;
+    skos:altLabel "ShoulderDepression" ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Depression" .
+
+feg:ScapularDownwardRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Downward Rotation" ;
+    rdfs:comment "Rotating the scapula so the glenoid points downward, returning from an overhead position. Primary drivers: rhomboids, levator scapulae, pectoralis minor." ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Downward Rotation" .
+
+feg:ScapularElevation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Elevation" ;
+    rdfs:comment "Raising the shoulder blades upward. Primary drivers: upper trapezius, levator scapulae." ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Elevation" .
+
+feg:ScapularProtraction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Protraction" ;
+    rdfs:comment "Spreading the shoulder blades away from the spine. Primary drivers: serratus anterior, pectoralis minor." ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Protraction" .
+
+feg:ScapularRetraction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Retraction" ;
+    rdfs:comment "Drawing the shoulder blades toward the spine. Primary drivers: rhomboids, middle trapezius." ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Retraction" .
+
+feg:ScapularUpwardRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Scapular Upward Rotation" ;
+    rdfs:comment "Rotating the scapula so the glenoid points upward to allow overhead reach. Occurs in all overhead pressing and pulling movements. Primary drivers: upper and lower trapezius, serratus anterior." ;
+    skos:broader feg:Scapula ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapular Upward Rotation" .
+
+feg:Semimembranosus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Semimembranosus" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Semimembranosus" .
+
+feg:Semitendinosus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Semitendinosus" ;
+    skos:broader feg:Hamstrings ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Semitendinosus" .
+
+feg:SerratusAnterior a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Serratus Anterior" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Serratus Anterior" .
+
+feg:ShapesGraph a owl:Ontology ;
+    rdfs:label "Free Exercise Graph SHACL Shapes" ;
+    owl:versionInfo "0.11.0" .
+
+feg:ShoulderAbduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Abduction" ;
+    rdfs:comment "Raising the arm out to the side in the frontal plane. Primary drivers: middle deltoid, supraspinatus." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Abduction" .
+
+feg:ShoulderAdduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Adduction" ;
+    rdfs:comment "Pulling the arm back toward and across the midline in the frontal plane. Primary drivers: latissimus dorsi, pectoralis major, teres major." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Adduction" .
+
+feg:ShoulderCircumduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Circumduction" ;
+    rdfs:comment "Circular movement of the arm combining flexion, abduction, extension, and adduction in sequence. Relevant for battle rope circles, macebell halos, and arm circle drills." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Circumduction" .
+
+feg:ShoulderExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Extension" ;
+    rdfs:comment "Moving the arm backward behind the body in the sagittal plane. Primary drivers: latissimus dorsi, posterior deltoid, teres major." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Extension" .
+
+feg:ShoulderExternalRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder External Rotation" ;
+    rdfs:comment "Rotating the humerus outward away from the midline. Primary drivers: infraspinatus, teres minor." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder External Rotation" .
+
+feg:ShoulderFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Flexion" ;
+    rdfs:comment "Raising the arm forward and upward in the sagittal plane. Primary drivers: anterior deltoid, clavicular pectoralis major." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Flexion" .
+
+feg:ShoulderHorizontalAbduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Horizontal Abduction" ;
+    rdfs:comment "Moving the arm outward from a horizontal forward position in the transverse plane. Primary drivers: posterior deltoid, infraspinatus, teres minor." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Horizontal Abduction" .
+
+feg:ShoulderHorizontalAdduction a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Horizontal Adduction" ;
+    rdfs:comment "Moving the arm across the body from a horizontally abducted position in the transverse plane. Primary drivers: pectoralis major, anterior deltoid." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Horizontal Adduction" .
+
+feg:ShoulderInternalRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Shoulder Internal Rotation" ;
+    rdfs:comment "Rotating the humerus inward toward the midline. Primary drivers: subscapularis, anterior deltoid, pectoralis major." ;
+    skos:broader feg:Shoulder ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder Internal Rotation" .
+
+feg:SlamBall a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Slam Ball" ;
+    rdfs:comment "A heavy, non-bouncing rubber ball used for overhead slam and rotational throw exercises." .
+
+feg:SlantBoard a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Slant Board" ;
+    rdfs:comment "An angled platform that elevates the heels, used for cyclist squats and ankle mobility work." .
+
+feg:Sled a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Sled" ;
+    rdfs:comment "A weighted sled pushed or pulled across a surface for conditioning and lower body strength work." .
+
+feg:SledgeHammer a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Sledge Hammer" ;
+    rdfs:comment "A heavy hammer swung against a tire for conditioning and rotational power work." ;
+    skos:altLabel "Sledgehammer" .
+
+feg:Sliders a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Sliders" ;
+    rdfs:comment "Small discs placed under the hands or feet to allow sliding on a surface, used for lunge, push-up, and core variations." ;
+    skos:altLabel "Gliding Discs" .
+
+feg:SoftTissue a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Soft Tissue" ;
+    rdfs:comment "Foam rolling, myofascial release, and similar soft tissue techniques. Not a movement in the traditional sense but a distinct exercise category in the source dataset." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Soft Tissue" .
+
+feg:Soleus a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Soleus" ;
+    skos:broader feg:Calves ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Soleus" .
+
+feg:SpinalExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Spinal Extension" ;
+    rdfs:comment "Extending the spine toward upright or hyperextended position. Primary drivers: erector spinae, multifidus." ;
+    skos:broader feg:Spine ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spinal Extension" .
+
+feg:SpinalFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Spinal Flexion" ;
+    rdfs:comment "Rounding the spine forward, reducing the angle between the torso and thighs. Primary drivers: rectus abdominis, obliques." ;
+    skos:broader feg:Spine ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spinal Flexion" .
+
+feg:SpinalLateralFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Spinal Lateral Flexion" ;
+    rdfs:comment "Bending the spine to the side in the frontal plane. Primary drivers: quadratus lumborum, obliques, erector spinae (unilateral)." ;
+    skos:broader feg:Spine ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spinal Lateral Flexion" .
+
+feg:SpinalRotation a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Spinal Rotation" ;
+    rdfs:comment "Twisting the torso around the vertical axis. Primary drivers: obliques, multifidus." ;
+    skos:broader feg:Spine ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spinal Rotation" .
+
+feg:SpinalStability a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Spinal Stability" ;
+    rdfs:comment "Isometric resistance of spinal movement under external load — the spine does not move, it braces against a destabilising force. The direction of the resisted force (extension, rotation, lateral flexion) is captured by the movement pattern (AntiExtension, AntiRotation, AntiLateralFlexion). Primary drivers: deep core musculature, transverse abdominis, multifidus." ;
+    skos:broader feg:Spine ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spinal Stability" .
+
+feg:Spinalis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Spinalis" ;
+    skos:broader feg:ErectorSpinae ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Spinalis" .
+
+feg:SplitSquat a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Split Squat" ;
+    rdfs:comment "A knee dominant movement performed with a staggered stance, both feet fixed, placing greater demand on the forward leg." ;
+    skos:broader feg:KneeDominant ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Split Squat" .
+
+feg:Squat a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Squat" ;
+    rdfs:comment "A bilateral knee dominant movement in which both feet remain fixed and the hips descend toward the ground." ;
+    skos:broader feg:KneeDominant ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Squat" .
+
+feg:SternalHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Sternal Head" ;
+    skos:altLabel "Lower Chest" ;
+    skos:broader feg:PectoralisMajor ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Sternal Head" .
+
+feg:Sternocleidomastoid a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Sternocleidomastoid" ;
+    skos:altLabel "SCM" ;
+    skos:broader feg:Neck ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Sternocleidomastoid" .
+
+feg:Strength a owl:NamedIndividual,
+        feg:TrainingModality ;
+    rdfs:label "Strength" ;
+    rdfs:comment "Training principally focused on developing maximal force production, typically performed at high loads and low repetitions." .
+
+feg:Subscapularis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Subscapularis" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Subscapularis" .
+
+feg:Superband a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Superband" ;
+    rdfs:comment "A large loop resistance band used for assisted pull-ups, hip activation, and banded stretching." ;
+    skos:altLabel "Pull-Up Band" .
+
+feg:Supraspinatus a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Supraspinatus" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Supraspinatus" .
+
+feg:SuspensionTrainer a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Suspension Trainer" ;
+    rdfs:comment "Adjustable straps anchored overhead, allowing bodyweight exercises with variable instability. Common brand: TRX." ;
+    skos:altLabel "TRX" .
+
+feg:TensorFasciaeLatae a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Tensor Fasciae Latae" ;
+    skos:altLabel "TFL" ;
+    skos:broader feg:Abductors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Tensor Fasciae Latae" ;
+    skos:related feg:HipFlexors .
+
+feg:TeresMajor a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Teres Major" ;
+    skos:broader feg:Lats ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Teres Major" ;
+    skos:scopeNote "Distinct from Teres Minor (rotator cuff). Acts synergistically with LatissimusDorsi in shoulder extension and adduction. Relevant on lat pulldowns, rows, and pull-up variants." .
+
+feg:TeresMinor a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Teres Minor" ;
+    skos:broader feg:RotatorCuff ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Teres Minor" .
+
+feg:TibialisAnterior a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Tibialis Anterior" ;
+    skos:altLabel "Tibialis" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Tibialis Anterior" .
+
+feg:TibialisPosterior a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Tibialis Posterior" ;
+    rdfs:comment "Deep posterior lower leg muscle responsible for ankle inversion and plantarflexion." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Tibialis Posterior" .
+
+feg:Tire a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Tire" ;
+    rdfs:comment "A large vehicle tire used as a target for sledgehammer slams or flipped for conditioning work." .
+
+feg:TrainingModalityVocabulary a owl:Ontology ;
+    owl:versionInfo "0.2.0" .
+
+feg:TransverseAbdominis a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Transverse Abdominis" ;
+    skos:altLabel "TVA" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Transverse Abdominis" .
+
+feg:TransversePlane a owl:NamedIndividual,
+        feg:PlaneOfMotion ;
+    rdfs:label "Transverse Plane" ;
+    rdfs:comment "The anatomical plane that divides the body into superior and inferior portions. Movements occurring primarily in this plane are typically rotational or horizontal in orientation. Examples include Russian twists, cable wood chops, rotational medicine ball throws, and hip internal or external rotation." ;
+    skos:inScheme feg:PlaneOfMotionScheme .
+
+feg:TrapBar a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Trap Bar" ;
+    rdfs:comment "A hexagonal or diamond-shaped bar that allows the lifter to stand inside it, used for deadlifts and shrugs." ;
+    skos:altLabel "Hex Bar" .
+
+feg:TricepsLateralHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Triceps Lateral Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Triceps Lateral Head" .
+
+feg:TricepsLongHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Triceps Long Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Triceps Long Head" .
+
+feg:TricepsMedialHead a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Triceps Medial Head" ;
+    skos:broader feg:TricepsBrachii ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Triceps Medial Head" .
+
+feg:Unilateral a owl:NamedIndividual,
+        feg:Laterality ;
+    rdfs:label "Unilateral" ;
+    rdfs:comment "One limb works at a time, independently of the other. Examples: single-leg squat, single-arm dumbbell row, single-leg Romanian deadlift." ;
+    skos:inScheme feg:LateralityScheme .
+
+feg:UpperTrapezius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Upper Trapezius" ;
+    skos:altLabel "Upper Traps" ;
+    skos:broader feg:Trapezius ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Upper Trapezius" .
+
+feg:VastusIntermedius a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Vastus Intermedius" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Vastus Intermedius" .
+
+feg:VastusLateralis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Vastus Lateralis" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Vastus Lateralis" .
+
+feg:VastusMedialis a skos:Concept,
+        feg:MuscleHead ;
+    rdfs:label "Vastus Medialis" ;
+    skos:altLabel "VMO" ;
+    skos:broader feg:Quadriceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Vastus Medialis" .
+
+feg:VerticalPull a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Vertical Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling vertically toward the body, principally targeting the lats and biceps." ;
+    skos:broader feg:Pull ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Vertical Pull" .
+
+feg:VerticalPush a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Vertical Push" ;
+    rdfs:comment "Movements in which force is produced by pushing vertically away from the body, principally targeting the shoulders and triceps." ;
+    skos:broader feg:Push ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Vertical Push" .
+
+feg:WallBall a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Wall Ball" ;
+    rdfs:comment "A large, soft medicine ball thrown against a wall for squat-to-throw conditioning exercises." .
+
+feg:WeightPlate a owl:NamedIndividual,
+        feg:Equipment ;
+    rdfs:label "Weight Plate" ;
+    rdfs:comment "A standard barbell weight plate used as a standalone implement for overhead, carry, and rotational exercises." ;
+    skos:altLabel "Plate" .
+
+feg:WristExtension a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Wrist Extension" ;
+    rdfs:comment "Bending the hand toward the back of the forearm. Primary drivers: wrist extensors (extensor carpi radialis, extensor carpi ulnaris)." ;
+    skos:broader feg:Wrist ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Wrist Extension" .
+
+feg:WristFlexion a owl:NamedIndividual,
+        skos:Concept,
+        feg:JointAction ;
+    rdfs:label "Wrist Flexion" ;
+    rdfs:comment "Bending the hand toward the front of the forearm. Primary drivers: wrist flexors (flexor carpi radialis, flexor carpi ulnaris)." ;
+    skos:broader feg:Wrist ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Wrist Flexion" .
+
+feg:catalog a owl:Ontology ;
+    rdfs:label "Free Exercise Graph — Source Catalog" ;
+    rdfs:comment "DCAT Dataset individuals representing upstream data sources ingested into the graph." ;
+    owl:versionInfo "1.0.0" .
+
+feg:Locomotion a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Locomotion" ;
+    rdfs:comment "Movements involving whole-body travel through space, including running, jumping, and crawling patterns." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Locomotion" .
+
+feg:PassiveTarget a owl:NamedIndividual,
+        feg:InvolvementDegree ;
+    rdfs:label "Passive Target" ;
+    rdfs:comment "A muscle that is the passive target of a stretch or soft tissue technique. Used in Mobility and SoftTissue exercises where the muscle is being lengthened or treated rather than actively contracting. Exercises with at least one PassiveTarget involvement are exempt from the PrimeMover requirement. Synergists and Stabilizers may still be present if other muscles are actively engaged." .
+
+feg:PrimeMover a owl:NamedIndividual,
+        feg:InvolvementDegree ;
+    rdfs:label "Prime Mover" ;
+    rdfs:comment "The muscle whose primary biomechanical action directly produces the exercise's defining joint action(s). The prime mover is the intended training target — the muscle the exercise is designed to develop. A muscle that is active but contributes via a secondary action should be Synergist instead. Example: LateralDeltoid's primary action is shoulder abduction; it should not be PrimeMover on a pressing or throwing exercise where ShoulderFlexion is the defining action. When multiple muscles share the same primary joint action (e.g. all four quadriceps heads all producing KneeExtension), all may be PrimeMover — they will be consolidated into the parent group post-ingestion by repair_04. Exception for explosive hip extension movements (cleans, snatches, jumps): GluteusMaximus is the primary PrimeMover. Hamstrings contribute to hip extension but are biarticular and are better classified Synergist in these movements." .
+
+feg:Psoas a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Psoas" ;
+    skos:broader feg:HipFlexors ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Psoas" .
+
+feg:Stabilizer a owl:NamedIndividual,
+        feg:InvolvementDegree ;
+    rdfs:label "Stabilizer" ;
+    rdfs:comment "A muscle that contracts to stabilize a joint during the exercise without contributing directly to the movement. Stabilizers are active but not trained in a meaningful hypertrophic or strength sense by the exercise." .
+
+feg:Synergist a owl:NamedIndividual,
+        feg:InvolvementDegree ;
+    rdfs:label "Synergist" ;
+    rdfs:comment "A muscle that assists the prime mover in producing the movement. The synergist contributes meaningfully to the exercise but is not the primary target." .
+
+feg:Traps a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Traps" ;
+    skos:altLabel "Trapezius" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Traps" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:equipment a owl:ObjectProperty ;
+    rdfs:label "equipment" ;
+    rdfs:comment "Relates an exercise to the equipment used to perform it." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:Equipment .
+
+feg:exerciseStyle a owl:ObjectProperty ;
+    rdfs:label "exercise style" ;
+    rdfs:comment "The training system, tradition, or methodological context the exercise belongs to. Assign only when the exercise has a clear home in a named tradition (e.g. a Turkish Get-Up is unambiguously Grinds/kettlebell; a barbell back squat is not exclusively Powerlifting). Do not assign when the exercise is generic. Multiple styles permitted where genuinely appropriate." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:ExerciseStyle .
+
+feg:hasInvolvement a owl:ObjectProperty ;
+    rdfs:label "has involvement" ;
+    rdfs:comment "Relates an exercise to a muscle involvement instance describing a muscle recruited during its execution." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:MuscleInvolvement .
+
+feg:isCombination a owl:DatatypeProperty ;
+    rdfs:label "is combination" ;
+    rdfs:comment "Set to true when the exercise is a deliberate sequence of two independent movements performed as one (e.g. squat-to-press, deadlift-to-row, lunge-to-curl). Distinct from feg:isCompound, which refers to joint mechanics. A combination exercise is always compound, but a compound exercise is not necessarily a combination. Omit or set to false for single-movement exercises." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean .
+
+feg:isCompound a owl:DatatypeProperty ;
+    rdfs:label "is compound" ;
+    rdfs:comment "Set to true when the exercise involves meaningful force production across multiple joints (e.g. squat, deadlift, bench press, row). Omit or set to false for single-joint isolation exercises (e.g. bicep curl, leg extension, lateral raise). When in doubt, count primary joint actions: two or more distinct joints contributing to force production indicates compound." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean .
+
+feg:isUnilateral a owl:DatatypeProperty ;
+    rdfs:label "is unilateral" ;
+    rdfs:comment "DEPRECATED — replaced by feg:laterality (ADR-075). This property cannot distinguish Contralateral and Ipsilateral exercises from plain Unilateral. Use feg:laterality with feg:Bilateral, feg:Unilateral, feg:Contralateral, or feg:Ipsilateral instead. Will be removed in a subsequent MAJOR version bump after re-enrichment." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:boolean ;
+    owl:deprecated true .
+
+feg:laterality a owl:ObjectProperty ;
+    rdfs:label "laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body. Use feg:Bilateral for symmetric two-limb exercises. Use feg:Unilateral for exercises performed one limb at a time. Use feg:Contralateral when opposite limbs work together (e.g. bird dog, dead bug). Use feg:Ipsilateral when same-side limbs work together. Replaces the deprecated feg:isUnilateral boolean (ADR-075)." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:Laterality .
+
+feg:legacySourceId a owl:DatatypeProperty ;
+    rdfs:label "legacy source ID" ;
+    rdfs:comment "The original identifier for this exercise in its upstream source dataset. Preserved for provenance and upstream traceability. Use dcterms:source to identify which dataset this ID belongs to." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range xsd:string .
+
+feg:movementPattern a owl:ObjectProperty ;
+    rdfs:label "movement pattern" ;
+    rdfs:comment "Use the most specific pattern that applies — prefer child patterns over parent patterns (e.g. Squat over KneeDominant, HorizontalPush over Push). Use a parent only when no child fits. Compound exercises may have more than one pattern. If no pattern fits well, return an empty array — do not force an ill-fitting label. Isolation exercises that are not curls, rows, presses, or hinges often have no clean pattern. Push and Pull patterns require multi-joint force production. Single-joint isolation movements (bicep curls, lateral raises, triceps extensions, leg extensions/curls) have no movement pattern — return empty array. Do not assign Pull to curls or Push to raises." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:MovementPattern .
+
+feg:muscle a owl:ObjectProperty ;
+    rdfs:label "muscle" ;
+    rdfs:comment "Prefer the most specific term available: MuscleHead > MuscleGroup > MuscleRegion. Use a region term only if no group applies; use a group term only if no head applies. Exception: groups marked useGroupLevel=true are the correct term — do not descend to their heads. Exception: Core (a MuscleGroup under Abdominals) is a convenience term permitted on compound movements where abdominal bracing is incidental; it must always be assigned as Stabilizer. Critical: joint action concept names (e.g. ScapularUpwardRotation, HipFlexion, ElbowFlexion, ScapularRetraction) are NOT muscle names — never use a joint action concept as a muscle value. TricepsBrachii (group) must not be used — always decompose into TricepsLongHead, TricepsLateralHead, and TricepsMedialHead, including for Stabilizer and Synergist roles; TricepsLongHead is meaningfully distinct as it crosses the shoulder joint. On Mobility exercises and passive stretches, minimise Stabilizers — include one only when there is a clear active stabilisation demand; do not routinely add Core or RotatorCuff. A muscle may not appear more than once across an exercise's involvements — if the same muscle would be assigned at two different degrees, use the higher-priority degree only (PrimeMover > Synergist > Stabilizer). An exercise may not list both a muscle and any of its SKOS ancestors — this double-counts the same muscle mass; use the most specific term only." ;
+    rdfs:domain feg:MuscleInvolvement ;
+    rdfs:range feg:Muscle .
+
+feg:planeOfMotion a owl:ObjectProperty ;
+    rdfs:label "plane of motion" ;
+    rdfs:comment "The cardinal plane(s) in which the primary movement of the exercise occurs. An exercise may involve multiple planes. Use feg:SagittalPlane for forward/backward movement, feg:FrontalPlane for side-to-side movement, feg:TransversePlane for rotational movement." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:PlaneOfMotion .
+
+feg:primaryJointAction a owl:ObjectProperty ;
+    rdfs:label "primary joint action" ;
+    rdfs:comment "Assign the joint actions that directly produce the exercise's defining movement — the mechanical reason the exercise exists. For a deadlift: HipExtension, KneeExtension. For a curl: ElbowFlexion. Typically 1–3 per exercise. Leaf-level concepts only — do not assign joint grouping nodes (Shoulder, Hip, etc.). Anti-movement rule: if the exercise is AntiExtension → SpinalStability; AntiRotation → SpinalStability; AntiLateralFlexion → SpinalStability. In all three cases the spine is isometrically resisting — not producing — movement. Do NOT assign SpinalExtension, SpinalRotation, or SpinalLateralFlexion to these exercises." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction ;
+    rdfs:subPropertyOf feg:jointAction .
+
+feg:supportingJointAction a owl:ObjectProperty ;
+    rdfs:label "supporting joint action" ;
+    rdfs:comment "Assign joint actions that contribute meaningfully but are not the defining stimulus — only those relevant for substitution decisions, fatigue accumulation, or inter-muscular coordination. This is not a biomechanical inventory: omit incidental or purely stabilising actions. Leave empty if nothing qualifies. Typically 0–3 per exercise. Leaf-level concepts only. Setup-position rule: do not assign joint actions that describe the starting position of the exercise — only actions that occur during the movement itself. Examples: bent knees at the start of a glute bridge are setup, not KneeFlexion as a joint action; semi-locked knees during a good morning are setup, not a movement action. Ankle mechanics for sagittal plane lifts: for squats, deadlifts, and lunges the relevant ankle action is Dorsiflexion (the ankle dorsiflexes to allow depth). AnkleEversion and AnkleInversion are movement faults, not defining supporting actions in these exercises." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction ;
+    rdfs:subPropertyOf feg:jointAction .
+
+feg:trainingModality a owl:ObjectProperty ;
+    rdfs:label "training modality" ;
+    rdfs:comment "Assign only when the modality is a defining characteristic of the exercise, not merely its typical training context. Plyometrics: explosive intent is the defining feature. Mobility: flexibility or range of motion is the defining feature. Cardio: cardiovascular adaptation is the defining feature. Omit for most resistance training exercises — a barbell squat, bench press, or deadlift has no defining modality." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:TrainingModality .
+
+feg:useGroupLevel a owl:DatatypeProperty ;
+    rdfs:label "use group level" ;
+    rdfs:comment "Indicates that this MuscleGroup functions as a single training unit — its constituent muscles cannot be selectively recruited or meaningfully targeted independently through exercise selection. The group term is the appropriate level of specificity; the individual head-level concepts exist for anatomical completeness but do not represent distinct training outcomes." ;
+    rdfs:domain feg:MuscleGroup ;
+    rdfs:range xsd:boolean ;
+    skos:editorialNote "Used by the classification pipeline to enforce group-level usage. Groups with this flag are surfaced in the prompt as explicit exceptions to the head-preference rule, and a SHACL constraint rejects any classification that references one of their child heads." .
+
+feg:BicepsBrachii a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Biceps Brachii" ;
+    skos:broader feg:Biceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Biceps Brachii" .
+
+feg:Calves a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Calves" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Calves" .
+
+feg:Elbow a skos:Concept ;
+    rdfs:label "Elbow" ;
+    rdfs:comment "Grouping node for elbow joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Elbow" .
+
+feg:Forearm a skos:Concept ;
+    rdfs:label "Forearm" ;
+    rdfs:comment "Grouping node for radioulnar joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Forearm" .
+
+feg:Gastrocnemius a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Gastrocnemius" ;
+    skos:broader feg:Calves ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Gastrocnemius" ;
+    feg:useGroupLevel true .
+
+feg:Knee a skos:Concept ;
+    rdfs:label "Knee" ;
+    rdfs:comment "Grouping node for knee joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Knee" .
+
+feg:Lats a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Lats" ;
+    skos:altLabel "Latissimus Dorsi" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lats" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:LowerBack a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Lower Back" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lower Back" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:MiddleBack a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Middle Back" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Middle Back" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Obliques a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Obliques" ;
+    skos:broader feg:Abdominals ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Obliques" ;
+    feg:useGroupLevel true .
+
+feg:PectoralisMajor a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Pectoralis Major" ;
+    skos:altLabel "Pec Major" ;
+    skos:broader feg:Chest ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Pectoralis Major" .
+
+feg:Peroneals a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Peroneals" ;
+    rdfs:comment "Lateral compartment of the lower leg. Responsible for ankle eversion and assist plantarflexion." ;
+    skos:altLabel "Fibularis" ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Peroneals" .
+
+feg:Pull a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Pull" ;
+    rdfs:comment "Movements in which force is produced by pulling load toward the body." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Pull" .
+
+feg:Push a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Push" ;
+    rdfs:comment "Movements in which force is produced by pushing load away from the body." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Push" .
+
+feg:Rhomboids a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Rhomboids" ;
+    skos:broader feg:MiddleBack ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rhomboids" ;
+    feg:useGroupLevel true .
+
+feg:Shins a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Shins" ;
+    rdfs:comment "Colloquial term for the anterior lower leg compartment. Contains the muscles responsible for ankle dorsiflexion and toe extension." ;
+    skos:broader feg:LowerLeg ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Shins" .
+
+feg:Shoulders a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Shoulders" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Shoulders" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Triceps a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Triceps" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Triceps" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Wrist a skos:Concept ;
+    rdfs:label "Wrist" ;
+    rdfs:comment "Grouping node for radiocarpal joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Wrist" .
+
+feg:WristExtensors a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Wrist Extensors" ;
+    skos:broader feg:Forearms ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Wrist Extensors" ;
+    feg:useGroupLevel true .
+
+feg:WristFlexors a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Wrist Flexors" ;
+    skos:broader feg:Forearms ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Wrist Flexors" ;
+    feg:useGroupLevel true .
+
+feg:degree a owl:ObjectProperty ;
+    rdfs:label "degree" ;
+    rdfs:comment "PrimeMover: the muscle directly produces the exercise's defining movement. Synergist: assists or fine-tunes the prime mover. Stabilizer: isometrically holds a joint or segment — does not contribute to the primary movement. PassiveTarget: tissue being lengthened or mobilised — Mobility and SoftTissue exercises only. Every exercise must have at least one PrimeMover, or at least one PassiveTarget for Mobility and SoftTissue exercises. Core must always be assigned as Stabilizer — for dedicated core exercises where the abdominals are the primary target, use specific muscles (RectusAbdominis, Obliques, TransverseAbdominis) instead." ;
+    rdfs:domain feg:MuscleInvolvement ;
+    rdfs:range feg:InvolvementDegree .
+
+feg:jointAction a owl:ObjectProperty ;
+    rdfs:label "joint action" ;
+    rdfs:comment "Umbrella property relating an exercise to its mechanical joint actions. In data, use feg:primaryJointAction or feg:supportingJointAction rather than this property directly. Queries over feg:jointAction will match both subproperties when RDFS inference is active." ;
+    rdfs:domain feg:Exercise ;
+    rdfs:range feg:JointAction .
+
+feg:Abductors a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Abductors" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Abductors" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Biceps a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Biceps" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Biceps" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Chest a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Chest" ;
+    skos:altLabel "Pectorals" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Chest" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Deltoid a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Deltoid" ;
+    skos:broader feg:Shoulders ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Deltoid" .
+
+feg:ErectorSpinae a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Erector Spinae" ;
+    skos:broader feg:LowerBack ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Erector Spinae" ;
+    feg:useGroupLevel true .
+
+feg:Forearms a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Forearms" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Forearms" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Hamstrings a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Hamstrings" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Hamstrings" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:KneeDominant a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Knee Dominant" ;
+    rdfs:comment "Movements in which the knee is the primary joint driving the exercise, involving significant quadriceps recruitment." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Knee Dominant" .
+
+feg:Neck a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Neck" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Neck" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:PlaneOfMotionScheme a skos:ConceptScheme ;
+    rdfs:label "Planes of Motion" ;
+    rdfs:comment "A concept scheme representing the three standard anatomical planes used to describe the primary directional orientation of human movement: Sagittal, Frontal, and Transverse." .
+
+feg:Scalenes a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Scalenes" ;
+    skos:broader feg:Neck ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Scalenes" ;
+    feg:useGroupLevel true .
+
+feg:Trapezius a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Trapezius" ;
+    skos:broader feg:Traps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Trapezius" .
+
+feg:TricepsBrachii a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Triceps Brachii" ;
+    skos:broader feg:Triceps ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Triceps Brachii" .
+
+feg:Abdominals a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Abdominals" ;
+    skos:altLabel "Abs" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Abdominals" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Adductors a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Adductors" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Adductors" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:Ankle a skos:Concept ;
+    rdfs:label "Ankle" ;
+    rdfs:comment "Grouping node for ankle joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Ankle" .
+
+feg:Glutes a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Glutes" ;
+    skos:altLabel "Gluteal Muscles" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Glutes" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:HipFlexors a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Hip Flexors" ;
+    skos:altLabel "HipFlexors" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Hip Flexors" ;
+    skos:scopeNote "Use only when both Psoas (Iliopsoas) and Sartorius are involved. If only one branch is active, use the specific child instead." ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:LateralityScheme a skos:ConceptScheme ;
+    rdfs:label "Laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body during an exercise." .
+
+feg:Quadriceps a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Quadriceps" ;
+    skos:altLabel "Quads" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Quadriceps" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:RotatorCuff a skos:Concept,
+        feg:MuscleGroup ;
+    rdfs:label "Rotator Cuff" ;
+    skos:broader feg:Shoulders ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Rotator Cuff" ;
+    feg:useGroupLevel true .
+
+feg:Muscle a owl:Class ;
+    rdfs:label "Muscle" ;
+    rdfs:comment "Superclass for all muscle vocabulary terms. Covers regions, groups, and heads. The feg:muscle property on MuscleInvolvement may point to any level of the hierarchy." ;
+    owl:disjointWith feg:JointAction .
+
+feg:MuscleInvolvement a owl:Class ;
+    rdfs:label "Muscle Involvement" ;
+    rdfs:comment "A relationship between a specific exercise and a specific muscle, capturing the degree to which that muscle is recruited during the exercise. A single exercise may have multiple muscle involvements, one per involved muscle." .
+
+feg:PlaneOfMotion a owl:Class ;
+    rdfs:label "Plane of Motion" ;
+    rdfs:comment "A standard anatomical reference plane used to characterize the directional pattern in which a movement primarily occurs. The canonical instances are Sagittal, Frontal, and Transverse." .
+
+feg:Spine a skos:Concept ;
+    rdfs:label "Spine" ;
+    rdfs:comment "Grouping node for spinal joint actions. Covers lumbar and thoracic segments together unless a distinction is clinically significant for exercise classification." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Spine" .
+
+feg:TrunkStability a owl:NamedIndividual,
+        skos:Concept,
+        feg:MovementPattern ;
+    rdfs:label "Trunk Stability" ;
+    rdfs:comment "Movements that train the trunk to resist external forces rather than produce movement. Parent concept — prefer the more specific anti-movement sub-patterns where applicable." ;
+    skos:inScheme feg:MovementPatternScheme ;
+    skos:prefLabel "Trunk Stability" .
+
+feg:InvolvementDegree a owl:Class ;
+    rdfs:label "Involvement Degree" ;
+    rdfs:comment "A classification describing the role a muscle plays in an exercise." .
+
+feg:Laterality a owl:Class ;
+    rdfs:label "Laterality" ;
+    rdfs:comment "Describes how limb involvement is distributed across the left and right sides of the body. Four values: Bilateral, Unilateral, Contralateral, Ipsilateral. See laterality.ttl for named individuals." .
+
+feg:Scapula a skos:Concept ;
+    rdfs:label "Scapula" ;
+    rdfs:comment "Grouping node for scapulothoracic joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Scapula" .
+
+feg:LowerLeg a skos:Concept,
+        feg:MuscleRegion ;
+    rdfs:label "Lower Leg" ;
+    skos:inScheme feg:MuscleScheme ;
+    skos:prefLabel "Lower Leg" ;
+    skos:topConceptOf feg:MuscleScheme .
+
+feg:TrainingModality a owl:Class ;
+    rdfs:label "Training Modality" ;
+    rdfs:comment "A category describing the physiological adaptation targeted by an exercise or program. Examples include strength, hypertrophy, cardio, and mobility." .
+
+feg:ExerciseStyleScheme a skos:ConceptScheme ;
+    rdfs:label "Exercise Style" ;
+    rdfs:comment "The training system, tradition, or methodological context an exercise belongs to. Distinct from training modality (which describes physiological adaptation). An exercise style describes where the exercise comes from — its community, technique standards, and cultural context." .
+
+feg:Hip a skos:Concept ;
+    rdfs:label "Hip" ;
+    rdfs:comment "Grouping node for hip joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Hip" .
+
+feg:Shoulder a skos:Concept ;
+    rdfs:label "Shoulder" ;
+    rdfs:comment "Grouping node for glenohumeral joint actions." ;
+    skos:inScheme feg:JointActionScheme ;
+    skos:prefLabel "Shoulder" .
+
+feg:ExerciseStyle a owl:Class ;
+    rdfs:label "Exercise Style" ;
+    rdfs:comment "The training system, tradition, or methodological context an exercise belongs to. Distinct from feg:TrainingModality, which describes physiological adaptation. See exercise_styles.ttl for named individuals." .
+
+feg:Exercise a owl:Class ;
+    rdfs:label "Exercise" ;
+    rdfs:comment "A bodily activity that enhances or maintains physical fitness and overall health and wellness." .
+
+feg:MuscleRegion a owl:Class ;
+    rdfs:label "Muscle Region" ;
+    rdfs:comment "A colloquial regional grouping of muscles used in exercise science (e.g. Shoulders, Lats, Quads). Corresponds to the coarse terms used in the source dataset." ;
+    rdfs:subClassOf feg:Muscle .
+
+feg:MovementPatternScheme a skos:ConceptScheme ;
+    rdfs:label "Movement Pattern Scheme" ;
+    rdfs:comment "A controlled vocabulary of fundamental human movement patterns used to classify exercises." ;
+    owl:versionInfo "0.7.0" .
+
+feg:MovementPattern a owl:Class ;
+    rdfs:label "Movement Pattern" ;
+    rdfs:comment "A fundamental category of human movement that describes the mechanical structure of an exercise. Exercises sharing a movement pattern make similar demands on the musculoskeletal system and may serve as substitutes for one another." .
+
+feg:MuscleHead a owl:Class ;
+    rdfs:label "Muscle Head" ;
+    rdfs:comment "A distinct head, portion, or fiber region of a muscle (e.g. Anterior Deltoid, Biceps Long Head). The LLM enrichment pipeline classifies at this level where applicable." ;
+    rdfs:subClassOf feg:Muscle .
+
+feg:MuscleGroup a owl:Class ;
+    rdfs:label "Muscle Group" ;
+    rdfs:comment "An individual muscle or functional muscle group (e.g. Deltoid, Triceps Brachii, Erector Spinae)." ;
+    rdfs:subClassOf feg:Muscle .
+
+feg:Equipment a owl:Class ;
+    rdfs:label "Equipment" ;
+    rdfs:comment "A physical tool or apparatus used to perform an exercise." .
+
+feg:JointAction a owl:Class ;
+    rdfs:label "Joint Action" ;
+    rdfs:comment "A biomechanical action produced at an individual joint, such as flexion, extension, abduction, or rotation. Joint actions describe movement at the level of specific joints rather than whole-exercise movement categories." .
+
+feg:JointActionScheme a skos:ConceptScheme ;
+    rdfs:label "Joint Action Scheme" ;
+    rdfs:comment "A controlled vocabulary of joint actions used to describe the mechanical basis of exercises. Joint grouping nodes organise actions by joint; only leaf-level JointAction individuals should be assigned to exercises via feg:jointAction." ;
+    owl:versionInfo "0.3.0" .
+
+feg:MuscleScheme a skos:ConceptScheme ;
+    rdfs:label "Muscle Vocabulary" ;
+    rdfs:comment "SKOS concept scheme organizing muscles by region." ;
+    owl:versionInfo "0.13.0" ;
+    skos:prefLabel "Muscle Vocabulary" .
+

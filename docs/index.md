@@ -21,6 +21,7 @@ to the right document.
 - **I want the SQLite workflow model:** [sqlite_data_model.md](/Users/talha/Code/free-exercise-graph/docs/sqlite_data_model.md)
 - **I want to review ambiguous identity matches:** [triage_workflow.md](/Users/talha/Code/free-exercise-graph/docs/triage_workflow.md)
 - **I want to understand graph, SHACL, and CI quality checks:** [quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
+- **I want to refresh the eval workbook or score a reviewed sample:** [quality_surfaces.md](/Users/talha/Code/free-exercise-graph/docs/quality_surfaces.md)
 - **I want the app build/export surface:** [README.md](/Users/talha/Code/free-exercise-graph/app/README.md)
 - **I want field provenance for app data:** [app_field_provenance.md](/Users/talha/Code/free-exercise-graph/docs/app_field_provenance.md)
 

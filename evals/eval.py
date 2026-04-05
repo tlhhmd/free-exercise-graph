@@ -1,94 +1,93 @@
 """
-Evaluation scorer for enrichment pipeline output.
-
-Scores predicted exercise attributes against a human-annotated gold standard.
-See ADR-109 for methodology decisions.
-
-Usage:
-    python3 evals/eval.py --gold evals/gold_annotation.xlsx
-    python3 evals/eval.py --gold evals/gold_annotation.xlsx --verbose
-    python3 evals/eval.py --gold evals/gold_annotation.xlsx --field movement_pattern
-
-Gold standard format: the xlsx produced by build_gold_sheet.py, with correction
-columns filled in by a human annotator. Rows with status "Pending" are skipped.
-
-Scoring methodology (ADR-109):
-  Muscle involvements — three dimensions:
-    strict_f1:    (muscle, degree) pair must match exactly
-    muscle_f1:    muscle name match, degree ignored
-    degree_acc:   for correctly identified muscles, fraction with correct degree
-
-  All other multi-value fields (movement_pattern, primary_joint_action, etc.):
-    exact set match F1
-
-  Boolean fields (is_compound, is_unilateral):
-    binary accuracy
+Score current pipeline predictions against submitted per-exercise gold CSVs.
 """
 
 from __future__ import annotations
 
 import argparse
-import json
+import csv
+import re
 import sys
 from pathlib import Path
 from typing import Any
 
-try:
-    from openpyxl import load_workbook
-except ImportError:
-    sys.exit("openpyxl required: pip install openpyxl")
-
 _ROOT = Path(__file__).parent.parent
-_DB_PATH = _ROOT / "pipeline" / "pipeline.db"
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
-# ─── Metric helpers ──────────────────────────────────────────────────────────
+from pipeline.db import DB_PATH, get_connection
+from pipeline.effective_claims import effective_prediction_record, load_muscle_maps
+
+_ONTOLOGY_DIR = _ROOT / "ontology"
+_SUBMITTED_DIR = _ROOT / "evals" / "submitted"
+_SCORED_DIR = _ROOT / "evals" / "scored"
+STATUS_HEADER = "status (pending/accepted/modified/flagged)"
+
+FIELD_SPECS = [
+    ("movement_patterns", "Movement Patterns", "set"),
+    ("primary_joint_actions", "Primary Joint Actions", "set"),
+    ("supporting_joint_actions", "Supporting Joint Actions", "set"),
+    ("training_modalities", "Training Modalities", "set"),
+    ("plane_of_motion", "Plane Of Motion", "set"),
+    ("exercise_style", "Exercise Style", "set"),
+    ("laterality", "Laterality", "scalar"),
+    ("is_compound", "Is Compound", "bool"),
+    ("is_combination", "Is Combination", "bool"),
+]
+
+FIELD_KIND = {key: kind for key, _, kind in FIELD_SPECS}
+FIELD_NAME_ALIASES = {
+    "movement_pattern": "movement_patterns",
+    "movement_patterns": "movement_patterns",
+    "primary_joint_action": "primary_joint_actions",
+    "primary_joint_actions": "primary_joint_actions",
+    "supporting_joint_action": "supporting_joint_actions",
+    "supporting_joint_actions": "supporting_joint_actions",
+    "training_modality": "training_modalities",
+    "training_modalities": "training_modalities",
+    "plane_of_motion": "plane_of_motion",
+    "exercise_style": "exercise_style",
+    "laterality": "laterality",
+    "is_compound": "is_compound",
+    "is_combination": "is_combination",
+    "muscle": "muscle",
+}
+
+ACTIVE_FIELD_STATUSES = {"accepted", "modified"}
+ACTIVE_REVIEW_STATUSES = {"accepted", "modified", "flagged"}
+MUSCLE_FIELD_RE = re.compile(r"^muscle_involvement_(\d+)_(muscle|involvementdegree)$")
+
 
 def _prf(tp: int, fp: int, fn: int) -> dict[str, float]:
-    p = tp / (tp + fp) if (tp + fp) else 0.0
-    r = tp / (tp + fn) if (tp + fn) else 0.0
-    f = 2 * p * r / (p + r) if (p + r) else 0.0
-    return {"precision": p, "recall": r, "f1": f, "tp": tp, "fp": fp, "fn": fn}
+    precision = tp / (tp + fp) if (tp + fp) else 0.0
+    recall = tp / (tp + fn) if (tp + fn) else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
+    return {"precision": precision, "recall": recall, "f1": f1, "tp": tp, "fp": fp, "fn": fn}
 
 
-def set_f1(pred: set, gold: set) -> dict[str, float]:
-    tp = len(pred & gold)
-    fp = len(pred - gold)
-    fn = len(gold - pred)
-    return _prf(tp, fp, fn)
+def set_f1(pred: set[str], gold: set[str]) -> dict[str, float]:
+    return _prf(len(pred & gold), len(pred - gold), len(gold - pred))
 
 
-def muscle_scores(
-    pred_involvements: list[dict],
-    gold_involvements: list[dict],
-) -> dict[str, Any]:
-    """
-    Three-dimension muscle scoring (ADR-109):
-      strict_f1   — (muscle, degree) pair exact match
-      muscle_f1   — muscle name match, degree ignored
-      degree_acc  — degree correct, conditional on correct muscle identification
-    """
-    pred_pairs = {(i["muscle"], i["degree"]) for i in pred_involvements}
-    gold_pairs = {(i["muscle"], i["degree"]) for i in gold_involvements}
-    pred_names = {i["muscle"] for i in pred_involvements}
-    gold_names = {i["muscle"] for i in gold_involvements}
+def muscle_scores(pred_involvements: list[dict], gold_involvements: list[dict]) -> dict[str, Any]:
+    pred_pairs = {(item["muscle"], item["degree"]) for item in pred_involvements}
+    gold_pairs = {(item["muscle"], item["degree"]) for item in gold_involvements}
+    pred_names = {item["muscle"] for item in pred_involvements}
+    gold_names = {item["muscle"] for item in gold_involvements}
 
     strict = set_f1(pred_pairs, gold_pairs)
     muscle = set_f1(pred_names, gold_names)
 
-    # Degree accuracy: among muscles present in both pred and gold,
-    # what fraction have the correct degree?
-    shared_muscles = pred_names & gold_names
+    shared = pred_names & gold_names
     degree_correct = 0
     degree_total = 0
-    if shared_muscles:
-        gold_degree_map = {i["muscle"]: i["degree"] for i in gold_involvements}
-        pred_degree_map = {i["muscle"]: i["degree"] for i in pred_involvements}
-        for m in shared_muscles:
+    if shared:
+        gold_degree = {item["muscle"]: item["degree"] for item in gold_involvements}
+        pred_degree = {item["muscle"]: item["degree"] for item in pred_involvements}
+        for muscle_name in shared:
             degree_total += 1
-            if pred_degree_map.get(m) == gold_degree_map.get(m):
+            if pred_degree.get(muscle_name) == gold_degree.get(muscle_name):
                 degree_correct += 1
-
-    degree_acc = degree_correct / degree_total if degree_total else None
 
     return {
         "strict_f1": strict["f1"],
@@ -97,427 +96,361 @@ def muscle_scores(
         "muscle_f1": muscle["f1"],
         "muscle_precision": muscle["precision"],
         "muscle_recall": muscle["recall"],
-        "degree_acc": degree_acc,
+        "degree_acc": degree_correct / degree_total if degree_total else None,
         "degree_correct": degree_correct,
         "degree_total": degree_total,
     }
 
 
-# ─── Gold standard loader ─────────────────────────────────────────────────────
-
 def _parse_csv_cell(value: str | None) -> list[str]:
-    """Parse a comma-separated cell value into a list of stripped strings."""
     if not value:
         return []
-    return [v.strip() for v in str(value).split(",") if v.strip()]
+    return [part.strip() for part in str(value).split(",") if part.strip()]
 
 
 def _bool_cell(value: str | None) -> bool | None:
     if value is None:
         return None
-    v = str(value).strip().upper()
-    if v in ("TRUE", "YES", "1"):
+    text = str(value).strip().upper()
+    if text in {"TRUE", "YES", "1"}:
         return True
-    if v in ("FALSE", "NO", "0"):
+    if text in {"FALSE", "NO", "0"}:
         return False
     return None
 
 
-def load_gold(xlsx_path: Path) -> dict[str, dict]:
-    """
-    Load annotated gold standard from xlsx.
+def _field_value(raw_value, kind: str):
+    if kind == "set":
+        return _parse_csv_cell(raw_value)
+    if kind == "bool":
+        return _bool_cell(raw_value)
+    if raw_value is None:
+        return None
+    text = str(raw_value).strip()
+    return text or None
 
-    Returns {exercise_id: gold_record} for all exercises whose
-    overall status is not "Pending".
 
-    Gold record shape:
-      {
-        "id": str,
-        "movement_patterns": [str, ...],
-        "primary_joint_actions": [str, ...],
-        "supporting_joint_actions": [str, ...],
-        "is_compound": bool | None,
-        "is_unilateral": bool | None,
-        "training_modalities": [str, ...],
-        "muscle_involvements": [{"muscle": str, "degree": str}, ...],
-      }
-    """
-    wb = load_workbook(xlsx_path, data_only=True)
-    gold: dict[str, dict] = {}
+def load_gold_csv(csv_path: Path) -> dict[str, dict]:
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name == "Index":
-            continue
-        ws = wb[sheet_name]
+    entity_id = None
+    record: dict[str, Any] = {}
+    muscle_slots: dict[str, dict[str, dict[str, str]]] = {}
 
-        # Exercise id is in row 2, col A value like "id: ffdb_... | ..."
-        id_row = ws.cell(row=2, column=1).value or ""
-        exercise_id = None
-        for part in str(id_row).split("|"):
-            if "id:" in part:
-                exercise_id = part.split("id:")[-1].strip()
-                break
-        if not exercise_id:
+    for row in rows:
+        field = str(row.get("field") or "").strip()
+        predicted = str(row.get("predicted_value") or "").strip()
+        corrected = str(row.get("corrected_value") or "").strip()
+        status = str(row.get(STATUS_HEADER) or row.get("status") or "pending").strip().lower()
+
+        if field == "entity_id" and predicted:
+            entity_id = predicted
             continue
 
-        # Overall status is written by build_gold_sheet.py in a known row.
-        # We scan for the "Overall Exercise Status" section marker and read
-        # the status cell two rows below it.
-        overall_status = "Pending"
-        for row in ws.iter_rows():
-            for cell in row:
-                if cell.value == "Overall Exercise Status":
-                    status_cell = ws.cell(row=cell.row + 2, column=2)
-                    overall_status = str(status_cell.value or "Pending").strip()
-                    break
-
-        if overall_status == "Pending":
+        if field == "exercise_name":
             continue
 
-        # Read scalar fields. They appear in a fixed order after the column
-        # header row. We scan for them by label in column A.
-        scalar: dict[str, Any] = {}
-        field_map = {
-            "Movement Patterns": "movement_patterns",
-            "Primary Joint Actions": "primary_joint_actions",
-            "Supporting Joint Actions": "supporting_joint_actions",
-            "Is Compound": "is_compound",
-            "Is Unilateral": "is_unilateral",
-            "Training Modalities": "training_modalities",
-        }
+        muscle_match = MUSCLE_FIELD_RE.match(field)
+        if muscle_match:
+            slot, part = muscle_match.groups()
+            muscle_slots.setdefault(slot, {})[part] = {
+                "predicted": predicted,
+                "corrected": corrected,
+                "status": status,
+            }
+            continue
 
-        for row in ws.iter_rows():
-            label_cell = row[0]
-            label = str(label_cell.value or "").strip()
-            if label not in field_map:
-                continue
-            # Column C is the corrected value; fall back to column B (LLM value)
-            # if correction is blank.
-            corrected = ws.cell(row=label_cell.row, column=3).value
-            llm_val = ws.cell(row=label_cell.row, column=2).value
-            value = corrected if corrected not in (None, "") else llm_val
-            field_key = field_map[label]
-            if field_key in ("is_compound", "is_unilateral"):
-                scalar[field_key] = _bool_cell(value)
-            else:
-                scalar[field_key] = _parse_csv_cell(value)
+        if field not in FIELD_KIND:
+            continue
+        if status not in ACTIVE_FIELD_STATUSES:
+            continue
 
-        # Read muscle involvement table. Scan for "Muscle Involvements" header,
-        # then read rows until we hit an empty muscle cell.
-        involvements: list[dict] = []
-        in_inv_table = False
-        past_header = False
+        chosen = predicted if status == "accepted" else corrected
+        if not chosen:
+            continue
+        parsed = _field_value(chosen, FIELD_KIND[field])
+        if parsed is not None:
+            record[field] = parsed
 
-        for row in ws.iter_rows():
-            label = str(row[0].value or "").strip()
-            if label == "Muscle Involvements":
-                in_inv_table = True
-                continue
-            if not in_inv_table:
-                continue
-            # Skip the column header row ("Muscle", "Degree", ...)
-            if not past_header:
-                past_header = True
-                continue
-            # Corrected muscle in col C (index 2), corrected degree in col D (index 3).
-            # Fall back to LLM values in col A (index 0) / col B (index 1).
-            corr_muscle = row[2].value if len(row) > 2 else None
-            corr_degree = row[3].value if len(row) > 3 else None
-            llm_muscle = row[0].value
-            llm_degree = row[1].value
+    if not entity_id:
+        return {}
 
-            muscle = str(corr_muscle or llm_muscle or "").strip()
-            degree = str(corr_degree or llm_degree or "").strip()
+    involvements: list[dict[str, str]] = []
+    for slot in sorted(muscle_slots, key=int):
+        muscle_row = muscle_slots[slot].get("muscle")
+        degree_row = muscle_slots[slot].get("involvementdegree")
+        if not muscle_row or not degree_row:
+            continue
 
-            if not muscle:
-                break  # end of table
-            involvements.append({"muscle": muscle, "degree": degree})
+        muscle_status = muscle_row["status"]
+        degree_status = degree_row["status"]
+        if muscle_status not in ACTIVE_FIELD_STATUSES or degree_status not in ACTIVE_FIELD_STATUSES:
+            continue
 
-        gold[exercise_id] = {
-            "id": exercise_id,
-            **scalar,
-            "muscle_involvements": involvements,
-        }
+        muscle = (
+            muscle_row["predicted"]
+            if muscle_status == "accepted"
+            else muscle_row["corrected"]
+        ).strip()
+        degree = (
+            degree_row["predicted"]
+            if degree_status == "accepted"
+            else degree_row["corrected"]
+        ).strip()
 
-    return gold
+        if not muscle or not degree:
+            continue
+        involvements.append({"muscle": muscle, "degree": degree})
+
+    if involvements:
+        record["muscle_involvements"] = involvements
+
+    if not record:
+        return {}
+    return {entity_id: {"id": entity_id, **record}}
 
 
-# ─── Prediction loader ────────────────────────────────────────────────────────
+def _gold_sources(path: Path) -> list[Path]:
+    if not path.exists():
+        raise SystemExit(f"Gold path not found: {path}")
+    if path.is_file():
+        return [path]
+    files = sorted(
+        file for file in path.glob("*.csv")
+        if file.is_file() and file.name != ".gitkeep"
+    )
+    if not files:
+        raise SystemExit(f"No .csv review files found in {path}")
+    return files
 
-def load_predictions(exercise_ids: list[str], db_path: Path = _DB_PATH) -> dict[str, dict]:
-    """
-    Load enrichment predictions from pipeline.db for the given exercise IDs.
 
-    Reads inferred_claims and resolved_claims (resolved takes precedence, matching
-    the same precedence logic used by build.py).
-    """
-    import sqlite3
+def load_gold(path: Path) -> tuple[dict[str, dict], list[Path]]:
+    files = _gold_sources(path)
+    merged: dict[str, dict] = {}
+    for file in files:
+        gold = load_gold_csv(file)
+        for entity_id, record in gold.items():
+            if entity_id in merged:
+                raise SystemExit(
+                    f"Duplicate reviewed entity_id across submitted files: {entity_id} "
+                    f"(at least one duplicate in {file})"
+                )
+            merged[entity_id] = record
+    return merged, files
 
-    conn = sqlite3.connect(db_path)
+
+def load_predictions(exercise_ids: list[str], db_path: Path = DB_PATH) -> dict[str, dict]:
+    conn = get_connection(db_path)
+    group_level_map, ancestor_map = load_muscle_maps(_ONTOLOGY_DIR)
     preds: dict[str, dict] = {}
-
-    for eid in exercise_ids:
-        # Collect all claims for this entity; resolved overrides inferred
-        claims: dict[str, list] = {}
-
-        for predicate, value, qualifier in conn.execute(
-            "SELECT predicate, value, qualifier FROM inferred_claims WHERE entity_id = ?",
-            (eid,),
-        ):
-            claims.setdefault(predicate, []).append((value, qualifier))
-
-        # Collect resolved claims per predicate, then override inferred per predicate
-        resolved: dict[str, list] = {}
-        for predicate, value, qualifier in conn.execute(
-            "SELECT predicate, value, qualifier FROM resolved_claims WHERE entity_id = ?",
-            (eid,),
-        ):
-            resolved.setdefault(predicate, []).append((value, qualifier))
-        # Resolved overrides inferred at the predicate level (same logic as build.py)
-        for predicate, values in resolved.items():
-            claims[predicate] = values
-
-        # Reshape into the eval format
-        muscle_involvements = [
-            {"muscle": v, "degree": q or ""}
-            for v, q in claims.get("muscle", [])
-        ]
-        movement_patterns = [v for v, _ in claims.get("movement_pattern", [])]
-        primary_jas = [v for v, _ in claims.get("primary_joint_action", [])]
-        supporting_jas = [v for v, _ in claims.get("supporting_joint_action", [])]
-        training_modalities = [v for v, _ in claims.get("training_modality", [])]
-
-        is_compound_vals = [v for v, _ in claims.get("is_compound", [])]
-        is_compound = _bool_cell(is_compound_vals[0]) if is_compound_vals else None
-
-        laterality_vals = [v for v, _ in claims.get("laterality", [])]
-        is_unilateral = (
-            laterality_vals[0].lower() in ("unilateral", "ipsilateral", "contralateral")
-            if laterality_vals else None
+    for entity_id in exercise_ids:
+        preds[entity_id] = effective_prediction_record(
+            conn,
+            entity_id,
+            group_level_map=group_level_map,
+            ancestor_map=ancestor_map,
         )
-
-        preds[eid] = {
-            "id": eid,
-            "movement_patterns": movement_patterns,
-            "primary_joint_actions": primary_jas,
-            "supporting_joint_actions": supporting_jas,
-            "training_modalities": training_modalities,
-            "is_compound": is_compound,
-            "is_unilateral": is_unilateral,
-            "muscle_involvements": muscle_involvements,
-        }
-
     conn.close()
     return preds
 
 
-# ─── Scoring ──────────────────────────────────────────────────────────────────
-
 def score_exercise(pred: dict, gold: dict) -> dict[str, Any]:
-    """Score a single exercise. Returns per-field metrics."""
-    results: dict[str, Any] = {"id": gold["id"]}
+    result: dict[str, Any] = {"id": gold["id"]}
 
-    # Movement patterns
-    pred_mp = set(pred.get("movement_patterns") or [])
-    gold_mp = set(gold.get("movement_patterns") or [])
-    results["movement_pattern"] = set_f1(pred_mp, gold_mp)
+    for key, _, kind in FIELD_SPECS:
+        if key not in gold:
+            result[key] = None
+            continue
+        if kind == "set":
+            result[key] = set_f1(set(pred.get(key) or []), set(gold.get(key) or []))
+        else:
+            result[key] = int(pred.get(key) == gold.get(key))
 
-    # Primary joint actions
-    pred_pja = set(pred.get("primary_joint_actions") or [])
-    gold_pja = set(gold.get("primary_joint_actions") or [])
-    results["primary_joint_action"] = set_f1(pred_pja, gold_pja)
+    if "muscle_involvements" in gold:
+        result["muscle"] = muscle_scores(
+            pred.get("muscle_involvements") or [],
+            gold.get("muscle_involvements") or [],
+        )
+    else:
+        result["muscle"] = None
 
-    # Supporting joint actions
-    pred_sja = set(pred.get("supporting_joint_actions") or [])
-    gold_sja = set(gold.get("supporting_joint_actions") or [])
-    results["supporting_joint_action"] = set_f1(pred_sja, gold_sja)
-
-    # Training modalities
-    pred_tm = set(pred.get("training_modalities") or [])
-    gold_tm = set(gold.get("training_modalities") or [])
-    results["training_modality"] = set_f1(pred_tm, gold_tm)
-
-    # Boolean fields
-    pred_compound = pred.get("is_compound")
-    gold_compound = gold.get("is_compound")
-    results["is_compound"] = (
-        int(pred_compound == gold_compound)
-        if gold_compound is not None else None
-    )
-
-    pred_uni = pred.get("is_unilateral")
-    gold_uni = gold.get("is_unilateral")
-    results["is_unilateral"] = (
-        int(pred_uni == gold_uni)
-        if gold_uni is not None else None
-    )
-
-    # Muscle involvements — three dimensions
-    pred_inv = pred.get("muscle_involvements") or []
-    gold_inv = gold.get("muscle_involvements") or []
-    results["muscle"] = muscle_scores(pred_inv, gold_inv)
-
-    return results
+    return result
 
 
 def aggregate(per_exercise: list[dict]) -> dict[str, Any]:
-    """Macro-average metrics across all scored exercises."""
-
     def _macro_f1(field: str) -> dict[str, float]:
-        ps, rs, fs = [], [], []
-        for ex in per_exercise:
-            m = ex.get(field)
-            if m and isinstance(m, dict):
-                ps.append(m["precision"])
-                rs.append(m["recall"])
-                fs.append(m["f1"])
-        if not fs:
+        metrics = [exercise[field] for exercise in per_exercise if isinstance(exercise.get(field), dict)]
+        if not metrics:
             return {"precision": 0.0, "recall": 0.0, "f1": 0.0, "n": 0}
         return {
-            "precision": sum(ps) / len(ps),
-            "recall": sum(rs) / len(rs),
-            "f1": sum(fs) / len(fs),
-            "n": len(fs),
+            "precision": sum(metric["precision"] for metric in metrics) / len(metrics),
+            "recall": sum(metric["recall"] for metric in metrics) / len(metrics),
+            "f1": sum(metric["f1"] for metric in metrics) / len(metrics),
+            "n": len(metrics),
         }
 
-    def _bool_acc(field: str) -> dict[str, float]:
-        vals = [ex[field] for ex in per_exercise if ex.get(field) is not None]
-        if not vals:
+    def _accuracy(field: str) -> dict[str, float]:
+        values = [exercise[field] for exercise in per_exercise if exercise.get(field) is not None]
+        if not values:
             return {"accuracy": 0.0, "n": 0}
-        return {"accuracy": sum(vals) / len(vals), "n": len(vals)}
+        return {"accuracy": sum(values) / len(values), "n": len(values)}
 
-    agg: dict[str, Any] = {
-        "n": len(per_exercise),
-        "movement_pattern": _macro_f1("movement_pattern"),
-        "primary_joint_action": _macro_f1("primary_joint_action"),
-        "supporting_joint_action": _macro_f1("supporting_joint_action"),
-        "training_modality": _macro_f1("training_modality"),
-        "is_compound": _bool_acc("is_compound"),
-        "is_unilateral": _bool_acc("is_unilateral"),
-    }
+    agg: dict[str, Any] = {"n": len(per_exercise)}
+    for key, _, kind in FIELD_SPECS:
+        agg[key] = _macro_f1(key) if kind == "set" else _accuracy(key)
 
-    # Muscle: aggregate all three dimensions
-    strict_ps, strict_rs, strict_fs = [], [], []
-    muscle_ps, muscle_rs, muscle_fs = [], [], []
-    degree_accs: list[float] = []
-
-    for ex in per_exercise:
-        m = ex.get("muscle")
-        if not m:
-            continue
-        strict_ps.append(m["strict_precision"])
-        strict_rs.append(m["strict_recall"])
-        strict_fs.append(m["strict_f1"])
-        muscle_ps.append(m["muscle_precision"])
-        muscle_rs.append(m["muscle_recall"])
-        muscle_fs.append(m["muscle_f1"])
-        if m["degree_acc"] is not None:
-            degree_accs.append(m["degree_acc"])
-
-    def _avg(lst: list[float]) -> float:
-        return sum(lst) / len(lst) if lst else 0.0
-
-    agg["muscle"] = {
-        "strict_f1": _avg(strict_fs),
-        "strict_precision": _avg(strict_ps),
-        "strict_recall": _avg(strict_rs),
-        "muscle_f1": _avg(muscle_fs),
-        "muscle_precision": _avg(muscle_ps),
-        "muscle_recall": _avg(muscle_rs),
-        "degree_acc": _avg(degree_accs) if degree_accs else None,
-        "n": len(strict_fs),
-    }
+    muscle_metrics = [exercise["muscle"] for exercise in per_exercise if exercise.get("muscle")]
+    if muscle_metrics:
+        counted = [metric for metric in muscle_metrics if metric["degree_acc"] is not None]
+        agg["muscle"] = {
+            "strict_f1": sum(metric["strict_f1"] for metric in muscle_metrics) / len(muscle_metrics),
+            "strict_precision": sum(metric["strict_precision"] for metric in muscle_metrics) / len(muscle_metrics),
+            "strict_recall": sum(metric["strict_recall"] for metric in muscle_metrics) / len(muscle_metrics),
+            "muscle_f1": sum(metric["muscle_f1"] for metric in muscle_metrics) / len(muscle_metrics),
+            "muscle_precision": sum(metric["muscle_precision"] for metric in muscle_metrics) / len(muscle_metrics),
+            "muscle_recall": sum(metric["muscle_recall"] for metric in muscle_metrics) / len(muscle_metrics),
+            "degree_acc": sum(metric["degree_acc"] for metric in counted) / len(counted) if counted else None,
+            "n": len(muscle_metrics),
+        }
+    else:
+        agg["muscle"] = {
+            "strict_f1": 0.0,
+            "strict_precision": 0.0,
+            "strict_recall": 0.0,
+            "muscle_f1": 0.0,
+            "muscle_precision": 0.0,
+            "muscle_recall": 0.0,
+            "degree_acc": None,
+            "n": 0,
+        }
 
     return agg
 
 
-# ─── Reporting ────────────────────────────────────────────────────────────────
-
-def _pct(v: float | None) -> str:
-    if v is None:
+def _pct(value: float | None) -> str:
+    if value is None:
         return "  —  "
-    return f"{v * 100:.1f}%"
+    return f"{value * 100:.1f}%"
 
 
-def print_report(agg: dict, per_exercise: list[dict], verbose: bool = False) -> None:
-    n = agg["n"]
-    print(f"\nEval Report — {n} exercise(s) scored")
-    print("─" * 62)
-    print(f"{'Field':<30} {'P':>7} {'R':>7} {'F1':>7}")
-    print("─" * 62)
+def _selected_fields(field_arg: str | None) -> list[str]:
+    if not field_arg:
+        return [key for key, _, _ in FIELD_SPECS] + ["muscle"]
+    normalized = FIELD_NAME_ALIASES.get(field_arg)
+    if not normalized:
+        raise SystemExit(f"Unknown field: {field_arg}")
+    return [normalized]
 
-    set_fields = [
-        ("movement_pattern",       "Movement Pattern"),
-        ("primary_joint_action",   "Primary Joint Action"),
-        ("supporting_joint_action","Supporting Joint Action"),
-        ("training_modality",      "Training Modality"),
-    ]
-    for key, label in set_fields:
-        m = agg[key]
-        print(f"  {label:<28} {_pct(m['precision'])} {_pct(m['recall'])} {_pct(m['f1'])}")
 
-    print()
-    m = agg["muscle"]
-    print(f"  {'Muscle (strict, w/ degree)':<28} {_pct(m['strict_precision'])} {_pct(m['strict_recall'])} {_pct(m['strict_f1'])}")
-    print(f"  {'Muscle (name only)':<28} {_pct(m['muscle_precision'])} {_pct(m['muscle_recall'])} {_pct(m['muscle_f1'])}")
-    print(f"  {'Degree accuracy (cond.)':<28}                   {_pct(m['degree_acc'])}")
+def print_report(agg: dict, per_exercise: list[dict], *, selected_fields: list[str], verbose: bool = False) -> None:
+    print(f"\nEval Report — {agg['n']} exercise(s) with at least one scored field")
+    print("─" * 78)
 
-    print()
-    ca = agg["is_compound"]
-    ua = agg["is_unilateral"]
-    print(f"  {'Is Compound':<28}                   {_pct(ca['accuracy'])}  (n={ca['n']})")
-    print(f"  {'Is Unilateral':<28}                   {_pct(ua['accuracy'])}  (n={ua['n']})")
-    print("─" * 62)
+    set_labels = {key: label for key, label, kind in FIELD_SPECS if kind == "set"}
+    scalar_labels = {key: label for key, label, kind in FIELD_SPECS if kind != "set"}
+
+    if any(field in selected_fields for field in set_labels):
+        print(f"{'Field':<28} {'P':>7} {'R':>7} {'F1':>7} {'n':>5}")
+        print("─" * 78)
+        for key, label in set_labels.items():
+            if key not in selected_fields:
+                continue
+            metric = agg[key]
+            print(f"{label:<28} {_pct(metric['precision'])} {_pct(metric['recall'])} {_pct(metric['f1'])} {metric['n']:>5}")
+        print()
+
+    if "muscle" in selected_fields:
+        metric = agg["muscle"]
+        print(f"{'Muscle (strict, w/ degree)':<28} {_pct(metric['strict_precision'])} {_pct(metric['strict_recall'])} {_pct(metric['strict_f1'])} {metric['n']:>5}")
+        print(f"{'Muscle (name only)':<28} {_pct(metric['muscle_precision'])} {_pct(metric['muscle_recall'])} {_pct(metric['muscle_f1'])} {metric['n']:>5}")
+        print(f"{'Degree accuracy (cond.)':<28}                   {_pct(metric['degree_acc'])} {metric['n']:>5}")
+        print()
+
+    scalar_fields = [field for field in scalar_labels if field in selected_fields]
+    if scalar_fields:
+        print(f"{'Field':<28} {'Accuracy':>12} {'n':>5}")
+        print("─" * 78)
+        for key in scalar_fields:
+            metric = agg[key]
+            print(f"{scalar_labels[key]:<28} {_pct(metric['accuracy']):>12} {metric['n']:>5}")
+        print("─" * 78)
 
     if verbose:
         print("\nPer-exercise breakdown:")
-        for ex in per_exercise:
-            eid = ex["id"]
-            mp = ex["movement_pattern"]["f1"]
-            ms = ex["muscle"]["strict_f1"]
-            mn = ex["muscle"]["muscle_f1"]
-            da = ex["muscle"]["degree_acc"]
-            print(f"  {eid}")
-            print(f"    movement_pattern f1={_pct(mp)}  muscle_strict={_pct(ms)}  muscle_name={_pct(mn)}  degree_acc={_pct(da)}")
+        for exercise in per_exercise:
+            print(f"  {exercise['id']}")
+            for key in selected_fields:
+                if key == "muscle":
+                    metric = exercise.get("muscle")
+                    if metric:
+                        print(
+                            f"    muscle_strict={_pct(metric['strict_f1'])} "
+                            f"muscle_name={_pct(metric['muscle_f1'])} "
+                            f"degree_acc={_pct(metric['degree_acc'])}"
+                        )
+                    continue
+                metric = exercise.get(key)
+                if isinstance(metric, dict):
+                    print(f"    {key} f1={_pct(metric['f1'])}")
+                elif metric is not None:
+                    print(f"    {key} accuracy={_pct(metric)}")
 
 
-# ─── CLI ─────────────────────────────────────────────────────────────────────
+def archive_scored_files(files: list[Path], destination_dir: Path) -> None:
+    destination_dir.mkdir(parents=True, exist_ok=True)
+    for file in files:
+        target = destination_dir / file.name
+        if target.exists():
+            raise SystemExit(f"Cannot archive scored file; destination already exists: {target}")
+        file.rename(target)
+
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Score enrichment output against gold standard")
-    parser.add_argument("--gold", required=True, help="Path to annotated gold_annotation.xlsx")
-    parser.add_argument("--db", default=str(_DB_PATH), help="Path to pipeline.db")
+    parser = argparse.ArgumentParser(description="Score pipeline predictions against submitted gold CSVs")
+    parser.add_argument("--gold", default=str(_SUBMITTED_DIR), help="Reviewed CSV file or directory of submitted CSVs")
+    parser.add_argument("--db", default=str(DB_PATH), help="Path to pipeline.db")
+    parser.add_argument("--archive-scored", action="store_true", help="Move successfully scored submitted CSVs into evals/scored")
+    parser.add_argument("--scored-dir", default=str(_SCORED_DIR), help="Destination directory for archived scored CSVs")
+    parser.add_argument("--field", help="Score only one field")
     parser.add_argument("--verbose", "-v", action="store_true", help="Print per-exercise breakdown")
-    parser.add_argument("--field", help="Score only this field (e.g. movement_pattern)")
     args = parser.parse_args()
-
-    gold_path = Path(args.gold)
-    if not gold_path.exists():
-        sys.exit(f"Gold file not found: {gold_path}")
 
     db_path = Path(args.db)
     if not db_path.exists():
         sys.exit(f"pipeline.db not found: {db_path}")
 
+    selected_fields = _selected_fields(args.field)
+    gold_path = Path(args.gold)
     print(f"Loading gold standard from {gold_path}...")
-    gold = load_gold(gold_path)
+    gold, source_files = load_gold(gold_path)
     if not gold:
-        sys.exit("No annotated exercises found (all Pending, or gold file is empty).")
-    print(f"  {len(gold)} annotated exercise(s) loaded.")
+        sys.exit("No reviewed exercises found (all rows Pending, or no valid corrected rows).")
+    print(f"  {len(gold)} reviewed exercise(s) loaded from {len(source_files)} file(s).")
 
     print(f"Loading predictions from {db_path}...")
     preds = load_predictions(list(gold.keys()), db_path)
-    missing = [eid for eid in gold if eid not in preds]
+
+    missing = [entity_id for entity_id in gold if entity_id not in preds]
     if missing:
-        print(f"  Warning: {len(missing)} exercise(s) in gold have no prediction file: {missing[:5]}")
+        print(f"  Warning: {len(missing)} exercise(s) in gold have no current prediction: {missing[:5]}")
 
     per_exercise = []
-    for eid, gold_rec in gold.items():
-        pred = preds.get(eid, {})
-        per_exercise.append(score_exercise(pred, gold_rec))
+    for entity_id, gold_record in gold.items():
+        pred = preds.get(entity_id, {"id": entity_id})
+        scored = score_exercise(pred, gold_record)
+        if any(scored.get(field) is not None for field in selected_fields):
+            per_exercise.append(scored)
+
+    if not per_exercise:
+        sys.exit("No scored fields found in the reviewed CSV files.")
 
     agg = aggregate(per_exercise)
-    print_report(agg, per_exercise, verbose=args.verbose)
+    print_report(agg, per_exercise, selected_fields=selected_fields, verbose=args.verbose)
+
+    if args.archive_scored:
+        archive_scored_files(source_files, Path(args.scored_dir))
+        print(f"\nArchived {len(source_files)} scored file(s) to {args.scored_dir}")
 
 
 if __name__ == "__main__":

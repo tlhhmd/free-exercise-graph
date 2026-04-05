@@ -33,58 +33,11 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from constants import FEG_NS
 from pipeline.db import DB_PATH, get_connection
+from pipeline.effective_claims import DEGREE_PRIORITY, effective_claims, load_muscle_maps, normalize_muscle_claims
 
 FEG = Namespace(FEG_NS)
 _ONTOLOGY_DIR = _PROJECT_ROOT / "ontology"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "graph.ttl"
-
-
-# ─── useGroupLevel normalization ──────────────────────────────────────────────
-
-def _build_muscle_maps() -> tuple[dict[str, str], dict[str, frozenset[str]]]:
-    """Return (group_level_map, ancestor_map) from muscles.ttl.
-
-    group_level_map: {head_local_name: group_local_name} for useGroupLevel=true groups.
-    ancestor_map: {muscle_local_name: frozenset of ancestor local names}.
-
-    Both are used at build time to normalize and deduplicate merged muscle claims.
-    """
-    from rdflib import Literal as RDFLiteral
-    from rdflib.namespace import SKOS, RDF as _RDF
-    g = Graph()
-    g.parse(_ONTOLOGY_DIR / "muscles.ttl", format="turtle")
-
-    def local(uri) -> str:
-        return str(uri).split("#")[-1]
-
-    # useGroupLevel map
-    group_level_map: dict[str, str] = {}
-    for group in g.subjects(FEG.useGroupLevel, RDFLiteral(True)):
-        group_name = local(group)
-        for head in g.subjects(SKOS.broader, group):
-            group_level_map[local(head)] = group_name
-
-    # Ancestor map for all muscles
-    all_muscles = (
-        set(g.subjects(_RDF.type, FEG.Muscle))
-        | set(g.subjects(_RDF.type, FEG.MuscleRegion))
-        | set(g.subjects(_RDF.type, FEG.MuscleGroup))
-        | set(g.subjects(_RDF.type, FEG.MuscleHead))
-    )
-
-    def ancestors_of(uri) -> frozenset[str]:
-        result: set[str] = set()
-        queue = list(g.objects(uri, SKOS.broader))
-        while queue:
-            p = queue.pop()
-            n = local(p)
-            if n not in result:
-                result.add(n)
-                queue.extend(g.objects(p, SKOS.broader))
-        return frozenset(result)
-
-    ancestor_map = {local(m): ancestors_of(m) for m in all_muscles}
-    return group_level_map, ancestor_map
 
 
 # ─── URI helpers ──────────────────────────────────────────────────────────────
@@ -97,76 +50,6 @@ def _ex_uri(entity_id: str) -> URIRef:
 def _inv_uri(entity_id: str, muscle: str, degree: str) -> URIRef:
     safe = entity_id.replace("-", "_")
     return FEG[f"inv_ex_{safe}_{muscle}_{degree}"]
-
-
-# ─── Effective claim computation ──────────────────────────────────────────────
-
-def _effective_claims(conn, entity_id: str) -> dict[str, list[tuple[str, str | None]]]:
-    """Return {predicate: [(value, qualifier)]} for one entity.
-
-    General rule: resolved_claims (source-asserted) takes precedence over
-    inferred_claims (LLM-enriched). Inferred fills predicates absent from resolved.
-
-    Exception — muscle claims (ADR-097): sources assert partial muscle lists.
-    Enrichment provides the complete picture. Strategy: union of resolved and
-    inferred muscles, with resolved degree taking precedence per muscle when both
-    sources name the same muscle.
-
-    Exception — joint actions and training modality: always use inferred, because
-    resolved only carries hints (joint_action_hint), not the primary/supporting split.
-    """
-    resolved = conn.execute(
-        "SELECT predicate, value, qualifier FROM resolved_claims WHERE entity_id = ?",
-        (entity_id,),
-    ).fetchall()
-
-    inferred = conn.execute(
-        "SELECT predicate, value, qualifier FROM inferred_claims WHERE entity_id = ?",
-        (entity_id,),
-    ).fetchall()
-
-    # Build resolved predicate set
-    by_pred: dict[str, list[tuple]] = {}
-    for r in resolved:
-        by_pred.setdefault(r["predicate"], []).append((r["value"], r["qualifier"]))
-
-    resolved_preds = set(by_pred.keys())
-
-    # Muscle claims: union strategy (ADR-097).
-    # Resolved degree wins per muscle — except when enrichment assigns PrimeMover
-    # and resolved assigns a lower degree. PrimeMover escalation: enrichment wins
-    # because it was specifically designed to identify prime movers accurately.
-    resolved_muscles: dict[str, str | None] = {
-        r["value"]: r["qualifier"] for r in resolved if r["predicate"] == "muscle"
-    }
-    inferred_muscles: dict[str, str | None] = {
-        r["value"]: r["qualifier"] for r in inferred if r["predicate"] == "muscle"
-    }
-    merged_muscles: list[tuple[str, str | None]] = []
-    for muscle, res_degree in resolved_muscles.items():
-        inf_degree = inferred_muscles.get(muscle)
-        # Escalate to PrimeMover if enrichment says so and source says lower
-        if inf_degree == "PrimeMover" and res_degree != "PrimeMover":
-            merged_muscles.append((muscle, "PrimeMover"))
-        else:
-            merged_muscles.append((muscle, res_degree))
-    for muscle, inf_degree in inferred_muscles.items():
-        if muscle not in resolved_muscles:
-            merged_muscles.append((muscle, inf_degree))
-    if merged_muscles:
-        by_pred["muscle"] = merged_muscles
-
-    # All other predicates: inferred fills predicates not covered by resolved.
-    # Joint actions and training modality always use inferred (resolved has only hints).
-    inferred_fills = {"primary_joint_action", "supporting_joint_action", "training_modality"}
-    for r in inferred:
-        pred = r["predicate"]
-        if pred == "muscle":
-            continue  # handled above
-        if pred in inferred_fills or pred not in resolved_preds:
-            by_pred.setdefault(pred, []).append((r["value"], r["qualifier"]))
-
-    return by_pred
 
 
 # ─── RDF assembly ─────────────────────────────────────────────────────────────
@@ -200,32 +83,11 @@ def _add_entity(g: Graph, entity_id: str, display_name: str, claims: dict, sourc
     # always emits the group-level term (e.g. RotatorCuff) per vocabulary policy.
     # Normalization may map multiple heads to the same group; deduplicate by muscle,
     # keeping the highest-priority degree (PrimeMover > Synergist > Stabilizer > PassiveTarget).
-    _DEGREE_PRIORITY = {"PrimeMover": 0, "Synergist": 1, "Stabilizer": 2, "PassiveTarget": 3}
-    muscle_claims = claims.get("muscle", [])
-
-    # Step 1: normalize to group-level and pick best degree per muscle
-    best_degree: dict[str, str] = {}
-    for muscle, degree in muscle_claims:
-        if degree is None:
-            continue
-        muscle = group_level_map.get(muscle, muscle)
-        current = best_degree.get(muscle)
-        if current is None or _DEGREE_PRIORITY.get(degree, 99) < _DEGREE_PRIORITY.get(current, 99):
-            best_degree[muscle] = degree
-
-    # Step 2: strip ancestors — if both a muscle and one of its ancestors are present,
-    # keep only the more specific term (the descendant).
-    muscle_set = set(best_degree)
-    ancestors_to_remove = {
-        ancestor
-        for muscle in muscle_set
-        for ancestor in ancestor_map.get(muscle, frozenset())
-        if ancestor in muscle_set
-    }
-    for ancestor in ancestors_to_remove:
-        del best_degree[ancestor]
-
-    for muscle, degree in best_degree.items():
+    for muscle, degree in normalize_muscle_claims(
+        claims.get("muscle", []),
+        group_level_map=group_level_map,
+        ancestor_map=ancestor_map,
+    ):
         inv = _inv_uri(entity_id, muscle, degree)
         g.add((uri, FEG.hasInvolvement, inv))
         g.add((inv, RDF.type, FEG.MuscleInvolvement))
@@ -269,7 +131,7 @@ def _add_entity(g: Graph, entity_id: str, display_name: str, claims: dict, sourc
 
 def build(output: Path = _DEFAULT_OUTPUT, db_path: Path = DB_PATH) -> int:
     """Build graph.ttl. Returns triple count."""
-    group_level_map, ancestor_map = _build_muscle_maps()
+    group_level_map, ancestor_map = load_muscle_maps(_ONTOLOGY_DIR)
     g = Graph()
 
     # Load vocabulary
@@ -302,7 +164,7 @@ def build(output: Path = _DEFAULT_OUTPUT, db_path: Path = DB_PATH) -> int:
     for row in entities:
         entity_id    = row["entity_id"]
         display_name = row["display_name"]
-        claims = _effective_claims(conn, entity_id)
+        claims = effective_claims(conn, entity_id)
         sources = [
             (r["source"], r["source_id"])
             for r in conn.execute(
