@@ -183,6 +183,19 @@ Interpretation:
 - `test_shacl.py` protects ontology/shape behavior
 - `pipeline/validate.py` tells you whether the built graph is healthy enough to ship/demo
 
+If you also want a fresh accuracy workbook and scorer pass:
+
+```bash
+python3 evals/build_gold_sheet.py
+python3 evals/eval.py
+```
+
+Notes:
+- `build_gold_sheet.py` now seeds from live canonical entities in `pipeline.db`
+- the default output is batched into 10-exercise files under `evals/unreviewed/`
+- move reviewed batches into `evals/submitted/`
+- `eval.py` reads submitted batches and skips rows and fields still marked `Pending`
+
 ---
 
 ## 9. Build Product Artifacts

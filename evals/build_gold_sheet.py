@@ -1,381 +1,303 @@
 """
-Build gold standard annotation workbook.
-
-One index sheet + one sheet per exercise.
-Each exercise sheet shows all LLM output with editable correction columns.
+Build per-exercise gold-review CSVs from the live canonical pipeline DB.
 
 Usage:
     python3 evals/build_gold_sheet.py
-    python3 evals/build_gold_sheet.py --output evals/gold_annotation.xlsx
+    python3 evals/build_gold_sheet.py --limit 60
+    python3 evals/build_gold_sheet.py --entity-id good_morning --entity-id sit_up
 """
 
-import argparse
-import json
-from pathlib import Path
+from __future__ import annotations
 
-from openpyxl import Workbook
-from openpyxl.styles import (
-    Alignment,
-    Border,
-    Font,
-    PatternFill,
-    Side,
-)
-from openpyxl.utils import get_column_letter
-from openpyxl.worksheet.datavalidation import DataValidation
+import argparse
+import csv
+import hashlib
+import random
+import re
+import sys
+from pathlib import Path
 
 _HERE = Path(__file__).parent
 _ROOT = _HERE.parent
-ENRICHED_DIR = _ROOT / "sources" / "free-exercise-db" / "enriched"
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
-# ---------------------------------------------------------------------------
-# Palette
-# ---------------------------------------------------------------------------
-C_HEADER_BG = "1F3864"     # dark navy — sheet header band
-C_HEADER_FG = "FFFFFF"
-C_SECTION_BG = "D6E4F0"   # light blue — section labels
-C_LLM_BG    = "EBF5FB"    # very light blue — LLM value cells (read-only feel)
-C_EDIT_BG   = "FDFEFE"    # near-white — editable correction cells
-C_TABLE_HDR = "2C3E50"    # dark for muscle table header
-C_INDEX_HDR = "1F3864"
+from pipeline.db import DB_PATH, get_connection
+from pipeline.effective_claims import effective_prediction_record, load_muscle_maps
 
-# Status fill colours
-STATUS_FILLS = {
-    "Pending":  PatternFill("solid", fgColor="F0F0F0"),
-    "Accepted": PatternFill("solid", fgColor="D5F5E3"),
-    "Modified": PatternFill("solid", fgColor="FEF9E7"),
-    "Flagged":  PatternFill("solid", fgColor="FADBD8"),
-}
+_ONTOLOGY_DIR = _ROOT / "ontology"
+_UNREVIEWED_DIR = _HERE / "unreviewed"
 
-STATUS_OPTIONS = '"Pending,Accepted,Modified,Flagged"'
-DEGREE_OPTIONS = '"PrimeMover,Synergist,Stabilizer,PassiveTarget"'
-ROW_STATUS_OPTIONS = '"Pending,Accept,Reject,Modify"'
+STATUS_HEADER = "status (pending/accepted/modified/flagged)"
+CSV_HEADERS = ["field", "predicted_value", "corrected_value", STATUS_HEADER, "comments"]
+DEFAULT_STATUS = "pending"
+BLANK_MUSCLE_ROWS = 4
 
-thin = Side(style="thin", color="CCCCCC")
-BORDER = Border(left=thin, right=thin, top=thin, bottom=thin)
-
-
-def _fill(hex_color: str) -> PatternFill:
-    return PatternFill("solid", fgColor=hex_color)
+FIELD_ORDER = [
+    "entity_id",
+    "exercise_name",
+    "movement_patterns",
+    "primary_joint_actions",
+    "supporting_joint_actions",
+    "training_modalities",
+    "plane_of_motion",
+    "exercise_style",
+    "laterality",
+    "is_compound",
+    "is_combination",
+]
 
 
-def _font(bold=False, color="000000", size=11) -> Font:
-    return Font(bold=bold, color=color, size=size, name="Calibri")
-
-
-def _align(h="left", v="center", wrap=False) -> Alignment:
-    return Alignment(horizontal=h, vertical=v, wrap_text=wrap)
-
-
-def _dv(formula: str, sqref: str) -> DataValidation:
-    dv = DataValidation(type="list", formula1=formula, allow_blank=True, showErrorMessage=False)
-    dv.sqref = sqref
-    return dv
-
-
-def _safe_sheet_name(name: str) -> str:
-    """Excel sheet names: max 31 chars, no special chars."""
-    bad = r"\/*?:[]\'"
-    for ch in bad:
-        name = name.replace(ch, "_")
-    return name[:31]
-
-
-def _fmt_list(val) -> str:
-    if not val:
+def _fmt_list(value) -> str:
+    if not value:
         return ""
-    if isinstance(val, list):
-        return ", ".join(str(v) for v in val)
-    return str(val)
+    return ", ".join(str(item) for item in value)
 
 
-def _fmt_bool(val) -> str:
-    if val is None:
+def _fmt_bool(value) -> str:
+    if value is None:
         return ""
-    return "TRUE" if val else "FALSE"
+    return "TRUE" if value else "FALSE"
 
 
-# ---------------------------------------------------------------------------
-# Exercise sheet builder
-# ---------------------------------------------------------------------------
-def build_exercise_sheet(ws, ex: dict) -> None:
-    ws.freeze_panes = "A8"  # freeze header block
-
-    # Column widths
-    ws.column_dimensions["A"].width = 22   # field label
-    ws.column_dimensions["B"].width = 40   # LLM value
-    ws.column_dimensions["C"].width = 40   # corrected value
-    ws.column_dimensions["D"].width = 14   # status / degree
-    ws.column_dimensions["E"].width = 20   # corrected muscle (involvements table)
-    ws.column_dimensions["F"].width = 18   # corrected degree
-    ws.column_dimensions["G"].width = 14   # row status
-
-    row = 1
-
-    # ---- Title band --------------------------------------------------------
-    ws.merge_cells(f"A{row}:G{row}")
-    cell = ws[f"A{row}"]
-    cell.value = ex.get("name", ex["id"])
-    cell.font = _font(bold=True, color=C_HEADER_FG, size=13)
-    cell.fill = _fill(C_HEADER_BG)
-    cell.alignment = _align("center")
-    ws.row_dimensions[row].height = 22
-    row += 1
-
-    ws.merge_cells(f"A{row}:G{row}")
-    cell = ws[f"A{row}"]
-    cell.value = f"id: {ex['id']}   |   category: {ex.get('category', '')}   |   level: {ex.get('level', '')}"
-    cell.font = _font(color=C_HEADER_FG, size=10)
-    cell.fill = _fill(C_HEADER_BG)
-    cell.alignment = _align("center")
-    row += 1
-
-    row += 1  # spacer
-
-    # ---- Column header for field block ------------------------------------
-    for col, label in enumerate(["Field", "LLM Output", "Corrected Value", "Status"], start=1):
-        cell = ws.cell(row=row, column=col, value=label)
-        cell.font = _font(bold=True, color=C_HEADER_FG)
-        cell.fill = _fill(C_TABLE_HDR)
-        cell.alignment = _align("center")
-        cell.border = BORDER
-    row += 1
-
-    # ---- Scalar / list fields ---------------------------------------------
-    scalar_fields = [
-        ("Movement Patterns",      _fmt_list(ex.get("movement_patterns"))),
-        ("Primary Joint Actions",  _fmt_list(ex.get("primary_joint_actions"))),
-        ("Supporting Joint Actions", _fmt_list(ex.get("supporting_joint_actions"))),
-        ("Is Compound",            _fmt_bool(ex.get("is_compound"))),
-        ("Is Unilateral",          _fmt_bool(ex.get("is_unilateral"))),
-        ("Training Modalities",    _fmt_list(ex.get("training_modalities"))),
-    ]
-
-    field_status_rows = []
-    for label, llm_val in scalar_fields:
-        ws.cell(row=row, column=1, value=label).font = _font(bold=True)
-        ws.cell(row=row, column=1).fill = _fill(C_SECTION_BG)
-        ws.cell(row=row, column=1).border = BORDER
-        ws.cell(row=row, column=1).alignment = _align()
-
-        llm_cell = ws.cell(row=row, column=2, value=llm_val)
-        llm_cell.fill = _fill(C_LLM_BG)
-        llm_cell.border = BORDER
-        llm_cell.alignment = _align(wrap=True)
-
-        corr_cell = ws.cell(row=row, column=3, value="")
-        corr_cell.fill = _fill(C_EDIT_BG)
-        corr_cell.border = BORDER
-        corr_cell.alignment = _align(wrap=True)
-
-        status_cell = ws.cell(row=row, column=4, value="Pending")
-        status_cell.fill = STATUS_FILLS["Pending"]
-        status_cell.border = BORDER
-        status_cell.alignment = _align("center")
-
-        field_status_rows.append(f"D{row}")
-        row += 1
-
-    # Add status dropdown for scalar field rows
-    for sqref in field_status_rows:
-        ws.add_data_validation(_dv(STATUS_OPTIONS, sqref))
-
-    row += 1  # spacer
-
-    # ---- Muscle involvements table ----------------------------------------
-    ws.merge_cells(f"A{row}:G{row}")
-    section_cell = ws[f"A{row}"]
-    section_cell.value = "Muscle Involvements"
-    section_cell.font = _font(bold=True, color=C_HEADER_FG)
-    section_cell.fill = _fill(C_TABLE_HDR)
-    section_cell.alignment = _align("center")
-    row += 1
-
-    # Table header
-    inv_headers = ["Muscle", "Degree", "Corrected Muscle", "Corrected Degree", "", "Row Status"]
-    for col, label in enumerate(inv_headers, start=1):
-        cell = ws.cell(row=row, column=col, value=label)
-        cell.font = _font(bold=True, color=C_HEADER_FG)
-        cell.fill = _fill(C_HEADER_BG)
-        cell.alignment = _align("center")
-        cell.border = BORDER
-    row += 1
-
-    inv_start = row
-    for inv in ex.get("muscle_involvements", []):
-        muscle = inv.get("muscle", "")
-        degree = inv.get("degree", "")
-
-        ws.cell(row=row, column=1, value=muscle).fill = _fill(C_LLM_BG)
-        ws.cell(row=row, column=1).border = BORDER
-
-        ws.cell(row=row, column=2, value=degree).fill = _fill(C_LLM_BG)
-        ws.cell(row=row, column=2).border = BORDER
-        ws.cell(row=row, column=2).alignment = _align("center")
-
-        ws.cell(row=row, column=3, value="").fill = _fill(C_EDIT_BG)
-        ws.cell(row=row, column=3).border = BORDER
-
-        ws.cell(row=row, column=4, value="").fill = _fill(C_EDIT_BG)
-        ws.cell(row=row, column=4).border = BORDER
-        ws.cell(row=row, column=4).alignment = _align("center")
-
-        status_cell = ws.cell(row=row, column=6, value="Pending")
-        status_cell.fill = STATUS_FILLS["Pending"]
-        status_cell.border = BORDER
-        status_cell.alignment = _align("center")
-
-        row += 1
-
-    inv_end = row - 1
-
-    # Dropdowns for involvement table
-    if inv_end >= inv_start:
-        ws.add_data_validation(_dv(DEGREE_OPTIONS, f"D{inv_start}:D{inv_end}"))
-        ws.add_data_validation(_dv(ROW_STATUS_OPTIONS, f"F{inv_start}:F{inv_end}"))
-
-    row += 2  # spacer
-
-    # ---- Overall status + notes -------------------------------------------
-    ws.merge_cells(f"A{row}:G{row}")
-    overall_label = ws[f"A{row}"]
-    overall_label.value = "Overall Exercise Status"
-    overall_label.font = _font(bold=True, color=C_HEADER_FG)
-    overall_label.fill = _fill(C_TABLE_HDR)
-    overall_label.alignment = _align("center")
-    row += 1
-
-    ws.cell(row=row, column=1, value="Status").font = _font(bold=True)
-    ws.cell(row=row, column=1).fill = _fill(C_SECTION_BG)
-    ws.cell(row=row, column=1).border = BORDER
-
-    overall_status = ws.cell(row=row, column=2, value="Pending")
-    overall_status.fill = STATUS_FILLS["Pending"]
-    overall_status.border = BORDER
-    overall_status.alignment = _align("center")
-    ws.add_data_validation(_dv(STATUS_OPTIONS, f"B{row}"))
-    row += 1
-
-    ws.cell(row=row, column=1, value="Notes").font = _font(bold=True)
-    ws.cell(row=row, column=1).fill = _fill(C_SECTION_BG)
-    ws.cell(row=row, column=1).border = BORDER
-
-    notes_cell = ws.cell(row=row, column=2, value="")
-    notes_cell.fill = _fill(C_EDIT_BG)
-    notes_cell.border = BORDER
-    notes_cell.alignment = _align(wrap=True)
-    ws.row_dimensions[row].height = 40
-    ws.merge_cells(f"B{row}:G{row}")
+def _field_predicted_value(field: str, exercise: dict) -> str:
+    if field == "entity_id":
+        return exercise["entity_id"]
+    if field == "exercise_name":
+        return exercise["name"]
+    value = exercise.get(field)
+    if isinstance(value, list):
+        return _fmt_list(value)
+    if isinstance(value, bool) or value is None:
+        return _fmt_bool(value)
+    return str(value or "")
 
 
-# ---------------------------------------------------------------------------
-# Index sheet builder
-# ---------------------------------------------------------------------------
-def build_index_sheet(ws, exercises: list) -> None:
-    ws.freeze_panes = "A3"
-    ws.column_dimensions["A"].width = 10
-    ws.column_dimensions["B"].width = 35
-    ws.column_dimensions["C"].width = 18
-    ws.column_dimensions["D"].width = 25
-    ws.column_dimensions["E"].width = 25
-    ws.column_dimensions["F"].width = 14
-    ws.column_dimensions["G"].width = 14
-    ws.column_dimensions["H"].width = 14
-    ws.column_dimensions["I"].width = 40
-
-    row = 1
-
-    # Title
-    ws.merge_cells("A1:I1")
-    title = ws["A1"]
-    title.value = "Gold Standard Annotation — Index"
-    title.font = _font(bold=True, color=C_HEADER_FG, size=13)
-    title.fill = _fill(C_INDEX_HDR)
-    title.alignment = _align("center")
-    ws.row_dimensions[1].height = 22
-    row += 1
-
-    # Column headers
-    headers = ["#", "Exercise", "Category", "Movement Patterns", "Primary Joint Actions",
-               "Is Compound", "Is Unilateral", "Status", "Notes"]
-    for col, label in enumerate(headers, start=1):
-        cell = ws.cell(row=row, column=col, value=label)
-        cell.font = _font(bold=True, color=C_HEADER_FG)
-        cell.fill = _fill(C_TABLE_HDR)
-        cell.alignment = _align("center")
-        cell.border = BORDER
-    row += 1
-
-    for i, ex in enumerate(exercises, start=1):
-        ws.cell(row=row, column=1, value=i).alignment = _align("center")
-        ws.cell(row=row, column=1).border = BORDER
-
-        name_cell = ws.cell(row=row, column=2, value=ex.get("name", ex["id"]))
-        name_cell.border = BORDER
-        # Hyperlink to exercise sheet
-        sheet_name = _safe_sheet_name(ex["id"])
-        name_cell.hyperlink = f"#{sheet_name}!A1"
-        name_cell.font = Font(color="1F497D", underline="single", name="Calibri", size=11)
-
-        ws.cell(row=row, column=3, value=ex.get("category", "")).border = BORDER
-        ws.cell(row=row, column=3).alignment = _align("center")
-
-        ws.cell(row=row, column=4, value=_fmt_list(ex.get("movement_patterns"))).border = BORDER
-        ws.cell(row=row, column=4).alignment = _align(wrap=True)
-
-        ws.cell(row=row, column=5, value=_fmt_list(ex.get("primary_joint_actions"))).border = BORDER
-        ws.cell(row=row, column=5).alignment = _align(wrap=True)
-
-        ws.cell(row=row, column=6, value=_fmt_bool(ex.get("is_compound"))).border = BORDER
-        ws.cell(row=row, column=6).alignment = _align("center")
-
-        ws.cell(row=row, column=7, value=_fmt_bool(ex.get("is_unilateral"))).border = BORDER
-        ws.cell(row=row, column=7).alignment = _align("center")
-
-        status_cell = ws.cell(row=row, column=8, value="Pending")
-        status_cell.fill = STATUS_FILLS["Pending"]
-        status_cell.border = BORDER
-        status_cell.alignment = _align("center")
-        ws.add_data_validation(_dv(STATUS_OPTIONS, f"H{row}"))
-
-        ws.cell(row=row, column=9, value="").border = BORDER
-        ws.cell(row=row, column=9).alignment = _align(wrap=True)
-
-        ws.row_dimensions[row].height = 30
-        row += 1
+def _edge_tokens(exercise: dict) -> list[str]:
+    tokens: list[str] = []
+    if exercise["source_count"] > 1:
+        tokens.append("multi-source")
+    if exercise["source_count"] > 2:
+        tokens.append("3+ sources")
+    if not exercise.get("movement_patterns"):
+        tokens.append("no movement pattern")
+    if exercise.get("laterality") in {"Contralateral", "Ipsilateral"}:
+        tokens.append(f"laterality:{exercise['laterality']}")
+    if exercise.get("is_compound") is False:
+        tokens.append("isolation")
+    if exercise.get("is_combination") is True:
+        tokens.append("combination")
+    for modality in exercise.get("training_modalities") or []:
+        tokens.append(f"modality:{modality}")
+    for plane in exercise.get("plane_of_motion") or []:
+        if plane != "SagittalPlane":
+            tokens.append(f"plane:{plane}")
+    return tokens
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-def main():
-    parser = argparse.ArgumentParser(description="Build gold standard annotation xlsx")
-    parser.add_argument("--output", default=str(_HERE / "gold_annotation.xlsx"))
+def _load_candidates(conn) -> list[dict]:
+    group_level_map, ancestor_map = load_muscle_maps(_ONTOLOGY_DIR)
+
+    source_map: dict[str, list[tuple[str, str]]] = {}
+    for row in conn.execute(
+        "SELECT entity_id, source, source_id FROM entity_sources ORDER BY entity_id, source, source_id"
+    ):
+        source_map.setdefault(row["entity_id"], []).append((row["source"], row["source_id"]))
+
+    stamp_map = {
+        row["entity_id"]: {"enriched_at": row["enriched_at"], "model": row["model"]}
+        for row in conn.execute("SELECT entity_id, enriched_at, model FROM enrichment_stamps")
+    }
+
+    exercises: list[dict] = []
+    rows = conn.execute("SELECT entity_id, display_name FROM entities ORDER BY display_name, entity_id").fetchall()
+    for row in rows:
+        entity_id = row["entity_id"]
+        record = effective_prediction_record(
+            conn,
+            entity_id,
+            group_level_map=group_level_map,
+            ancestor_map=ancestor_map,
+        )
+        sources = source_map.get(entity_id, [])
+        stamp = stamp_map.get(entity_id, {})
+        record.update({
+            "name": row["display_name"],
+            "entity_id": entity_id,
+            "source_count": len(sources),
+            "source_summary": ", ".join(sorted({source for source, _ in sources})) or "",
+            "source_ids": ", ".join(f"{source}:{source_id}" for source, source_id in sources) or "",
+            "enriched_at": stamp.get("enriched_at") or "",
+            "model": stamp.get("model") or "",
+        })
+        record["edge_tokens"] = _edge_tokens(record)
+        exercises.append(record)
+    return exercises
+
+
+def _pick_representative_sample(exercises: list[dict], limit: int, seed: int) -> list[dict]:
+    if limit >= len(exercises):
+        for exercise in exercises:
+            exercise["selection_reason"] = "full population"
+        return list(exercises)
+
+    token_freq: dict[str, int] = {}
+    for exercise in exercises:
+        for token in set(exercise["edge_tokens"]):
+            token_freq[token] = token_freq.get(token, 0) + 1
+
+    edge_quota = min(limit // 3, 15)
+    uncovered = set(token_freq)
+    selected_ids: set[str] = set()
+    edge_selected: list[dict] = []
+
+    while len(edge_selected) < edge_quota:
+        best = None
+        best_score = 0.0
+        best_tags: list[str] = []
+
+        for exercise in exercises:
+            if exercise["entity_id"] in selected_ids:
+                continue
+            unique_tokens = sorted(set(exercise["edge_tokens"]))
+            score = sum(1.0 / token_freq[token] for token in unique_tokens if token in uncovered)
+            if score <= 0:
+                continue
+            tags = sorted(unique_tokens, key=lambda token: (token_freq[token], token))
+            tie_break = (exercise["source_count"], exercise["enriched_at"], exercise["name"])
+            if score > best_score or (
+                score == best_score
+                and best is not None
+                and tie_break > (best["source_count"], best["enriched_at"], best["name"])
+            ):
+                best = exercise
+                best_score = score
+                best_tags = tags
+
+        if best is None:
+            break
+
+        selected_ids.add(best["entity_id"])
+        uncovered.difference_update(best["edge_tokens"])
+        best["selection_reason"] = f"coverage: {', '.join(best_tags[:3])}"
+        edge_selected.append(best)
+
+    remaining = [exercise for exercise in exercises if exercise["entity_id"] not in selected_ids]
+    rng = random.Random(seed)
+    rng.shuffle(remaining)
+    fill = remaining[: max(0, limit - len(edge_selected))]
+    for exercise in fill:
+        exercise["selection_reason"] = f"representative random (seed={seed})"
+
+    sample = edge_selected + fill
+    return sorted(sample, key=lambda exercise: (exercise["name"].lower(), exercise["entity_id"]))
+
+
+def _select_exercises(conn, *, limit: int, seed: int, entity_ids: list[str]) -> list[dict]:
+    exercises = _load_candidates(conn)
+    by_id = {exercise["entity_id"]: exercise for exercise in exercises}
+
+    if entity_ids:
+        missing = [entity_id for entity_id in entity_ids if entity_id not in by_id]
+        if missing:
+            raise SystemExit(f"Unknown entity_id(s): {', '.join(missing[:10])}")
+        selected = [by_id[entity_id] for entity_id in entity_ids]
+        for exercise in selected:
+            exercise["selection_reason"] = "explicit entity_id"
+        return selected
+
+    return _pick_representative_sample(exercises, limit=limit, seed=seed)
+
+
+def _slugify_filename(text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    return slug or "exercise"
+
+
+def _unique_file_name(output_dir: Path, entity_id: str, exercise_name: str) -> Path:
+    short_hash = hashlib.sha1(entity_id.encode("utf-8")).hexdigest()[:8]
+    base = f"{_slugify_filename(exercise_name)}__{short_hash}"
+    path = output_dir / f"{base}.csv"
+    n = 2
+    while path.exists():
+        path = output_dir / f"{base}_{n}.csv"
+        n += 1
+    return path
+
+
+def _build_rows(exercise: dict) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+
+    for field in FIELD_ORDER:
+        comments = ""
+        if field == "exercise_name":
+            comments = exercise.get("selection_reason", "")
+        rows.append({
+            "field": field,
+            "predicted_value": _field_predicted_value(field, exercise),
+            "corrected_value": "",
+            STATUS_HEADER: DEFAULT_STATUS,
+            "comments": comments,
+        })
+
+    involvements = exercise.get("muscle_involvements") or []
+    total_slots = len(involvements) + BLANK_MUSCLE_ROWS
+    for idx in range(total_slots):
+        involvement = involvements[idx] if idx < len(involvements) else {"muscle": "", "degree": ""}
+        prefix = f"muscle_involvement_{idx + 1:02d}"
+        rows.append({
+            "field": f"{prefix}_muscle",
+            "predicted_value": involvement.get("muscle", ""),
+            "corrected_value": "",
+            STATUS_HEADER: DEFAULT_STATUS,
+            "comments": "",
+        })
+        rows.append({
+            "field": f"{prefix}_involvementdegree",
+            "predicted_value": involvement.get("degree", ""),
+            "corrected_value": "",
+            STATUS_HEADER: DEFAULT_STATUS,
+            "comments": "",
+        })
+
+    return rows
+
+
+def _write_exercise_csv(path: Path, exercise: dict) -> None:
+    rows = _build_rows(exercise)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=CSV_HEADERS)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Build per-exercise gold review CSVs")
+    parser.add_argument("--output-dir", default=str(_UNREVIEWED_DIR), help="Directory to write per-exercise CSVs into")
+    parser.add_argument("--db", default=str(DB_PATH), help="Path to pipeline.db")
+    parser.add_argument("--limit", type=int, default=50, help="Representative sample size when no explicit IDs are given")
+    parser.add_argument("--seed", type=int, default=7, help="Deterministic seed for representative sampling")
+    parser.add_argument("--entity-id", action="append", default=[], help="Explicit canonical entity_id to include; may be repeated")
     args = parser.parse_args()
 
-    enriched_files = sorted(ENRICHED_DIR.glob("*.json"))
-    if not enriched_files:
-        print("No enriched files found. Run enrich.py first.")
-        return
-    exercises = [json.loads(p.read_text()) for p in enriched_files]
-    exercises = sorted(exercises, key=lambda e: e.get("name", e["id"]).lower())
+    conn = get_connection(Path(args.db))
+    exercises = _select_exercises(conn, limit=args.limit, seed=args.seed, entity_ids=args.entity_id)
+    conn.close()
 
-    wb = Workbook()
+    if not exercises:
+        raise SystemExit("No exercises selected for CSV generation.")
 
-    # Index sheet
-    ws_index = wb.active
-    ws_index.title = "Index"
-    build_index_sheet(ws_index, exercises)
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-    # One sheet per exercise
-    for ex in exercises:
-        sheet_name = _safe_sheet_name(ex["id"])
-        ws = wb.create_sheet(title=sheet_name)
-        build_exercise_sheet(ws, ex)
+    for file in out_dir.glob("*.csv"):
+        if file.name != ".gitkeep":
+            file.unlink()
 
-    out = Path(args.output)
-    wb.save(out)
-    print(f"Wrote {len(exercises)} exercises → {out}")
+    for exercise in exercises:
+        out = _unique_file_name(out_dir, exercise["entity_id"], exercise["name"])
+        _write_exercise_csv(out, exercise)
+        print(f"Wrote 1 exercise → {out}")
 
 
 if __name__ == "__main__":
