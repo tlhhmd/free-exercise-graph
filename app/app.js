@@ -78,13 +78,11 @@ const TOKEN_NORMALIZATION = {
 };
 
 const BROWSE_FILTER_KEYS = ["patterns", "modalities", "equipment", "joints", "laterality", "planes", "styles"];
-const DEFAULT_THEME = "gold";
+const DEFAULT_THEME = "mono";
 const THEME_STORAGE_KEY = "feg-theme";
 const THEMES = {
-  gold: { label: "Gold", swatchStart: "#ffd94f", swatchEnd: "#c83200" },
   mono: { label: "Mono", swatchStart: "#efefef", swatchEnd: "#202020" },
   dark: { label: "Dark", swatchStart: "#2a2e35", swatchEnd: "#f4efe7" },
-  campbell: { label: "Campbell", swatchStart: "#f6e2bd", swatchEnd: "#c9242b" },
 };
 
 const FILTER_VALUE_GETTERS = {
