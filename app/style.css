@@ -60,425 +60,413 @@ body {
   transition: background 0.25s ease, color 0.2s ease;
 }
 
-body[data-theme="mono"] {
-  /* Core surfaces / text / borders */
-  --bg: #d7d3cb;
-  --bg-top: #e4dfd6;
-  --page-glow: radial-gradient(circle at top, rgba(255, 251, 245, 0.18), transparent 40%);
-  --surface: rgba(244, 239, 230, 0.96);
-  --surface-2: #e7dfd1;
-  --surface-3: #d8cebe;
-  --paper: #f2ece1;
-  --panel-bg: rgba(244, 239, 230, 0.96);
-  --panel-bg-muted: rgba(232, 224, 212, 0.88);
-  --sheet-bg: rgba(245, 240, 231, 0.985);
-  --summary-card-bg: rgba(249, 245, 238, 0.84);
-  --card-bg: rgba(247, 242, 234, 0.95);
-  --card-bg-pressed: #e7dfd1;
-  --paper-card-bg: rgba(250, 246, 239, 0.86);
-  --paper-card-bg-strong: rgba(251, 247, 241, 0.92);
-  --paper-card-bg-soft: rgba(247, 242, 235, 0.78);
+body[data-theme="folk"] {
+  /* Core surfaces / text / borders — acid green canvas, folk art naïve painting */
+  --bg: #c0c84a;
+  --bg-top: #ccd258;
+  --page-glow: radial-gradient(ellipse at top center, rgba(255, 250, 200, 0.22), transparent 45%);
+  --surface: rgba(252, 250, 228, 0.97);
+  --surface-2: #eeeabc;
+  --surface-3: #e4e0a8;
+  --paper: #f8f6d8;
+  --panel-bg: rgba(252, 250, 228, 0.97);
+  --panel-bg-muted: rgba(244, 240, 212, 0.90);
+  --sheet-bg: rgba(253, 251, 232, 0.988);
+  --summary-card-bg: rgba(254, 252, 236, 0.86);
+  --card-bg: rgba(253, 251, 232, 0.96);
+  --card-bg-pressed: #eeeabc;
+  --paper-card-bg: rgba(254, 252, 236, 0.88);
+  --paper-card-bg-strong: rgba(255, 253, 240, 0.94);
+  --paper-card-bg-soft: rgba(252, 250, 228, 0.80);
 
-  --text: #1e1915;
-  --text-2: #655b50;
-  --accent: #2d2520;
-  --accent-soft: rgba(45, 37, 32, 0.08);
-  --accent-2: #786c60;
-  --navy: #241d19;
+  --text: #18180a;
+  --text-2: #565828;
+  --accent: #c83828;
+  --accent-soft: rgba(200, 56, 40, 0.09);
+  --accent-2: #2a7878;
+  --navy: #18180a;
 
-  --border: rgba(62, 50, 39, 0.16);
-  --border-strong: rgba(62, 50, 39, 0.28);
+  --border: rgba(26, 26, 10, 0.14);
+  --border-strong: rgba(26, 26, 10, 0.24);
 
   /* Typography */
-  --title-shadow: rgba(112, 100, 86, 0.16);
-  --font-body: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --font-display: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --font-kicker: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --display-letterspacing: -0.045em;
+  --title-shadow: rgba(26, 26, 10, 0.14);
+  --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Cormorant", Georgia, serif;
+  --font-kicker: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --display-letterspacing: 0.02em;
   --display-transform: uppercase;
   --title-transform: none;
   --kicker-transform: uppercase;
 
-  --kicker-size: 18px;
+  --kicker-size: 12px;
   --kicker-weight: 600;
-  --kicker-letterspacing: 0.02em;
+  --kicker-letterspacing: 0.14em;
   --kicker-line-height: 1;
-  --kicker-margin-bottom: 8px;
+  --kicker-margin-bottom: 10px;
 
-  --title-size: clamp(32px, 6.8vw, 52px);
-  --title-weight: 800;
-  --title-line-height: 0.98;
-  --title-letterspacing: -0.025em;
+  --title-size: clamp(36px, 7.5vw, 58px);
+  --title-weight: 600;
+  --title-line-height: 0.93;
+  --title-letterspacing: 0.01em;
   --title-margin-bottom: 10px;
-  --title-shadow: rgba(112, 100, 86, 0.14);
-  --title-shadow-x: 1px;
+  --title-shadow-x: 0px;
   --title-shadow-y: 1px;
-  --title-shadow-blur: 0;
-  --title-stroke-width: 0.45px;
-  --title-stroke-color: rgba(30, 25, 21, 0.22);
-  --title-shadow-stack:
-    1px 1px 0 rgba(120, 109, 96, 0.22),
-    2px 2px 0 rgba(110, 100, 88, 0.18),
-    4px 3px 0 rgba(97, 88, 78, 0.14),
-    7px 4px 0 rgba(83, 76, 68, 0.12),
-    11px 6px 10px rgba(41, 32, 24, 0.12);
+  --title-shadow-blur: 8px;
+  --title-stroke-width: 0px;
+  --title-stroke-color: transparent;
+  --title-shadow-stack: 0 1px 12px rgba(26, 26, 10, 0.16);
 
   /* Elevation / shadow */
-  --shadow-card: 0 10px 20px rgba(41, 32, 24, 0.07);
-  --shadow-panel: 0 10px 20px rgba(41, 32, 24, 0.05);
-  --shadow-nav: 0 -14px 28px rgba(35, 28, 22, 0.08);
-  --shadow-sheet: 0 -18px 36px rgba(35, 28, 22, 0.13);
-  --shadow-control: 0 4px 10px rgba(41, 32, 24, 0.045);
-  --shadow-hero: 0 12px 26px rgba(41, 32, 24, 0.09);
-  --shadow-inline: 0 8px 16px rgba(48, 37, 29, 0.07);
-  --shadow-pressed: inset 0 1px 0 rgba(255, 251, 245, 0.52);
+  --shadow-card: 0 6px 18px rgba(26, 26, 10, 0.10);
+  --shadow-panel: 0 6px 16px rgba(26, 26, 10, 0.08);
+  --shadow-nav: 0 -10px 24px rgba(26, 26, 10, 0.12);
+  --shadow-sheet: 0 -14px 32px rgba(26, 26, 10, 0.16);
+  --shadow-control: 0 3px 8px rgba(26, 26, 10, 0.07);
+  --shadow-hero: 0 8px 22px rgba(26, 26, 10, 0.10);
+  --shadow-inline: 0 5px 14px rgba(26, 26, 10, 0.08);
+  --shadow-pressed: inset 0 1px 0 rgba(255, 255, 255, 0.60);
 
   /* Hero / card / sheet / panel backgrounds */
   --hero-bg:
-    linear-gradient(180deg, rgba(244, 239, 230, 0.985) 0%, rgba(239, 233, 223, 0.985) 100%),
-    linear-gradient(90deg, rgba(67, 53, 40, 0.025), transparent 58%);
-  --sheet-handle-bg: linear-gradient(180deg, rgba(245, 240, 231, 0.985) 72%, rgba(245, 240, 231, 0));
-  --overlay-scrim: rgba(24, 20, 17, 0.38);
+    linear-gradient(180deg, rgba(253, 251, 232, 0.97) 0%, rgba(248, 246, 224, 0.97) 100%);
+  --sheet-handle-bg: linear-gradient(180deg, rgba(253, 251, 232, 0.988) 72%, rgba(253, 251, 232, 0));
+  --overlay-scrim: rgba(18, 18, 8, 0.42);
 
   /* Controls and interactive surfaces */
-  --control-bg: rgba(250, 246, 239, 0.84);
-  --control-bg-strong: rgba(251, 247, 241, 0.94);
-  --control-bg-hover: rgba(244, 238, 229, 0.92);
-  --control-border: rgba(62, 50, 39, 0.16);
-  --control-text: #241d19;
-  --control-active-bg: linear-gradient(180deg, #372d26 0%, #211b17 100%);
-  --control-active-text: #f7f1e8;
-  --control-active-border: #4a3c31;
-  --control-quiet-bg: rgba(245, 239, 230, 0.86);
-  --control-quiet-text: #655b50;
-  --focus-ring-on-dark: rgba(247, 241, 232, 0.92);
-  --input-bg: rgba(251, 247, 241, 0.94);
-  --input-border: rgba(62, 50, 39, 0.14);
-  --input-focus-ring: rgba(73, 58, 43, 0.10);
-  --toggle-track-bg: rgba(243, 235, 225, 0.56);
-  --toggle-track-border: rgba(95, 77, 60, 0.15);
-  --toggle-active-bg: linear-gradient(180deg, #372d26 0%, #211b17 100%);
-  --toggle-active-shadow: 0 8px 16px rgba(41, 32, 24, 0.15);
-  --input-wash: linear-gradient(180deg, rgba(255, 252, 246, 0.20), rgba(255, 252, 246, 0));
+  --control-bg: rgba(252, 250, 228, 0.86);
+  --control-bg-strong: rgba(254, 252, 236, 0.94);
+  --control-bg-hover: rgba(248, 246, 220, 0.94);
+  --control-border: rgba(26, 26, 10, 0.14);
+  --control-text: #18180a;
+  --control-active-bg: linear-gradient(180deg, #18180a 0%, #2a2a10 100%);
+  --control-active-text: #f8f6d8;
+  --control-active-border: #2a2a10;
+  --control-quiet-bg: rgba(248, 246, 220, 0.88);
+  --control-quiet-text: #565828;
+  --focus-ring-on-dark: rgba(248, 246, 224, 0.92);
+  --input-bg: rgba(255, 253, 238, 0.96);
+  --input-border: rgba(26, 26, 10, 0.13);
+  --input-focus-ring: rgba(200, 56, 40, 0.14);
+  --toggle-track-bg: rgba(238, 234, 200, 0.60);
+  --toggle-track-border: rgba(26, 26, 10, 0.12);
+  --toggle-active-bg: linear-gradient(180deg, #18180a 0%, #2a2a10 100%);
+  --toggle-active-shadow: 0 6px 14px rgba(26, 26, 10, 0.18);
+  --input-wash: linear-gradient(180deg, rgba(255, 255, 220, 0.24), rgba(255, 255, 220, 0));
 
-  /* Navigation / dock */
-  --nav-bg: linear-gradient(180deg, rgba(247, 242, 234, 0.60), rgba(238, 231, 221, 0.44));
-  --nav-border: rgba(95, 77, 60, 0.13);
-  --nav-desktop-border: rgba(62, 50, 39, 0.11);
-  --nav-text: rgba(248, 242, 234, 0.95);
-  --nav-btn-bg: rgba(46, 38, 31, 0.74);
-  --nav-btn-border: rgba(31, 26, 22, 0.22);
-  --nav-btn-inset: inset 0 1px 0 rgba(255, 249, 240, 0.08);
-  --nav-active-bg: linear-gradient(180deg, rgba(248, 243, 235, 0.98), rgba(231, 222, 209, 0.96));
-  --nav-active-text: #241d19;
-  --nav-active-border: rgba(95, 77, 60, 0.26);
-  --dock-bg: rgba(246, 240, 231, 0.78);
-  --dock-border: rgba(95, 77, 60, 0.17);
-  --dock-text: rgba(45, 37, 32, 0.72);
-  --dock-toggle-bg: rgba(246, 240, 231, 0.78);
-  --dock-toggle-text: rgba(45, 37, 32, 0.72);
-  --dock-toggle-bg-hover: rgba(246, 240, 231, 0.93);
-  --dock-toggle-border-hover: rgba(95, 77, 60, 0.24);
-  --dock-menu-bg: rgba(248, 243, 235, 0.96);
-  --dock-swatch-ring: rgba(255, 251, 245, 0.84);
-  --stepper-dot-border: rgba(247, 241, 232, 0.5);
-  --stepper-dot-fill: #f7f1e8;
-  --stepper-dot-hover: rgba(247, 241, 232, 0.88);
-  --stepper-nav-bg: rgba(247, 241, 232, 0.16);
-  --stepper-nav-border: rgba(247, 241, 232, 0.25);
-  --stepper-nav-hover: rgba(247, 241, 232, 0.27);
+  /* Navigation / dock — dark ink bar floating over green */
+  --nav-bg: linear-gradient(180deg, rgba(20, 20, 10, 0.82), rgba(14, 14, 6, 0.68));
+  --nav-border: rgba(26, 26, 10, 0.22);
+  --nav-desktop-border: rgba(26, 26, 10, 0.18);
+  --nav-text: rgba(248, 246, 224, 0.88);
+  --nav-btn-bg: rgba(255, 255, 255, 0.04);
+  --nav-btn-border: rgba(248, 246, 224, 0.10);
+  --nav-btn-inset: inset 0 1px 0 rgba(255, 255, 220, 0.06);
+  --nav-active-bg: linear-gradient(180deg, #f8f6d8 0%, #e8e6b8 100%);
+  --nav-active-text: #18180a;
+  --nav-active-border: rgba(248, 246, 224, 0.38);
+  --dock-bg: rgba(252, 250, 228, 0.82);
+  --dock-border: rgba(26, 26, 10, 0.14);
+  --dock-text: rgba(24, 24, 10, 0.68);
+  --dock-toggle-bg: rgba(252, 250, 228, 0.82);
+  --dock-toggle-text: rgba(24, 24, 10, 0.68);
+  --dock-toggle-bg-hover: rgba(254, 252, 236, 0.95);
+  --dock-toggle-border-hover: rgba(26, 26, 10, 0.22);
+  --dock-menu-bg: rgba(254, 252, 236, 0.97);
+  --dock-swatch-ring: rgba(26, 26, 10, 0.14);
+  --stepper-dot-border: rgba(248, 246, 224, 0.5);
+  --stepper-dot-fill: #f8f6d8;
+  --stepper-dot-hover: rgba(248, 246, 224, 0.88);
+  --stepper-nav-bg: rgba(248, 246, 224, 0.16);
+  --stepper-nav-border: rgba(248, 246, 224, 0.28);
+  --stepper-nav-hover: rgba(248, 246, 224, 0.28);
 
   /* Section / label / note styling */
-  --section-title-color: #241d19;
-  --kicker-color: #766b60;
-  --context-note-bg: rgba(240, 234, 225, 0.90);
-  --context-note-border: rgba(95, 77, 60, 0.17);
-  --context-note-text: #342b25;
+  --section-title-color: #18180a;
+  --kicker-color: #6a6c28;
+  --context-note-bg: rgba(238, 234, 200, 0.90);
+  --context-note-border: rgba(26, 26, 10, 0.13);
+  --context-note-text: #2a2a10;
   --empty-bg: transparent;
-  --pill-bg: rgba(249, 245, 238, 0.86);
-  --pill-text: #241d19;
+  --pill-bg: rgba(252, 250, 228, 0.90);
+  --pill-text: #18180a;
 
   /* SVG body map / diagram styling */
-  --body-outline: rgba(39, 32, 27, 0.70);
-  --body-outline-soft: rgba(39, 32, 27, 0.56);
-  --body-fill: rgba(248, 242, 234, 0.32);
-  --body-axis: rgba(39, 32, 27, 0.22);
-  --region-fill: rgba(249, 245, 238, 0.95);
-  --region-fill-emphasis: rgba(251, 247, 241, 0.98);
-  --region-stroke: rgba(231, 221, 208, 0.94);
-  --region-callout: rgba(60, 49, 40, 0.50);
-  --region-label: #241d19;
-  --region-label-stroke: rgba(248, 242, 234, 0.95);
-  --region-hover-fill: rgba(238, 230, 220, 0.98);
-  --region-hover-stroke: rgba(223, 212, 199, 1);
-  --region-highlight-fill: #342b25;
-  --region-highlight-stroke: rgba(247, 241, 232, 0.56);
-  --region-highlight-text: #f7f1e8;
-  --region-highlight-callout: rgba(244, 238, 229, 0.90);
-  --region-muted-opacity: 0.34;
-  --region-muted-ink-opacity: 0.42;
+  --body-outline: rgba(26, 26, 10, 0.68);
+  --body-outline-soft: rgba(26, 26, 10, 0.50);
+  --body-fill: rgba(254, 252, 236, 0.28);
+  --body-axis: rgba(26, 26, 10, 0.20);
+  --region-fill: rgba(253, 251, 232, 0.96);
+  --region-fill-emphasis: rgba(255, 253, 238, 0.98);
+  --region-stroke: rgba(200, 56, 40, 0.22);
+  --region-callout: rgba(26, 26, 10, 0.44);
+  --region-label: #18180a;
+  --region-label-stroke: rgba(253, 251, 232, 0.96);
+  --region-hover-fill: rgba(248, 246, 218, 0.98);
+  --region-hover-stroke: rgba(200, 56, 40, 0.36);
+  --region-highlight-fill: #c83828;
+  --region-highlight-stroke: rgba(200, 56, 40, 0.40);
+  --region-highlight-text: #f8f6d8;
+  --region-highlight-callout: rgba(200, 56, 40, 0.80);
+  --region-muted-opacity: 0.36;
+  --region-muted-ink-opacity: 0.44;
 
   /* State / badge / tag styling */
-  --badge-compound-bg: #e6d6b7;
-  --badge-compound-text: #5f4b29;
-  --badge-isolation-bg: #e5ddd1;
-  --badge-isolation-text: #655b50;
-  --badge-combo-bg: #ddd9df;
-  --badge-combo-text: #4f4758;
-  --badge-modality-bg: #ebe3d7;
-  --badge-modality-text: #241d19;
-  --tag-bg: rgba(251, 247, 241, 0.86);
-  --tag-text: #241d19;
-  --tag-primary-bg: rgba(73, 58, 43, 0.07);
-  --tag-primary-text: #342b25;
-  --tag-primary-border: rgba(73, 58, 43, 0.24);
-  --badge-consensus-bg: #dde7dc;
-  --badge-consensus-text: #345239;
-  --badge-union-bg: #dde0e6;
-  --badge-union-text: #39445b;
-  --badge-gap-bg: #ebdfc3;
-  --badge-gap-text: #6a5531;
-  --badge-override-bg: #e4dfe6;
-  --badge-override-text: #56495f;
-  --badge-deferred-bg: #e9ddd7;
-  --badge-deferred-text: #6b4238;
-  --badge-cross-bg: #dfe8e0;
-  --badge-cross-text: #36503a;
-  --badge-single-bg: #ebe3d7;
-  --badge-single-text: #655b50;
+  --badge-compound-bg: #f0e0b0;
+  --badge-compound-text: #6a4a18;
+  --badge-isolation-bg: #e8e4c8;
+  --badge-isolation-text: #4a4820;
+  --badge-combo-bg: #d8e8e4;
+  --badge-combo-text: #1e5050;
+  --badge-modality-bg: #f0eccc;
+  --badge-modality-text: #18180a;
+  --tag-bg: rgba(253, 251, 232, 0.90);
+  --tag-text: #18180a;
+  --tag-primary-bg: rgba(26, 26, 10, 0.06);
+  --tag-primary-text: #18180a;
+  --tag-primary-border: rgba(26, 26, 10, 0.20);
+  --badge-consensus-bg: #d0e8c8;
+  --badge-consensus-text: #1e4820;
+  --badge-union-bg: #c8d8e8;
+  --badge-union-text: #1a3858;
+  --badge-gap-bg: #f0e0a0;
+  --badge-gap-text: #6a4a10;
+  --badge-override-bg: #e8d0e4;
+  --badge-override-text: #522050;
+  --badge-deferred-bg: #f0c8c0;
+  --badge-deferred-text: #6a1818;
+  --badge-cross-bg: #d0e8c8;
+  --badge-cross-text: #1e4820;
+  --badge-single-bg: #ece8c8;
+  --badge-single-text: #4a4820;
 
-  /* Mini-region chips */
-  --mini-legs-front-bg: #d9c5bc;
-  --mini-legs-front-text: #5e3e33;
-  --mini-hamstrings-bg: #e3d4b0;
-  --mini-hamstrings-text: #665120;
-  --mini-glutes-bg: #d9ced8;
-  --mini-glutes-text: #57465d;
-  --mini-calves-bg: #d8e1d5;
-  --mini-calves-text: #36513a;
-  --mini-core-bg: #d7dde7;
-  --mini-core-text: #3b495f;
-  --mini-back-bg: #d8e4df;
-  --mini-back-text: #35544d;
-  --mini-shoulders-bg: #ddd7e8;
-  --mini-shoulders-text: #554a68;
-  --mini-chest-bg: #e9d7bf;
-  --mini-chest-text: #6d5225;
-  --mini-arms-bg: #e7d8e6;
-  --mini-arms-text: #68476d;
-  --mini-hips-bg: #e6d7c7;
-  --mini-hips-text: #6a4d2b;
+  /* Mini-region chips — painterly, on cream card surface */
+  --mini-legs-front-bg: #f0c8b8;
+  --mini-legs-front-text: #7a2818;
+  --mini-hamstrings-bg: #f0dca0;
+  --mini-hamstrings-text: #7a5010;
+  --mini-glutes-bg: #e4cce4;
+  --mini-glutes-text: #622060;
+  --mini-calves-bg: #c8e4c0;
+  --mini-calves-text: #1e5820;
+  --mini-core-bg: #c4d8f0;
+  --mini-core-text: #1a3870;
+  --mini-back-bg: #b8e0d8;
+  --mini-back-text: #105850;
+  --mini-shoulders-bg: #d8ccf0;
+  --mini-shoulders-text: #402878;
+  --mini-chest-bg: #f0dca8;
+  --mini-chest-text: #7a4a10;
+  --mini-arms-bg: #f0c8e0;
+  --mini-arms-text: #6a1858;
+  --mini-hips-bg: #f0d4b8;
+  --mini-hips-text: #7a3818;
 }
 
 body[data-theme="dark"] {
   color-scheme: dark;
 
-  /* Core surfaces / text / borders */
-  --bg: #17191d;
-  --bg-top: #24272d;
-  --page-glow: radial-gradient(circle at top, rgba(245, 241, 232, 0.06), transparent 36%);
-  --surface: rgba(31, 33, 38, 0.96);
-  --surface-2: #2b2f36;
-  --surface-3: #383d46;
-  --paper: #1e2127;
-  --panel-bg: rgba(31, 33, 38, 0.96);
-  --panel-bg-muted: rgba(43, 47, 54, 0.82);
-  --sheet-bg: rgba(28, 30, 35, 0.985);
-  --summary-card-bg: rgba(40, 43, 50, 0.9);
-  --card-bg: rgba(34, 37, 43, 0.95);
-  --card-bg-pressed: #2a2e35;
-  --paper-card-bg: rgba(38, 41, 48, 0.88);
-  --paper-card-bg-strong: rgba(43, 47, 55, 0.94);
-  --paper-card-bg-soft: rgba(37, 40, 47, 0.8);
+  /* Core surfaces / text / borders — warm olive, from embroidered denim */
+  --bg: #131108;
+  --bg-top: #1c1a0e;
+  --page-glow: radial-gradient(ellipse at top, rgba(184, 147, 74, 0.07), transparent 50%);
+  --surface: rgba(30, 27, 14, 0.96);
+  --surface-2: #28230f;
+  --surface-3: #342d18;
+  --paper: #1a1809;
+  --panel-bg: rgba(30, 27, 14, 0.96);
+  --panel-bg-muted: rgba(38, 34, 18, 0.82);
+  --sheet-bg: rgba(24, 21, 10, 0.985);
+  --summary-card-bg: rgba(36, 32, 18, 0.9);
+  --card-bg: rgba(28, 25, 12, 0.95);
+  --card-bg-pressed: #1e1c0e;
+  --paper-card-bg: rgba(32, 29, 15, 0.88);
+  --paper-card-bg-strong: rgba(38, 34, 18, 0.94);
+  --paper-card-bg-soft: rgba(30, 27, 14, 0.8);
 
-  --text: #f4efe7;
-  --text-2: #b7afa3;
-  --accent: #f1ebe1;
-  --accent-soft: rgba(241, 235, 225, 0.08);
-  --accent-2: #959cad;
-  --navy: #f7f1e8;
+  --text: #ead8b8;
+  --text-2: #8c7f5e;
+  --accent: #c4788a;
+  --accent-soft: rgba(196, 120, 138, 0.10);
+  --accent-2: #b88c42;
+  --navy: #ead8b8;
 
-  --border: rgba(244, 239, 231, 0.12);
-  --border-strong: rgba(244, 239, 231, 0.22);
+  --border: rgba(184, 140, 66, 0.14);
+  --border-strong: rgba(184, 140, 66, 0.26);
 
   /* Typography */
-  --title-shadow: rgba(255, 255, 255, 0.16);
-  --font-body: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --font-display: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --font-kicker: "JetBrains Mono", "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  --display-letterspacing: -0.03em;
+  --title-shadow: rgba(0, 0, 0, 0.4);
+  --font-body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Cormorant", Georgia, serif;
+  --font-kicker: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+  --display-letterspacing: 0.02em;
   --display-transform: uppercase;
   --title-transform: none;
   --kicker-transform: uppercase;
 
-  --kicker-size: 18px;
+  --kicker-size: 12px;
   --kicker-weight: 600;
-  --kicker-letterspacing: 0.04em;
+  --kicker-letterspacing: 0.14em;
   --kicker-line-height: 1;
-  --kicker-margin-bottom: 8px;
+  --kicker-margin-bottom: 10px;
 
-  --title-size: clamp(32px, 6.8vw, 52px);
-  --title-weight: 800;
-  --title-line-height: 0.98;
-  --title-letterspacing: -0.02em;
+  --title-size: clamp(36px, 7.5vw, 58px);
+  --title-weight: 600;
+  --title-line-height: 0.93;
+  --title-letterspacing: 0.01em;
   --title-margin-bottom: 10px;
-  --title-shadow-x: 1px;
-  --title-shadow-y: 1px;
-  --title-shadow-blur: 0;
-  --title-stroke-width: 0.35px;
-  --title-stroke-color: rgba(255, 248, 238, 0.14);
-  --title-shadow-stack:
-    1px 1px 0 rgba(255, 255, 255, 0.2),
-    2px 2px 0 rgba(223, 223, 223, 0.16),
-    4px 3px 0 rgba(173, 173, 173, 0.13),
-    7px 4px 0 rgba(115, 115, 115, 0.11),
-    11px 6px 14px rgba(0, 0, 0, 0.34);
+  --title-shadow-x: 0px;
+  --title-shadow-y: 2px;
+  --title-shadow-blur: 24px;
+  --title-stroke-width: 0px;
+  --title-stroke-color: transparent;
+  --title-shadow-stack: 0 4px 32px rgba(0, 0, 0, 0.55);
 
   /* Elevation / shadow */
-  --shadow-card: 0 14px 28px rgba(0, 0, 0, 0.24);
-  --shadow-panel: 0 12px 24px rgba(0, 0, 0, 0.18);
-  --shadow-nav: 0 -16px 32px rgba(0, 0, 0, 0.28);
-  --shadow-sheet: 0 -18px 38px rgba(0, 0, 0, 0.32);
-  --shadow-control: 0 6px 14px rgba(0, 0, 0, 0.16);
-  --shadow-hero: 0 18px 34px rgba(0, 0, 0, 0.24);
-  --shadow-inline: 0 8px 18px rgba(0, 0, 0, 0.18);
-  --shadow-pressed: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-panel: 0 8px 20px rgba(0, 0, 0, 0.26);
+  --shadow-nav: 0 -12px 28px rgba(0, 0, 0, 0.36);
+  --shadow-sheet: 0 -16px 40px rgba(0, 0, 0, 0.44);
+  --shadow-control: 0 4px 12px rgba(0, 0, 0, 0.22);
+  --shadow-hero: 0 14px 32px rgba(0, 0, 0, 0.30);
+  --shadow-inline: 0 6px 16px rgba(0, 0, 0, 0.24);
+  --shadow-pressed: inset 0 1px 0 rgba(234, 216, 184, 0.05);
 
   /* Hero / card / sheet / panel backgrounds */
   --hero-bg:
-    linear-gradient(180deg, rgba(34, 36, 41, 0.985) 0%, rgba(25, 27, 31, 0.99) 100%),
-    linear-gradient(90deg, rgba(247, 241, 232, 0.04), transparent 58%);
-  --sheet-handle-bg: linear-gradient(180deg, rgba(28, 30, 35, 0.985) 72%, rgba(28, 30, 35, 0));
-  --overlay-scrim: rgba(0, 0, 0, 0.58);
+    linear-gradient(180deg, rgba(32, 29, 14, 0.97) 0%, rgba(22, 20, 9, 0.99) 100%),
+    linear-gradient(135deg, rgba(184, 140, 66, 0.05), transparent 55%);
+  --sheet-handle-bg: linear-gradient(180deg, rgba(24, 21, 10, 0.985) 72%, rgba(24, 21, 10, 0));
+  --overlay-scrim: rgba(0, 0, 0, 0.68);
 
   /* Controls and interactive surfaces */
-  --control-bg: rgba(43, 46, 53, 0.84);
-  --control-bg-strong: rgba(49, 53, 61, 0.92);
-  --control-bg-hover: rgba(57, 61, 70, 0.92);
-  --control-border: rgba(244, 239, 231, 0.12);
-  --control-text: #f4efe7;
-  --control-active-bg: linear-gradient(180deg, #f4efe7 0%, #d8d0c4 100%);
-  --control-active-text: #17191d;
-  --control-active-border: rgba(255, 248, 238, 0.34);
-  --control-quiet-bg: rgba(42, 46, 53, 0.88);
-  --control-quiet-text: #cdc5b9;
-  --focus-ring-on-dark: rgba(255, 248, 238, 0.92);
-  --input-bg: rgba(31, 34, 40, 0.94);
-  --input-border: rgba(244, 239, 231, 0.12);
-  --input-focus-ring: rgba(241, 235, 225, 0.12);
-  --toggle-track-bg: rgba(48, 52, 60, 0.58);
-  --toggle-track-border: rgba(244, 239, 231, 0.10);
-  --toggle-active-bg: linear-gradient(180deg, #f4efe7 0%, #d8d0c4 100%);
-  --toggle-active-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
-  --input-wash: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+  --control-bg: rgba(40, 36, 18, 0.84);
+  --control-bg-strong: rgba(48, 43, 22, 0.92);
+  --control-bg-hover: rgba(56, 50, 26, 0.92);
+  --control-border: rgba(184, 140, 66, 0.16);
+  --control-text: #ead8b8;
+  --control-active-bg: linear-gradient(180deg, #ead8b8 0%, #c8b890 100%);
+  --control-active-text: #1a1809;
+  --control-active-border: rgba(234, 216, 184, 0.36);
+  --control-quiet-bg: rgba(38, 34, 18, 0.88);
+  --control-quiet-text: #8c7f5e;
+  --focus-ring-on-dark: rgba(234, 216, 184, 0.92);
+  --input-bg: rgba(26, 23, 11, 0.94);
+  --input-border: rgba(184, 140, 66, 0.16);
+  --input-focus-ring: rgba(196, 120, 138, 0.18);
+  --toggle-track-bg: rgba(44, 40, 20, 0.58);
+  --toggle-track-border: rgba(184, 140, 66, 0.12);
+  --toggle-active-bg: linear-gradient(180deg, #ead8b8 0%, #c8b890 100%);
+  --toggle-active-shadow: 0 6px 16px rgba(0, 0, 0, 0.30);
+  --input-wash: linear-gradient(180deg, rgba(184, 140, 66, 0.04), rgba(184, 140, 66, 0));
 
   /* Navigation / dock */
-  --nav-bg: linear-gradient(180deg, rgba(18, 20, 24, 0.76), rgba(18, 20, 24, 0.58));
-  --nav-border: rgba(244, 239, 231, 0.08);
-  --nav-desktop-border: rgba(244, 239, 231, 0.1);
-  --nav-text: rgba(244, 239, 231, 0.82);
-  --nav-btn-bg: rgba(255, 255, 255, 0.04);
-  --nav-btn-border: rgba(244, 239, 231, 0.08);
-  --nav-btn-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  --nav-active-bg: linear-gradient(180deg, #f4efe7 0%, #d8d0c4 100%);
-  --nav-active-text: #17191d;
-  --nav-active-border: rgba(255, 248, 238, 0.34);
-  --dock-bg: rgba(29, 31, 36, 0.78);
-  --dock-border: rgba(244, 239, 231, 0.12);
-  --dock-text: rgba(241, 235, 225, 0.78);
-  --dock-toggle-bg: rgba(29, 31, 36, 0.78);
-  --dock-toggle-text: rgba(241, 235, 225, 0.78);
-  --dock-toggle-bg-hover: rgba(36, 39, 45, 0.94);
-  --dock-toggle-border-hover: rgba(244, 239, 231, 0.22);
-  --dock-menu-bg: rgba(28, 30, 35, 0.96);
-  --dock-swatch-ring: rgba(255, 248, 238, 0.16);
-  --stepper-dot-border: rgba(241, 235, 225, 0.42);
-  --stepper-dot-fill: #f4efe7;
-  --stepper-dot-hover: rgba(255, 248, 238, 0.86);
-  --stepper-nav-bg: rgba(255, 255, 255, 0.08);
-  --stepper-nav-border: rgba(255, 255, 255, 0.14);
-  --stepper-nav-hover: rgba(255, 255, 255, 0.14);
+  --nav-bg: linear-gradient(180deg, rgba(15, 13, 6, 0.82), rgba(12, 11, 5, 0.66));
+  --nav-border: rgba(184, 140, 66, 0.10);
+  --nav-desktop-border: rgba(184, 140, 66, 0.12);
+  --nav-text: rgba(234, 216, 184, 0.75);
+  --nav-btn-bg: rgba(255, 255, 255, 0.03);
+  --nav-btn-border: rgba(184, 140, 66, 0.10);
+  --nav-btn-inset: inset 0 1px 0 rgba(234, 216, 184, 0.04);
+  --nav-active-bg: linear-gradient(180deg, #ead8b8 0%, #c8b890 100%);
+  --nav-active-text: #1a1809;
+  --nav-active-border: rgba(234, 216, 184, 0.36);
+  --dock-bg: rgba(18, 16, 8, 0.78);
+  --dock-border: rgba(184, 140, 66, 0.16);
+  --dock-text: rgba(234, 216, 184, 0.72);
+  --dock-toggle-bg: rgba(18, 16, 8, 0.78);
+  --dock-toggle-text: rgba(234, 216, 184, 0.72);
+  --dock-toggle-bg-hover: rgba(28, 25, 12, 0.94);
+  --dock-toggle-border-hover: rgba(184, 140, 66, 0.28);
+  --dock-menu-bg: rgba(22, 20, 9, 0.96);
+  --dock-swatch-ring: rgba(234, 216, 184, 0.14);
+  --stepper-dot-border: rgba(234, 216, 184, 0.36);
+  --stepper-dot-fill: #ead8b8;
+  --stepper-dot-hover: rgba(234, 216, 184, 0.82);
+  --stepper-nav-bg: rgba(184, 140, 66, 0.08);
+  --stepper-nav-border: rgba(184, 140, 66, 0.16);
+  --stepper-nav-hover: rgba(184, 140, 66, 0.16);
 
   /* Section / label / note styling */
-  --section-title-color: #f4efe7;
-  --kicker-color: #8f968f;
-  --context-note-bg: rgba(40, 43, 50, 0.9);
-  --context-note-border: rgba(244, 239, 231, 0.1);
-  --context-note-text: #e6e0d7;
+  --section-title-color: #ead8b8;
+  --kicker-color: #6e6244;
+  --context-note-bg: rgba(36, 32, 16, 0.9);
+  --context-note-border: rgba(184, 140, 66, 0.12);
+  --context-note-text: #c8b890;
   --empty-bg: transparent;
-  --pill-bg: rgba(43, 47, 55, 0.88);
-  --pill-text: #f4efe7;
+  --pill-bg: rgba(40, 36, 18, 0.88);
+  --pill-text: #ead8b8;
 
   /* SVG body map / diagram styling */
-  --body-outline: rgba(241, 235, 225, 0.72);
-  --body-outline-soft: rgba(241, 235, 225, 0.56);
-  --body-fill: rgba(255, 255, 255, 0.04);
-  --body-axis: rgba(241, 235, 225, 0.24);
-  --region-fill: rgba(45, 49, 57, 0.98);
-  --region-fill-emphasis: rgba(52, 57, 66, 0.98);
-  --region-stroke: rgba(105, 113, 126, 0.72);
-  --region-callout: rgba(210, 214, 222, 0.58);
-  --region-label: #f4efe7;
-  --region-label-stroke: rgba(20, 22, 26, 0.96);
-  --region-hover-fill: rgba(58, 63, 73, 0.98);
-  --region-hover-stroke: rgba(150, 158, 170, 0.9);
-  --region-highlight-fill: #f4efe7;
-  --region-highlight-stroke: rgba(255, 255, 255, 0.38);
-  --region-highlight-text: #17191d;
-  --region-highlight-callout: rgba(244, 239, 231, 0.84);
-  --region-muted-opacity: 0.34;
-  --region-muted-ink-opacity: 0.42;
+  --body-outline: rgba(234, 216, 184, 0.60);
+  --body-outline-soft: rgba(234, 216, 184, 0.40);
+  --body-fill: rgba(184, 140, 66, 0.04);
+  --body-axis: rgba(234, 216, 184, 0.18);
+  --region-fill: rgba(36, 32, 16, 0.98);
+  --region-fill-emphasis: rgba(44, 40, 20, 0.98);
+  --region-stroke: rgba(120, 100, 55, 0.60);
+  --region-callout: rgba(184, 160, 100, 0.50);
+  --region-label: #ead8b8;
+  --region-label-stroke: rgba(15, 13, 6, 0.96);
+  --region-hover-fill: rgba(52, 46, 24, 0.98);
+  --region-hover-stroke: rgba(160, 130, 72, 0.80);
+  --region-highlight-fill: #c4788a;
+  --region-highlight-stroke: rgba(196, 120, 138, 0.36);
+  --region-highlight-text: #1a1809;
+  --region-highlight-callout: rgba(196, 120, 138, 0.80);
+  --region-muted-opacity: 0.30;
+  --region-muted-ink-opacity: 0.40;
 
   /* State / badge / tag styling */
-  --badge-compound-bg: #5f523a;
-  --badge-compound-text: #f3dfb2;
-  --badge-isolation-bg: #3b4048;
-  --badge-isolation-text: #d7d1c6;
-  --badge-combo-bg: #454150;
-  --badge-combo-text: #ddd4f2;
-  --badge-modality-bg: #31363e;
-  --badge-modality-text: #f4efe7;
-  --tag-bg: rgba(43, 47, 55, 0.88);
-  --tag-text: #f4efe7;
-  --tag-primary-bg: rgba(241, 235, 225, 0.08);
-  --tag-primary-text: #f4efe7;
-  --tag-primary-border: rgba(244, 239, 231, 0.2);
-  --badge-consensus-bg: #33463b;
-  --badge-consensus-text: #d4ecdb;
-  --badge-union-bg: #364150;
-  --badge-union-text: #d7e4f7;
-  --badge-gap-bg: #564a32;
-  --badge-gap-text: #f1dfb2;
-  --badge-override-bg: #4b4457;
-  --badge-override-text: #e6dff2;
-  --badge-deferred-bg: #5b3f42;
-  --badge-deferred-text: #f0d6d7;
-  --badge-cross-bg: #33463b;
-  --badge-cross-text: #d4ecdb;
-  --badge-single-bg: #31363e;
-  --badge-single-text: #d7d1c6;
+  --badge-compound-bg: #4a3a1c;
+  --badge-compound-text: #e8c87a;
+  --badge-isolation-bg: #2e2818;
+  --badge-isolation-text: #b8a880;
+  --badge-combo-bg: #3a2a38;
+  --badge-combo-text: #d4b8d4;
+  --badge-modality-bg: #2a2412;
+  --badge-modality-text: #ead8b8;
+  --tag-bg: rgba(40, 36, 18, 0.88);
+  --tag-text: #ead8b8;
+  --tag-primary-bg: rgba(234, 216, 184, 0.06);
+  --tag-primary-text: #ead8b8;
+  --tag-primary-border: rgba(184, 140, 66, 0.22);
+  --badge-consensus-bg: #243020;
+  --badge-consensus-text: #a8d0a0;
+  --badge-union-bg: #1e2630;
+  --badge-union-text: #a0bcd8;
+  --badge-gap-bg: #3c2c14;
+  --badge-gap-text: #d8b870;
+  --badge-override-bg: #34243a;
+  --badge-override-text: #c8aad4;
+  --badge-deferred-bg: #3a2028;
+  --badge-deferred-text: #d8a0b0;
+  --badge-cross-bg: #243020;
+  --badge-cross-text: #a8d0a0;
+  --badge-single-bg: #2a2412;
+  --badge-single-text: #b8a880;
 
-  /* Mini-region chips */
-  --mini-legs-front-bg: #4f3f39;
-  --mini-legs-front-text: #efd0c7;
-  --mini-hamstrings-bg: #544936;
-  --mini-hamstrings-text: #efdeae;
-  --mini-glutes-bg: #4d4452;
-  --mini-glutes-text: #e4d8ee;
-  --mini-calves-bg: #37473c;
-  --mini-calves-text: #d6ead9;
-  --mini-core-bg: #37424d;
-  --mini-core-text: #d9e2ee;
-  --mini-back-bg: #33464a;
-  --mini-back-text: #d5ece9;
-  --mini-shoulders-bg: #433f54;
-  --mini-shoulders-text: #ddd8f0;
-  --mini-chest-bg: #554332;
-  --mini-chest-text: #efdcb7;
-  --mini-arms-bg: #4d3f54;
-  --mini-arms-text: #ead8ef;
-  --mini-hips-bg: #55463b;
-  --mini-hips-text: #eedbca;
+  /* Mini-region chips — warm muted tones over olive base */
+  --mini-legs-front-bg: #3e2820;
+  --mini-legs-front-text: #e8b8a8;
+  --mini-hamstrings-bg: #3c2e14;
+  --mini-hamstrings-text: #e0c888;
+  --mini-glutes-bg: #342030;
+  --mini-glutes-text: #d4b0d8;
+  --mini-calves-bg: #1e2e1e;
+  --mini-calves-text: #a8d0a8;
+  --mini-core-bg: #1e2430;
+  --mini-core-text: #a8b8d8;
+  --mini-back-bg: #183028;
+  --mini-back-text: #90c8c0;
+  --mini-shoulders-bg: #28203c;
+  --mini-shoulders-text: #c0b0e0;
+  --mini-chest-bg: #3c2810;
+  --mini-chest-text: #e0c090;
+  --mini-arms-bg: #301a38;
+  --mini-arms-text: #d0a8e0;
+  --mini-hips-bg: #3a2418;
+  --mini-hips-text: #d8b898;
 }
 
 /* ── Layout ─────────────────────────────────────────────────────────────── */
@@ -567,10 +555,11 @@ body[data-theme="dark"] {
   border-radius: var(--r-lg);
   cursor: pointer;
   color: var(--nav-text);
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 400;
-  letter-spacing: 0.03em;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   min-height: 44px;
   transition: color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   box-shadow: var(--nav-btn-inset);
@@ -818,10 +807,10 @@ body[data-theme="dark"] {
 .filter-panel-title {
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 400;
+  font-weight: 700;
   color: var(--section-title-color);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   margin-bottom: 8px;
 }
 
@@ -1007,9 +996,10 @@ body[data-theme="dark"] {
 
 .card-name {
   font-size: var(--text-base);
-  font-weight: 700;
+  font-weight: 600;
   flex: 1;
-  line-height: 1.3;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
 }
 
 .movement-glyph {
@@ -1076,54 +1066,54 @@ body[data-theme="dark"] {
 }
 
 .mini-region-legs_front {
-  background: #ffd7d1;
-  color: #9a2f1f;
+  background: var(--mini-legs-front-bg);
+  color: var(--mini-legs-front-text);
 }
 
 .mini-region-hamstrings {
-  background: #ffe3a6;
-  color: #7d5200;
+  background: var(--mini-hamstrings-bg);
+  color: var(--mini-hamstrings-text);
 }
 
 .mini-region-glutes {
-  background: #eddcff;
-  color: #5b2ca0;
+  background: var(--mini-glutes-bg);
+  color: var(--mini-glutes-text);
 }
 
 .mini-region-calves {
-  background: #d9f7dc;
-  color: #145f2d;
+  background: var(--mini-calves-bg);
+  color: var(--mini-calves-text);
 }
 
 .mini-region-core {
-  background: #d9e7ff;
-  color: #1f3f84;
+  background: var(--mini-core-bg);
+  color: var(--mini-core-text);
 }
 
 .mini-region-back,
 .mini-region-lower_back {
-  background: #dff3f0;
-  color: #0d5e56;
+  background: var(--mini-back-bg);
+  color: var(--mini-back-text);
 }
 
 .mini-region-shoulders {
-  background: #e4ddff;
-  color: #5433a8;
+  background: var(--mini-shoulders-bg);
+  color: var(--mini-shoulders-text);
 }
 
 .mini-region-chest {
-  background: #ffe7bf;
-  color: #8a4d00;
+  background: var(--mini-chest-bg);
+  color: var(--mini-chest-text);
 }
 
 .mini-region-arms {
-  background: #f8dbff;
-  color: #7b2c8c;
+  background: var(--mini-arms-bg);
+  color: var(--mini-arms-text);
 }
 
 .mini-region-hips {
-  background: #ffe8cf;
-  color: #8d4f1a;
+  background: var(--mini-hips-bg);
+  color: var(--mini-hips-text);
 }
 
 .card-facts {
@@ -1153,13 +1143,21 @@ body[data-theme="dark"] {
 }
 
 .pill-prime {
-  background: #fee2e2;
+  background: rgba(185, 28, 28, 0.15);
   color: var(--deg-prime);
 }
 
 .pill-synergist {
-  background: #ffedd5;
+  background: rgba(194, 65, 12, 0.15);
   color: var(--deg-synergist);
+}
+
+body[data-theme="folk"] .pill-prime {
+  background: #fee2e2;
+}
+
+body[data-theme="folk"] .pill-synergist {
+  background: #ffedd5;
 }
 
 .pill-stabilizer {
@@ -1264,9 +1262,11 @@ body[data-theme="dark"] {
 }
 
 .sheet-title {
+  font-family: var(--font-display);
   font-size: var(--text-lg);
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   margin-bottom: 4px;
   overflow-wrap: anywhere;
 }
@@ -1361,10 +1361,10 @@ body[data-theme="dark"] {
 .section-label {
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 400;
+  font-weight: 700;
   color: var(--section-title-color);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   margin: 16px 0 8px;
 }
 
@@ -2231,8 +2231,10 @@ body[data-theme="dark"] {
   border-radius: var(--r-lg);
   cursor: pointer;
   font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 28px;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   -webkit-tap-highlight-color: transparent;
   box-shadow: var(--shadow-card);
 }
@@ -2245,8 +2247,8 @@ body[data-theme="dark"] {
   font-family: var(--font-display);
   font-size: var(--text-xl);
   line-height: 1;
-  font-weight: 400;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   padding: 6px 12px 5px;
   border-radius: var(--r-full);
   min-width: 52px;

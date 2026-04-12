@@ -3525,6 +3525,30 @@ Exclusions are keyed by `(source, source_id)` rather than entity ID, so they rem
 
 **Files changed:** `pipeline/identity.py`.
 
+### ADR-114: Ontology sources — directory structure, catalog typing, and URI scheme
+**Status:** Accepted
+
+**Context:** The project has so far treated `sources/` as exclusively A-box — exercise record producers that feed the pipeline. A new category of source is needed: YouTube videos and other material from domain experts (coaches, researchers) that inform vocabulary decisions. These are T-box inputs: they shape concept definitions, scope notes, and ADRs rather than producing exercise records.
+
+**Decision:**
+
+**Directory split.** Rename `sources/` to `exercise-sources/` and introduce a parallel `ontology-sources/` directory. This makes the A-box / T-box boundary visible in the repo structure and clarifies the safe rebuild order: ontology-sources inform `ontology/*.ttl` and `DECISIONS.md`; exercise-sources feed `pipeline.db` and `graph.ttl`.
+
+**Catalog typing.** Exercise sources remain `dcat:Dataset`. Ontology sources are typed as `dcat:Resource` + the appropriate DCMI media type:
+- Video → `dcmitype:MovingImage`
+- Essay, article, book → `dcmitype:Text`
+- Podcast → `dcmitype:Sound`
+
+No custom role class is introduced. The T-box role is conveyed by directory placement, `dcterms:subject` links to vocabulary concepts, and `dcterms:source` backlinks from concept `.ttl` files.
+
+**URI scheme for YouTube videos.** Use the YouTube video ID as the local name, prefixed with `yt`: `feg:yt_{videoId}` (e.g. `feg:yt_9tn-mzRj9wE`). The video ID is stable, unique, and fully determined by the URL. URI schemes for other source types (essays, books) will be decided when the first non-video source is added.
+
+**Provenance linking.** Catalog entries carry `dcterms:subject` pointing to the vocabulary concepts they informed. Vocabulary concepts in `ontology/*.ttl` carry `dcterms:source` pointing back to the catalog entry. This makes the influence graph queryable in both directions.
+
+**Extraction artifacts.** Each ontology source directory may contain an `extracted/` subdirectory holding `.ttl` files with candidate concept proposals, scope note drafts, and gap annotations derived from the source content. These artifacts are inputs to ADR drafting and vocabulary editing — they are not loaded directly into the graph.
+
+**Files changed:** `ontology/catalog.ttl`, `DECISIONS.md`. Directory rename deferred to implementation.
+
 ### ADR-113: Fix --drop-enrichment deletion bug in identity.py
 **Status:** Accepted
 

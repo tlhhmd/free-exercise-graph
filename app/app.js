@@ -78,11 +78,11 @@ const TOKEN_NORMALIZATION = {
 };
 
 const BROWSE_FILTER_KEYS = ["patterns", "modalities", "equipment", "joints", "laterality", "planes", "styles"];
-const DEFAULT_THEME = "mono";
+const DEFAULT_THEME = "dark";
 const THEME_STORAGE_KEY = "feg-theme";
 const THEMES = {
-  mono: { label: "Mono", swatchStart: "#efefef", swatchEnd: "#202020" },
-  dark: { label: "Dark", swatchStart: "#2a2e35", swatchEnd: "#f4efe7" },
+  folk: { label: "Folk", swatchStart: "#c8cc5a", swatchEnd: "#c83828" },
+  dark: { label: "Dark", swatchStart: "#28230f", swatchEnd: "#c4788a" },
 };
 
 const FILTER_VALUE_GETTERS = {

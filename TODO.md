@@ -6,6 +6,8 @@ Remaining work is grouped by execution horizon.
 
 ## Now
 
+- [ ] **Ontology sources — bootstrap** — watch the three Blenis/Galpin core training videos (see `working/sourcingfromyoutubevideos.md`), flagging moments where distinctions are made that the current vocabulary can't express. Use those observations to write concrete eval criteria before designing the extraction prompt. Then: rename `sources/` → `exercise-sources/`, create `ontology-sources/`, add the three video entries to `catalog.ttl` (`dcat:Resource` + `dcmitype:MovingImage`, URIs from YouTube video IDs, `dcterms:subject` → relevant vocabulary concepts). ADR-114.
+
 - [ ] **Gold standard annotation** — review the batched workbooks in `evals/unreviewed/`, then move completed batches into `evals/submitted/` for scoring with `python3 evals/eval.py`. Batches are generated from the live canonical `pipeline.db` using a representative 50-exercise sample plus a small edge-case coverage slice, split into 10-exercise files. Methodology: strict (muscle, degree) pair F1 + muscle-name F1 + conditional degree accuracy; exact movement pattern match; leaf-level annotation required (ADR-109). Use `run_notes.md` flags as candidates for explicit inclusion when rebuilding the workbook.
 
 ---
